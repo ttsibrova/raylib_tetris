@@ -19,5 +19,5 @@ private:
     const int m_cellHeight;
     const int m_cellWidght;
 
-    Tools::multi_array<int, Settings::_rowNum, Settings::_colNum> m_grid;
+    Tools::multi_array<int, Settings::_colNum, Settings::_rowNum> m_grid;
 };
