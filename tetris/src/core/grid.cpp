@@ -1,14 +1,18 @@
 #include <core/grid.h>
+
+#include <core/drawer.h>
 #include <engine/game_state.h>
+#include <graphics/drawable_container.h>
 #include <cassert>
 #include <unordered_set>
 
-Grid::Grid ():
-    m_grid (0)
-{
-}
+Grid::Grid (const DrawSettings& settings):
+    m_pos {0., 0.},
+    m_grid (0),
+    m_settings (settings)
+{}
 
-bool Grid::IsOutsideGrid (const BoundingBox2d& bbox) const
+bool Grid::IsOutsideGrid (const GridPositionBBox& bbox) const
 {
     if (bbox.min.m_col < 0 || bbox.max.m_col > Settings::_colNum - 1) {
         return true;
@@ -16,7 +20,7 @@ bool Grid::IsOutsideGrid (const BoundingBox2d& bbox) const
     return false;
 }
 
-bool Grid::IsCollided (const std::vector<Position>& cells) const
+bool Grid::IsCollided (const std::vector<GridPosition>& cells) const
 {
     for (auto& cell : cells) {
         if (cell.m_row > Settings::_rowNum - 1) {
@@ -29,14 +33,14 @@ bool Grid::IsCollided (const std::vector<Position>& cells) const
     return false;
 }
 
-void Grid::AddCells (const std::vector<Position>& cells, int colorId)
+void Grid::AddCells (const std::vector<GridPosition>& cells, int colorId)
 {
     for (auto& cell : cells) {
         m_grid.Value (cell.m_row, cell.m_col) = colorId;
     }
 }
 
-int Grid::RemoveRows (const BoundingBox2d& hint)
+int Grid::RemoveRows (const GridPositionBBox& hint)
 {
     std::unordered_set <size_t> linesToRemove;
     for (size_t i = hint.min.m_row; i <= hint.max.m_row; i++) {
@@ -124,6 +128,27 @@ int Grid::RemoveRows (const BoundingBox2d& hint)
     std::cout << std::endl;
 #endif
     return linesToRemove.size();
+}
+
+void Grid::Draw() const
+{
+    Drawer::DrawGrid (m_pos.x, m_pos.y, *this, m_settings);
+}
+
+BoundingBox2d Grid::GetBoundingBox() const
+{
+    return {m_pos, {m_pos.x + GetGridWidth() * m_settings.GetCellSize(), m_pos.y + GetGridHeight() * m_settings.GetCellSize()}};
+}
+
+void Grid::Translate (const Vector2& translation)
+{
+    m_pos.x += translation.x;
+    m_pos.y += translation.y;
+}
+
+void Grid::Scale (float scale)
+{
+
 }
 
 

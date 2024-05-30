@@ -1,31 +1,59 @@
-#include <engine/game.h>
 #include <core/drawer.h>
 #include <core/blocks.h>
+#include <engine/game.h>
+#include <graphics/drawable_container.h>
 
 #include <raylib/raylib.h>
 #include <cassert>
 #include <cmath>
 
-Game::Game ():
-    m_drawSettings (),
-    m_gameGrid (),
+Game::Game (DrawableContainer* ownerContainer):
+    m_drawSettings(),
+    m_gameGrid (nullptr),
     m_activeBlock (nullptr),
     m_holdBlock (nullptr),
-    m_bCanPlay (true),
+    m_bCanPlay (false),
     m_bCanHold (true),
     m_speedLvl (1),
     m_gameScore (0),
     m_numRemovedLines(0),
     m_comboNum (0),
-    m_gameHUD()
+    m_ownerContainer (ownerContainer)
 {
     m_drawSettings.SetCellSize (40);
-    m_gameHUD.UpdateSizes (GetGridWidght(), GetGridHeight());
 }
 
 void Game::Init()
 {
-    m_gameGrid.Clear();
+    //Graphics registering
+    auto grid = std::make_unique <Grid> (m_drawSettings);
+    m_gameGrid = grid.get();
+
+    auto ownerBBox = m_ownerContainer->GetBoundingBox();
+    Vector2 gridPixelPos {ownerBBox.Min().x + (ownerBBox.Max().x - ownerBBox.Min().x) / 2, ownerBBox.Min().y};
+
+    m_ownerContainer->AddRectangle ({gridPixelPos.x+1, gridPixelPos.y}, DrawPosition::Top, GetGridHeight() + 4, GetGridWidth() + 7, Colors::lightBlue_dimmer);
+    m_ownerContainer->AddDrawableObject (gridPixelPos, DrawPosition::Top, std::move (grid));
+
+    auto gameHUD = std::make_unique <GridHUD> (m_gameGrid, m_ownerContainer);
+    gameHUD->Init();
+    AddObserver (gameHUD.get());
+    m_ownerContainer->AddDrawableObject (gridPixelPos, DrawPosition::Top, std::move (gameHUD));
+
+}
+
+void Game::Start()
+{
+    m_activeBlock = m_blockFactory.GenerateBlock();
+    PrepareBlock (m_activeBlock.get());
+    CreateNextBlock();
+    m_bCanPlay = true;
+    m_bCanHold = true;
+}
+
+void Game::Reset()
+{
+    m_gameGrid->Clear();
     m_gameScore = 0;
     m_comboNum = 0;
     m_bCanPlay = false;
@@ -36,23 +64,12 @@ void Game::Init()
     m_numRemovedLines = 0;
 }
 
-void Game::Start()
-{
-    m_activeBlock = m_blockFactory.GenerateBlock();
-    PrepareBlock (m_activeBlock.get());
-    m_nextBlock = m_blockFactory.GenerateBlock();
-    m_bCanPlay = true;
-    m_bCanHold = true;
-}
-
 void Game::Draw()
 {
-    Drawer::DrawGrid (m_gameHUD.GetGridOffset(), 0, m_gameGrid, m_drawSettings);
     if (m_activeBlock) {
-        Drawer::DrawBlock (m_gameHUD.GetGridOffset(), 0, m_activeBlock.get(), m_drawSettings);
+        Drawer::DrawGhostBlock (m_gameGrid->GetPosition().x, m_gameGrid->GetPosition().y, m_ghostBlock.get(), m_drawSettings);
+        Drawer::DrawBlock (m_gameGrid->GetPosition().x, m_gameGrid->GetPosition().y, m_activeBlock.get(), m_drawSettings);
     }
-    m_gameHUD.DrawLeft (m_gameScore, m_speedLvl, m_numRemovedLines, m_nextBlock.get());
-    m_gameHUD.DrawRight (m_comboNum, m_holdBlock.get());
 }
 
 void Game::HandleInput()
@@ -86,7 +103,7 @@ void Game::HandleInput()
     if (IsGamepadAvailable (gamepad)) {
 
         if (IsGamepadButtonPressed (gamepad, GAMEPAD_BUTTON_RIGHT_FACE_DOWN)) {
-            RotateBlock ();
+            RotateBlock();
         }
         if (IsGamepadButtonPressed (gamepad, GAMEPAD_BUTTON_LEFT_FACE_DOWN)) {
             MoveBlockDown();
@@ -107,14 +124,22 @@ void Game::HandleInput()
 
 }
 
+void Game::Tick()
+{
+    if (CanPlay()) {
+        HandleInput();
+        UpdateFallingBlock();
+    }
+}
+
 void Game::MoveBlockDown()
 {
     m_activeBlock->Move (0, 1);
-    if (m_gameGrid.IsOutsideGrid (m_activeBlock->GetBBox())) {
+    if (m_gameGrid->IsOutsideGrid (m_activeBlock->GetBBox())) {
         m_activeBlock->Move (0, -1);
         return;
     }
-    if (m_gameGrid.IsCollided (m_activeBlock->GetCurrentCells())) {
+    if (m_gameGrid->IsCollided (m_activeBlock->GetCurrentCells())) {
         m_activeBlock->Move (0, -1);
         UpdateElements();
     }
@@ -123,28 +148,40 @@ void Game::MoveBlockDown()
 void Game::MoveBlockRight()
 {
     m_activeBlock->Move (1, 0);
-    if (m_gameGrid.IsOutsideGrid (m_activeBlock->GetBBox())) {
+    m_ghostBlock->Move (1, 0);
+    if (m_gameGrid->IsOutsideGrid (m_activeBlock->GetBBox())) {
         m_activeBlock->Move (-1, 0);
+        m_ghostBlock->Move (-1, 0);
+        return;
     }
-    if (m_gameGrid.IsCollided (m_activeBlock->GetCurrentCells ())) {
+    if (m_gameGrid->IsCollided (m_activeBlock->GetCurrentCells())) {
         m_activeBlock->Move (-1, 0);
+        m_ghostBlock->Move (-1, 0);
+        return;
     }
+    UpdateGhostBlock();
 }
 
 void Game::MoveBlockLeft()
 {
     m_activeBlock->Move (-1, 0);
-    if (m_gameGrid.IsOutsideGrid (m_activeBlock->GetBBox())) {
+    m_ghostBlock->Move (-1, 0);
+    if (m_gameGrid->IsOutsideGrid (m_activeBlock->GetBBox())) {
         m_activeBlock->Move (1, 0);
+        m_ghostBlock->Move (1, 0);
+        return;
     }
-    if (m_gameGrid.IsCollided (m_activeBlock->GetCurrentCells ())) {
+    if (m_gameGrid->IsCollided (m_activeBlock->GetCurrentCells())) {
         m_activeBlock->Move (1, 0);
+        m_ghostBlock->Move (1, 0);
+        return;
     }
+    UpdateGhostBlock();
 }
 
 void Game::InstantBlockDrop()
 {
-    while (!m_gameGrid.IsCollided (m_activeBlock->GetCurrentCells()))
+    while (!m_gameGrid->IsCollided (m_activeBlock->GetCurrentCells()))
     {
         m_activeBlock->Move (0, 1);
     }
@@ -155,19 +192,24 @@ void Game::InstantBlockDrop()
 void Game::RotateBlock()
 {
     m_activeBlock->Rotate();
-    if (m_gameGrid.IsOutsideGrid (m_activeBlock->GetBBox())) {
+    m_ghostBlock->Rotate();
+    if (m_gameGrid->IsOutsideGrid (m_activeBlock->GetBBox())) {
         m_activeBlock->RotateLeft();
+        m_ghostBlock->RotateLeft();
         return;
     }
-    if (m_gameGrid.IsCollided (m_activeBlock->GetCurrentCells())) {
+    if (m_gameGrid->IsCollided (m_activeBlock->GetCurrentCells())) {
         m_activeBlock->RotateLeft();
+        m_ghostBlock->RotateLeft();
+        return;
     }
+    UpdateGhostBlock();
 }
 
 void Game::UpdateFallingBlock()
 {
     double deltaTime = GetTime() - m_lastFallStarted;
-    if (deltaTime > m_baseFallTime / m_speedLvl) {
+    if (deltaTime > m_baseFallTime / (m_speedLvl * 0.7)) {
         MoveBlockDown();
         m_lastFallStarted = GetTime();
     }
@@ -175,22 +217,22 @@ void Game::UpdateFallingBlock()
 
 int Game::GetGridHeight()
 {
-    return m_gameGrid.GetGridHeight() * m_drawSettings.GetCellSize();
+    return m_gameGrid->GetGridHeight() * m_drawSettings.GetCellSize();
 }
 
-int Game::GetGridWidght()
+int Game::GetGridWidth()
 {
-    return m_gameGrid.GetGridWidght() * m_drawSettings.GetCellSize();
+    return m_gameGrid->GetGridWidth() * m_drawSettings.GetCellSize();
 }
 
 int Game::GetGameHeight()
 {
-    return GetGridHeight();
+    return GetGridHeight(); // return height of bbox of graphics container?
 }
 
-int Game::GetGameWidght()
+int Game::GetGameWidth()
 {
-    return GetGridWidght() + m_gameHUD.GetHUDWidght();
+    return GetGridWidth();// return width of bbox of graphics container?
 }
 
 void Game::PrepareBlock (Block* block)
@@ -202,48 +244,70 @@ void Game::PrepareBlock (Block* block)
     default: block->Move (4, 0); break;
     }
     m_lastFallStarted = GetTime();
+    m_ghostBlock = std::make_unique <Block> (*block);
+    m_ghostBlock->SetColorId (8);
+
+    UpdateGhostBlock();
+}
+
+void Game::CreateNextBlock()
+{
+    m_nextBlock = m_blockFactory.GenerateBlock();
+    Notify (*this, Event::NEXT_BLOCK_UPDATED);
 }
 
 void Game::UpdateElements()
 {
-    m_gameGrid.AddCells (m_activeBlock->GetCurrentCells(), m_activeBlock->GetColorId());
-    int numRemovedLines = m_gameGrid.RemoveRows (m_activeBlock->GetBBox());
+    m_gameGrid->AddCells (m_activeBlock->GetCurrentCells(), m_activeBlock->GetColorId());
+    int numRemovedLines = m_gameGrid->RemoveRows (m_activeBlock->GetBBox());
     UpdateScore (numRemovedLines);
     m_numRemovedLines += numRemovedLines;
+    if (numRemovedLines > 0) {
+        Notify (*this, Event::NUM_REMOVED_LINES_UPDATED);
+        UpdateFallTime();
+    }
     m_activeBlock.swap (m_nextBlock);
     PrepareBlock (m_activeBlock.get());
-    if (m_gameGrid.IsCollided (m_activeBlock->GetCurrentCells())) {
+    if (m_gameGrid->IsCollided (m_activeBlock->GetCurrentCells())) {
         m_bCanPlay = false;
     }
-    m_nextBlock = m_blockFactory.GenerateBlock();
+    CreateNextBlock();
     m_bCanHold = true;
-    UpdateFallTime();
+
 
 }
 
 void Game::UpdateScore (int numRemovedLines)
 {
+    size_t oldScore = m_gameScore;
+    size_t oldCombo = m_comboNum;
     switch (numRemovedLines)
     {
     case 1:
-        m_gameScore += 100 + 50 * m_speedLvl - 1; break;
+        m_gameScore += 100 + 50 * (m_speedLvl - 1); break;
     case 2:
-        m_gameScore += 200 + 75 * m_speedLvl - 1; break;
+        m_gameScore += 200 + 75 * (m_speedLvl - 1); break;
     case 3:
-        m_gameScore += 350 + 120 * m_speedLvl - 1; break;
+        m_gameScore += 350 + 120 * (m_speedLvl - 1); break;
     case 4:
-        m_gameScore += 500 + 200 * m_speedLvl - 1; break;
+        m_gameScore += 500 + 200 * (m_speedLvl - 1); break;
     default:
         assert (true, "Invalid num of lines.");
         break;
     }
     if (m_comboNum > 0 && numRemovedLines == 0) {
         if (m_comboNum >= 2)
-            m_gameScore += 20 * std::pow (2, m_comboNum) + 120 * m_speedLvl - 1;
+            m_gameScore += 20 * std::pow (2, m_comboNum) + 120 * (m_speedLvl - 1);
         m_comboNum = 0;
     } else if (numRemovedLines > 0) {
         m_comboNum++;
     }
+
+    if (oldScore != m_gameScore)
+        Notify (*this, Event::SCORE_UPDATED);
+
+    if (oldCombo != m_comboNum)
+        Notify (*this, Event::COMBO_UPDATED);
 }
 
 void Game::HoldBlock()
@@ -254,18 +318,31 @@ void Game::HoldBlock()
     m_activeBlock.swap (m_holdBlock);
     if (!m_activeBlock) {
         m_activeBlock.swap (m_nextBlock);
-        m_nextBlock = m_blockFactory.GenerateBlock();
+        CreateNextBlock();
     }
     PrepareBlock (m_activeBlock.get());
     m_holdBlock->ResetOffset();
     m_bCanHold = false;
+    Notify (*this, Event::HOLD_BLOCK_UPDATED);
 }
 
 void Game::UpdateFallTime()
 {
-    size_t speedLvl = m_numRemovedLines / 25 + 1;
+    size_t speedLvl = m_numRemovedLines / 15 + 1;
     if (speedLvl > 10) {
         speedLvl = 10;
     }
-    m_speedLvl = speedLvl;
+    if (m_speedLvl != speedLvl) {
+        m_speedLvl = speedLvl;
+        Notify (*this, Event::SPEED_LVL_UPDATED);
+    }
+}
+
+void Game::UpdateGhostBlock()
+{
+    m_ghostBlock->SetOffset (m_activeBlock->GetOffset());
+    while (!m_gameGrid->IsCollided (m_ghostBlock->GetCurrentCells())) {
+        m_ghostBlock->Move (0, 1);
+    }
+    m_ghostBlock->Move (0, -1);
 }

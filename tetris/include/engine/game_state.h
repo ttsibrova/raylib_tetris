@@ -6,6 +6,10 @@ public:
         m_cellSize (10)
     {}
 
+    DrawSettings (int cellSize):
+        m_cellSize (cellSize)
+    {}
+
     int GetCellSize() const { return m_cellSize; }
     void SetCellSize (int cellSize) { m_cellSize = cellSize; }
 
