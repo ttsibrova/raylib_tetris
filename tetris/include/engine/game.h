@@ -42,6 +42,8 @@ public:
     const Block* GetNextBlock() const {return m_nextBlock.get();}
     const Block* GetHoldBlock() const {return m_holdBlock.get();}
 
+    ~Game();
+
 private:
     void PrepareBlock (Block* block);
     void CreateNextBlock();
@@ -71,5 +73,10 @@ private:
     BlocksFactory             m_blockFactory;
     //std::unique_ptr <GridHUD> m_gameHUD;
     DrawableContainer*        m_ownerContainer;
+
+    Sound                     m_moveSound;
+    Sound                     m_fallSound;
+    Sound                     m_tetrisSound;
+    Sound                     m_holdSound;
 };
 

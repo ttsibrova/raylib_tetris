@@ -5,18 +5,6 @@
 #include <vector>
 #include <string>
 
-enum class DrawPosition
-{
-    Center,
-    Right,
-    Left,
-    TopRight,
-    Top,
-    TopLeft,
-    BottomRight,
-    Bottom,
-    BottomLeft
-};
 
 class DrawableContainer : public IDrawableObject
 {
@@ -24,6 +12,7 @@ public:
 
     IDrawableObject* AddRectangle (Vector2 pixelPos, DrawPosition alignPos, int height, int widght, const Color& color);
     IDrawableObject* AddRectangle (Vector2 pixelPos, DrawPosition alignPos, const BoundingBox2d& bbox, const Color& color);
+    IDrawableObject* AddRectangleRounded (Vector2 pixelPos, DrawPosition alignPos, int height, int widght, float roundness, const Color& color);
     IDrawableObject* AddText (Vector2 pixelPos, DrawPosition alignPos, const std::string& text, int fontSize, const Color& color);
     IDrawableObject* AddShadedText (Vector2 pixelPos, DrawPosition alignPos, const std::string& text, int fontSize, const Color& color, const Color& shadeColor);
 

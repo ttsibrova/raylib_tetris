@@ -25,7 +25,7 @@ void GridHUD::FillGraphics()
     Vector2 min {0, 0};
     Vector2 max {2.2 * width, height};
 
-    auto groupContainer = std::make_unique <UIGroupContainer> (min, max);
+    auto groupContainer = std::make_unique <UIGroupContainer> (DrawPosition::TopLeft, min, max);
     m_graphics->AddDrawableObject ({0., 0.}, DrawPosition::TopLeft, std::move (groupContainer));
 
     float posXHUDRight = max.x - 0.3 * width;
@@ -84,45 +84,6 @@ void GridHUD::onNotify (const Object& obj, Event e)
     }
 }
 
-
-void GridHUD::DrawLeft (size_t score, char speedLvl, size_t numRemovedLines, const Block* nextBlock) const
-{
-    //int posXOffset = GetGridOffset() + m_gridWidght + 1;
-    //const int tab = 20;
-    //DrawRectangle (posXOffset, 0, m_widghtLeft, m_height, Colors::darkBlue);
-
-    //DrawText ("Next block:", posXOffset + tab, 20, 25, Colors::lightBlue);
-
-    //if (nextBlock) {
-    //    Drawer::DrawBlock (posXOffset + 40, 60, nextBlock, m_blockDrawSettings);
-    //}
-
-    //DrawText ("Score:", posXOffset + tab, 140, 25, Colors::lightBlue);
-    //DrawText (std::to_string (score).c_str(), posXOffset + tab, 170, 50, DARKBLUE);
-
-    //DrawText ("Speed level:", posXOffset + tab, 240, 25, Colors::lightBlue);
-    //DrawText (std::to_string (speedLvl).c_str(), posXOffset + tab, 270, 50, Colors::green);
-
-    //DrawText ("Lines removed: ", posXOffset + tab, 340, 25, Colors::lightBlue);
-    //DrawText (std::to_string (numRemovedLines).c_str(), posXOffset + tab, 370, 50, Colors::purple);
-}
-
-void GridHUD::DrawRight (int combo, const Block* holdBlock) const
-{
-    //const int tab = 20;
-
-    //DrawRectangle (0, 0, m_widghtRight, m_height, Colors::darkBlue);
-
-    //DrawText ("Hold :", tab, 20, 25, Colors::lightBlue);
-    //if (holdBlock) {
-    //    Drawer::DrawBlock (40, 60, holdBlock, m_blockDrawSettings);
-    //}
-    //if (combo >= 2) {
-    //    DrawText ("Combo : ", tab, 140, 25, Colors::lightBlue);
-    //    DrawText (std::to_string (combo).c_str(), 40, 170, 50, YELLOW);
-    //}
-}
-
 void GridHUD::Score::FillGraphics()
 {
     HUDGroup::FillGraphics();
@@ -140,7 +101,7 @@ void GridHUD::Score::FillGraphics()
     m_graphics->AddRectangle ({offsetX, posScoreY}, DrawPosition::Left, fontSize + 3, width, GRAY);
     m_graphics->AddRectangle ({offsetX + 3, posScoreY}, DrawPosition::Left, fontSize - 3, width - 6, BLACK);
 
-    auto scoreText = std::make_unique <shapes::Text> (minCorner, DrawPosition::Right, "0", fontSize);
+    auto scoreText = std::make_unique <shapes::Text> (DrawPosition::Right, "0", fontSize);
     scoreText->SetColor (Colors::yellow);
     m_text = scoreText.get();
     m_graphics->AddDrawableObject ({width - offsetX - 8, posScoreY + 2}, DrawPosition::Right, std::move (scoreText));
@@ -164,7 +125,7 @@ void GridHUD::NumRemovedLines::FillGraphics()
     m_graphics->AddRectangle ({offsetX, posScoreY}, DrawPosition::Left, fontSize + 3, width, GRAY);
     m_graphics->AddRectangle ({offsetX + 3, posScoreY}, DrawPosition::Left, fontSize - 3, width - 6, BLACK);
 
-    auto linesText = std::make_unique <shapes::Text> (minCorner, DrawPosition::Right, "0", fontSize);
+    auto linesText = std::make_unique <shapes::Text> (DrawPosition::Right, "0", fontSize);
     linesText->SetColor (Colors::green);
     m_text = linesText.get();
     m_graphics->AddDrawableObject ({width - offsetX - 8, posScoreY + 2}, DrawPosition::Right, std::move (linesText));
@@ -189,7 +150,7 @@ void GridHUD::SpeedLVL::FillGraphics()
     auto blackField = m_graphics->AddRectangle ({offsetX + 3, posScoreY}, DrawPosition::Left, fontSize - 3, fieldWidth, BLACK);
     Vector2 textPos = DrawableContainer::ComputePosition (DrawPosition::Right, blackField->GetBoundingBox());
 
-    auto speedText = std::make_unique <shapes::Text> (minCorner, DrawPosition::Right, "1", fontSize);
+    auto speedText = std::make_unique <shapes::Text> (DrawPosition::Right, "1", fontSize);
     speedText->SetColor (Colors::purple);
     m_text = speedText.get();
     m_graphics->AddDrawableObject ({textPos.x - 4, textPos.y + 2}, DrawPosition::Right, std::move (speedText));
@@ -212,7 +173,7 @@ void GridHUD::Combo::FillGraphics()
     m_graphics->AddRectangle ({offsetX, posScoreY}, DrawPosition::Left, fontSize + 3, width, GRAY);
     m_graphics->AddRectangle ({offsetX + 3, posScoreY}, DrawPosition::Left, fontSize - 3, width - 6, BLACK);
 
-    auto comboText = std::make_unique <shapes::Text> (minCorner, DrawPosition::Right, "", fontSize);
+    auto comboText = std::make_unique <shapes::Text> (DrawPosition::Right, "", fontSize);
     comboText->SetColor (Colors::yellow);
     m_text = comboText.get();
     m_graphics->AddDrawableObject ({width - offsetX - 8, posScoreY + 2}, DrawPosition::Right, std::move (comboText));
@@ -297,7 +258,7 @@ void GridHUD::HUDGroup::FillGraphics()
 
     Vector2 minCorner{0, 0};
     Vector2 maxCorner{width, height};
-    auto groupContainer = std::make_unique <UIGroupContainer> (minCorner, maxCorner);
+    auto groupContainer = std::make_unique <UIGroupContainer> (DrawPosition::TopLeft, minCorner, maxCorner);
     //m_graphics->AddRectangle (minCorner, DrawPosition::TopLeft, BoundingBox2d (minCorner, maxCorner), DARKGREEN);
     m_graphics->AddDrawableObject (minCorner, DrawPosition::TopLeft, std::move (groupContainer));
     m_graphics->AddShadedText ({offsetX, posStaticTextY}, DrawPosition::Left, m_HUDGroupName, fontSize, Colors::lightBlue, BLACK);

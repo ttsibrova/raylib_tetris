@@ -3,20 +3,14 @@
 #include <graphics/drawable_container.h>
 #include <functional/colors.h>
 #include <string>
-#include <optional>
 
 namespace shapes {
 
 class Shape: public IDrawableObject
 {
 public:
-    Shape ():
-        m_pos{0., 0.},
-        m_align (DrawPosition::TopLeft),
-        m_color (Colors::lightBlue)
-    {}
-    Shape (const Vector2& pos, DrawPosition align):
-        m_pos (pos),
+    Shape (DrawPosition align):
+        m_pos {0., 0.},
         m_align (align),
         m_color (Colors::lightBlue)
     {}
@@ -37,18 +31,9 @@ private:
 class Text: public Shape
 {
 public:
-    Text (const std::string& str, int fontSize):
-        m_str (str),
-        m_fontSize (fontSize)
-    {}
-    Text (const char* str, int fontSize):
-        m_str (str),
-        m_fontSize (fontSize)
-    {}
-
-    Text (const Vector2& pos, DrawPosition align, const char* str, int fontSize) :
-        Shape (pos, align),
-        m_str (str),
+    Text (DrawPosition align, std::string str, int fontSize) :
+        Shape (align),
+        m_str (std::move (str)),
         m_fontSize (fontSize)
     {}
 
@@ -70,8 +55,8 @@ protected:
 class ShadedText: public Text
 {
 public:
-    ShadedText (const Vector2& pos, DrawPosition align, const char* str, int fontSize, const Color& shadeColor):
-        Text (pos, align, str, fontSize),
+    ShadedText (DrawPosition align, const char* str, int fontSize, const Color& shadeColor):
+        Text (align, str, fontSize),
         m_shadeColor (shadeColor)
     {}
 
@@ -84,40 +69,41 @@ private:
 class Rectangle: public Shape
 {
 public:
-    Rectangle (float width, float height):
+    Rectangle (DrawPosition align, float width, float height):
+        Shape (align),
         m_width (width),
         m_height (height)
     {}
-    Rectangle (const Vector2& pos, DrawPosition align, float width, float height):
-        Shape (pos, align),
-        m_width (width),
-        m_height (height)
-    {}
-    Rectangle (const BoundingBox2d& bbox);
+    Rectangle (DrawPosition align, const BoundingBox2d& bbox);
 
     virtual void Draw() const override;
     virtual BoundingBox2d GetBoundingBox() const override;
     virtual void Translate (const Vector2& translation) override;
     virtual void Scale (float scale) override;
 
-private:
+protected:
     float   m_width;
     float   m_height;
 };
 
-class Cell: public Shape
+class RectangleRounded: public Rectangle
 {
 public:
+    RectangleRounded (DrawPosition align, float width, float height, float roundness):
+        Rectangle (align, width, height),
+        m_roundness (roundness)
+    {}
+    RectangleRounded (DrawPosition align, const BoundingBox2d& bbox, float roundness):
+        Rectangle (align, bbox),
+        m_roundness (roundness)
+    {}
 
+    virtual void Draw() const override;
 
 private:
-    int     m_cellSize;
-    Color m_mainColor;
-    Color m_internalShadeColor;
-
-    std::optional <Color> m_outlineColor;
-    std::optional <Color> m_externalShadeColor;
+    float m_roundness;
 };
+
 
 class Triangle: public Shape
 {

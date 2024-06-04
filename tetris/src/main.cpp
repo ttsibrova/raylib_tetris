@@ -6,8 +6,10 @@
 
 int main() {
 
-    ScreenSize screenSize {1000, 850, 1.0};
-    InitWindow (screenSize.m_width, screenSize.m_height, "Raylib Tetris");
+    ScreenSize screenSize {1000, 850, 1.};
+    InitWindow (screenSize.m_width * screenSize.m_scale, screenSize.m_height * screenSize.m_scale, "Raylib Tetris");
+
+    InitAudioDevice();
     SetTargetFPS (60);
 
     ClassicTetrisGameScreen aGameScreen (screenSize);
@@ -20,5 +22,6 @@ int main() {
 
         EndDrawing();
     }
+    CloseAudioDevice();
     CloseWindow();
 }

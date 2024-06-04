@@ -8,7 +8,7 @@ IDrawableObject* DrawableContainer::AddRectangle (
     int height, int widght,
     const Color& color)
 {
-    auto Rectangle = std::make_unique <shapes::Rectangle> (widght, height);
+    auto Rectangle = std::make_unique <shapes::Rectangle> (alignPos, widght, height);
     Rectangle->SetColor (color);
 
     auto bbox = Rectangle->GetBoundingBox();
@@ -20,7 +20,7 @@ IDrawableObject* DrawableContainer::AddRectangle (
 
 IDrawableObject* DrawableContainer::AddRectangle (Vector2 pixelPos, DrawPosition alignPos, const BoundingBox2d& bbox, const Color& color)
 {
-    auto Rectangle = std::make_unique <shapes::Rectangle> (bbox);
+    auto Rectangle = std::make_unique <shapes::Rectangle> (alignPos, bbox);
     Rectangle->SetColor (color);
 
     auto currentAdjustedPos = ComputePosition (alignPos, bbox);
@@ -29,9 +29,21 @@ IDrawableObject* DrawableContainer::AddRectangle (Vector2 pixelPos, DrawPosition
     return m_objects.back().get();
 }
 
+IDrawableObject* DrawableContainer::AddRectangleRounded (Vector2 pixelPos, DrawPosition alignPos, int height, int width, float roundness, const Color& color)
+{
+    auto Rectangle = std::make_unique <shapes::RectangleRounded> (alignPos, height, width, roundness);
+    Rectangle->SetColor (color);
+
+    auto bbox = Rectangle->GetBoundingBox();
+    auto currentAdjustedPos = ComputePosition (alignPos, bbox);
+    Rectangle->Translate (ComputeTranslation (currentAdjustedPos, pixelPos));
+    m_objects.push_back (std::move (Rectangle));
+    return m_objects.back().get();
+}
+
 IDrawableObject* DrawableContainer::AddText (Vector2 pixelPos, DrawPosition alignPos, const std::string& text, int fontSize, const Color& color)
 {
-    auto Text = std::make_unique <shapes::Text> (text, fontSize);
+    auto Text = std::make_unique <shapes::Text> (alignPos, text, fontSize);
     Text->SetColor (color);
 
     auto bbox = Text->GetBoundingBox();
@@ -48,8 +60,7 @@ IDrawableObject* DrawableContainer::AddShadedText (Vector2 pixelPos,
                                        const Color& color,
                                        const Color& shadeColor)
 {
-    Vector2 zero {0., 0.};
-    auto Text = std::make_unique <shapes::ShadedText> (zero, alignPos, text.c_str(), fontSize, shadeColor);
+    auto Text = std::make_unique <shapes::ShadedText> (alignPos, text.c_str(), fontSize, shadeColor);
     Text->SetColor (color);
 
     auto bbox = Text->GetBoundingBox();
@@ -149,7 +160,7 @@ Vector2 DrawableContainer::ComputePosition (DrawPosition alignPos, const Boundin
     case DrawPosition::Bottom:
         return {bbox.Min().x + width / 2, bbox.Max().y};
     case DrawPosition::BottomLeft:
-        return {bbox.Min().x + bbox.Max().y};
+        return {bbox.Min().x, bbox.Max().y};
     default:
         break;
     }

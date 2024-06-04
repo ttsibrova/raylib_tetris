@@ -9,7 +9,8 @@ void Shape::UpdatePosition (const BoundingBox2d& oldBBox, const BoundingBox2d& n
     Translate (DrawableContainer::ComputeTranslation (newPos, oldTargetPos));
 }
 
-Rectangle::Rectangle (const BoundingBox2d& bbox)
+Rectangle::Rectangle (DrawPosition align, const BoundingBox2d& bbox):
+    Shape (align)
 {
     m_pos.x = bbox.Min().x;
     m_pos.y = bbox.Min().y;
@@ -56,7 +57,7 @@ void Text::UpdateText (const std::string& newText)
 void Text::Draw() const
 {
     if (!m_str.empty())
-        DrawText (m_str.c_str(), m_pos.x, m_pos.y, m_fontSize, GetColor());
+        DrawText (m_str.c_str(), m_pos.x, m_pos.y, (int)m_fontSize, GetColor());
 }
 
 BoundingBox2d Text::GetBoundingBox() const
@@ -83,8 +84,13 @@ void Text::Scale (float scale)
 
 void ShadedText::Draw() const
 {
-    DrawText (m_str.c_str(), m_pos.x + 4, m_pos.y + 3, m_fontSize+2, m_shadeColor);
+    DrawText (m_str.c_str(), m_pos.x + 4, m_pos.y + 3, (int)m_fontSize+2, m_shadeColor);
     Text::Draw();
+}
+
+void RectangleRounded::Draw() const
+{
+    DrawRectangleRounded ({m_pos.x, m_pos.y, m_width, m_height}, m_roundness, 10, GetColor());
 }
 
 }

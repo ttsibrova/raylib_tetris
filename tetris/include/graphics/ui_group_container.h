@@ -5,12 +5,12 @@
 class UIGroupContainer: public shapes::Rectangle
 {
 public:
-    UIGroupContainer (const BoundingBox2d& boundaries):
-        shapes::Rectangle (boundaries)
+    UIGroupContainer (DrawPosition align, const BoundingBox2d& boundaries):
+        shapes::Rectangle (align, boundaries)
     {}
 
-    UIGroupContainer (const Vector2& minCorner, const Vector2 maxCorner):
-        shapes::Rectangle (BoundingBox2d (minCorner, maxCorner))
+    UIGroupContainer (DrawPosition align, const Vector2& minCorner, const Vector2 maxCorner):
+        shapes::Rectangle (align, BoundingBox2d (minCorner, maxCorner))
     {}
 
     virtual void Draw() const override {} //Has no graphics formally

@@ -53,7 +53,7 @@ public:
     {
     public:
         NextBlock (DrawableContainer* ownerContainer, int cellSize):
-            HUDWithBlock ("Next block:", ownerContainer, cellSize)
+            HUDWithBlock ("Next:", ownerContainer, cellSize)
         {}
         virtual void onNotify (const Object& obj, Event e) override;
     };
@@ -112,9 +112,6 @@ public:
     void Init();
 
     virtual void onNotify (const Object& obj, Event e) override;
-
-    void DrawLeft (size_t Score, char speedLvl, size_t numRemovedLines, const Block* nextBlock) const;
-    void DrawRight (int combo, const Block* holdBlock) const;
 
 private:
     const Grid*              m_grid;

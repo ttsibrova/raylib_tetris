@@ -2,6 +2,7 @@
 #include <core/blocks.h>
 #include <engine/game.h>
 #include <graphics/drawable_container.h>
+#include <graphics/decorative_block.h>
 
 #include <raylib/raylib.h>
 #include <cassert>
@@ -39,6 +40,21 @@ void Game::Init()
     gameHUD->Init();
     AddObserver (gameHUD.get());
     m_ownerContainer->AddDrawableObject (gridPixelPos, DrawPosition::Top, std::move (gameHUD));
+
+    auto dBlockLeft = std::make_unique <DecorativeBlock> (DrawPosition::BottomLeft, m_drawSettings.GetCellSize());
+    dBlockLeft->AddCell ({0, 0}, Colors::yellow, Colors::yellow_shade);
+    dBlockLeft->AddCell ({1, 0}, Colors::cyan, Colors::cyan_shade);
+    dBlockLeft->AddCell ({2, 0}, Colors::yellow, Colors::yellow_shade);
+    dBlockLeft->AddCell ({1, 1}, Colors::cyan, Colors::cyan_shade);
+    dBlockLeft->AddCell ({2, 1}, Colors::red, Colors::red_shade);
+
+    m_ownerContainer->AddDrawableObject ({ownerBBox.Min().x, ownerBBox.Max().y}, DrawPosition::BottomLeft, std::move (dBlockLeft));
+
+
+    m_moveSound = LoadSound ("resources/hi_hat.wav");
+    m_fallSound = LoadSound ("resources/snare.wav");
+    m_tetrisSound = LoadSound ("resources/ta_da.wav");
+    m_holdSound = LoadSound ("resources/808_click.wav");
 
 }
 
@@ -159,6 +175,7 @@ void Game::MoveBlockRight()
         m_ghostBlock->Move (-1, 0);
         return;
     }
+    PlaySound (m_moveSound);
     UpdateGhostBlock();
 }
 
@@ -176,6 +193,7 @@ void Game::MoveBlockLeft()
         m_ghostBlock->Move (1, 0);
         return;
     }
+    PlaySound (m_moveSound);
     UpdateGhostBlock();
 }
 
@@ -203,6 +221,7 @@ void Game::RotateBlock()
         m_ghostBlock->RotateLeft();
         return;
     }
+    PlaySound (m_moveSound);
     UpdateGhostBlock();
 }
 
@@ -233,6 +252,14 @@ int Game::GetGameHeight()
 int Game::GetGameWidth()
 {
     return GetGridWidth();// return width of bbox of graphics container?
+}
+
+Game::~Game()
+{
+    UnloadSound (m_moveSound);
+    UnloadSound (m_fallSound);
+    UnloadSound (m_tetrisSound);
+    UnloadSound (m_holdSound);
 }
 
 void Game::PrepareBlock (Block* block)
@@ -274,7 +301,7 @@ void Game::UpdateElements()
     CreateNextBlock();
     m_bCanHold = true;
 
-
+    PlaySound (m_fallSound);
 }
 
 void Game::UpdateScore (int numRemovedLines)
@@ -302,6 +329,9 @@ void Game::UpdateScore (int numRemovedLines)
     } else if (numRemovedLines > 0) {
         m_comboNum++;
     }
+    if (numRemovedLines == 4) {
+        PlaySound (m_tetrisSound);
+    }
 
     if (oldScore != m_gameScore)
         Notify (*this, Event::SCORE_UPDATED);
@@ -324,6 +354,7 @@ void Game::HoldBlock()
     m_holdBlock->ResetOffset();
     m_bCanHold = false;
     Notify (*this, Event::HOLD_BLOCK_UPDATED);
+    PlaySound (m_holdSound);
 }
 
 void Game::UpdateFallTime()

@@ -1,0 +1,81 @@
+#include <graphics/decorative_block.h>
+
+void DecorativeBlock::AddCell (const GridPosition& pos, const Color& mainColor, const Color& shadeColor)
+{
+    float posX = m_pos.x + pos.m_col * (m_cellSize + 1);
+    float posY = m_pos.y + pos.m_row * (m_cellSize + 1);
+
+    m_positions.push_back (pos);
+
+    auto cell = std::make_unique <Cell> (DrawPosition::TopLeft, m_cellSize, mainColor, shadeColor);
+    cell->FillGraphics();
+    cell->Translate ({posX, posY});
+
+    m_graphics->AddDrawableObject (std::move (cell));
+}
+
+void DecorativeBlock::SetOutline (const Color& outlineColor, int outlineSize)
+{
+    m_outlineColor = outlineColor;
+    m_outlineSize = outlineSize;
+}
+
+void DecorativeBlock::SetExternalShade (const Color& extShadeColor, int extShadeOffset)
+{
+    m_externalShadeColor = extShadeColor;
+    m_extShadeOffset = extShadeOffset;
+}
+
+void Cell::FillGraphics()
+{
+    int shadeSize = m_cellSize / 10;
+    m_graphics->AddRectangle (m_pos, DrawPosition::TopLeft, m_cellSize, m_cellSize, m_internalShadeColor);
+    m_graphics->AddRectangle ({m_pos.x + shadeSize, m_pos.y + shadeSize},
+                               DrawPosition::TopLeft,
+                               m_cellSize - shadeSize * 2, m_cellSize - shadeSize * 2,
+                               m_mainColor);
+}
+
+void DecorativeBlock::FillGraphics() //intentionally empty
+{}
+
+void DecorativeBlock::Draw() const
+{
+    const float roundness = 0.2;
+    const int segments = 10;
+
+    if (m_externalShadeColor.has_value()) {
+        if (m_outlineColor.has_value()) {
+            for (auto& pos : m_positions) {
+                float posX = m_pos.x + pos.m_col * (m_cellSize + 1) + m_extShadeOffset;
+                float posY = m_pos.y + pos.m_row * (m_cellSize + 1) + m_extShadeOffset;
+
+                DrawRectangleRounded ({posX, posY, (float) m_cellSize, (float) m_cellSize}, roundness, segments, m_externalShadeColor.value());
+            }
+        } else {
+            for (auto& pos : m_positions) {
+                int posX = m_pos.x + pos.m_col * (m_cellSize + 1) + m_extShadeOffset;
+                int posY = m_pos.y + pos.m_row * (m_cellSize + 1) + m_extShadeOffset;
+
+                DrawRectangle (posX, posY, m_cellSize, m_cellSize, m_externalShadeColor.value());
+            }
+        }
+    }
+    if (m_outlineColor.has_value()) {
+        float outlineCellSize = m_cellSize + 2 * m_outlineSize;
+        for (auto& pos: m_positions) {
+            float posX = m_pos.x + pos.m_col * (m_cellSize + 1) - m_outlineSize;
+            float posY = m_pos.y + pos.m_row * (m_cellSize + 1) - m_outlineSize;
+            DrawRectangleRounded ({posX, posY, outlineCellSize, outlineCellSize}, roundness, segments, m_outlineColor.value());
+        }
+    }
+
+    m_graphics->Draw();
+}
+
+void DecorativeBlock::Translate (const Vector2& translation)
+{
+    m_pos.x += translation.x;
+    m_pos.y += translation.y;
+    m_graphics->Translate (translation);
+}
