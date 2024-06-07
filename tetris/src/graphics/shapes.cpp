@@ -1,16 +1,18 @@
 #include <graphics/shapes.h>
+
+#include <graphics/graphics_helper.h>
+
 namespace shapes {
 
 void Shape::UpdatePosition (const BoundingBox2d& oldBBox, const BoundingBox2d& newBBox)
 {
-    Vector2 oldTargetPos = DrawableContainer::ComputePosition (m_align, oldBBox);
-    Vector2 newPos = DrawableContainer::ComputePosition (m_align, newBBox);
+    Vector2 oldTargetPos = GraphicsHelper::ComputePosition (m_align, oldBBox);
+    Vector2 newPos = GraphicsHelper::ComputePosition (m_align, newBBox);
 
-    Translate (DrawableContainer::ComputeTranslation (newPos, oldTargetPos));
+    Translate (GraphicsHelper::ComputeTranslation (newPos, oldTargetPos));
 }
 
-Rectangle::Rectangle (DrawPosition align, const BoundingBox2d& bbox):
-    Shape (align)
+Rectangle::Rectangle (const BoundingBox2d& bbox)
 {
     m_pos.x = bbox.Min().x;
     m_pos.y = bbox.Min().y;

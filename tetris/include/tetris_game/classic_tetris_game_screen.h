@@ -1,6 +1,8 @@
 #pragma once
 #include <engine/screen.h>
-#include <functional/events.h>
+#include <engine/events.h>
+#include <engine/observer.h>
+#include <tetris_game/game.h>
 
 
 class ClassicTetrisGameScreen: public Screen, IObserver <ClassicTetrisGameScreenEvent>

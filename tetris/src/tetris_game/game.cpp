@@ -1,6 +1,7 @@
-#include <core/drawer.h>
-#include <core/blocks.h>
-#include <engine/game.h>
+#include <tetris_game/game.h>
+
+#include <tetris_game/drawer.h>
+#include <tetris_game/blocks.h>
 #include <graphics/drawable_container.h>
 #include <graphics/decorative_block.h>
 
@@ -9,7 +10,7 @@
 #include <cmath>
 
 Game::Game (DrawableContainer* ownerContainer):
-    m_drawSettings(),
+    m_cellSize (40),
     m_gameGrid (nullptr),
     m_activeBlock (nullptr),
     m_holdBlock (nullptr),
@@ -21,13 +22,12 @@ Game::Game (DrawableContainer* ownerContainer):
     m_comboNum (0),
     m_ownerContainer (ownerContainer)
 {
-    m_drawSettings.SetCellSize (40);
 }
 
 void Game::Init()
 {
     //Graphics registering
-    auto grid = std::make_unique <Grid> (m_drawSettings);
+    auto grid = std::make_unique <Grid> (m_cellSize);
     m_gameGrid = grid.get();
 
     auto ownerBBox = m_ownerContainer->GetBoundingBox();
@@ -36,17 +36,28 @@ void Game::Init()
     m_ownerContainer->AddRectangle ({gridPixelPos.x+1, gridPixelPos.y}, DrawPosition::Top, GetGridHeight() + 4, GetGridWidth() + 7, Colors::lightBlue_dimmer);
     m_ownerContainer->AddDrawableObject (gridPixelPos, DrawPosition::Top, std::move (grid));
 
-    auto gameHUD = std::make_unique <GridHUD> (m_gameGrid, m_ownerContainer);
-    gameHUD->Init();
+    auto gameHUD = std::make_unique <GridHUD> (m_gameGrid);
     AddObserver (gameHUD.get());
     m_ownerContainer->AddDrawableObject (gridPixelPos, DrawPosition::Top, std::move (gameHUD));
 
-    auto dBlockLeft = std::make_unique <DecorativeBlock> (DrawPosition::BottomLeft, m_drawSettings.GetCellSize());
-    dBlockLeft->AddCell ({0, 0}, Colors::yellow, Colors::yellow_shade);
+    auto dBlockLeft = std::make_unique <DecorativeBlock> (m_cellSize);
+    dBlockLeft->AddCell ({0, 0}, Colors::cyan, Colors::cyan_shade);
     dBlockLeft->AddCell ({1, 0}, Colors::cyan, Colors::cyan_shade);
-    dBlockLeft->AddCell ({2, 0}, Colors::yellow, Colors::yellow_shade);
     dBlockLeft->AddCell ({1, 1}, Colors::cyan, Colors::cyan_shade);
-    dBlockLeft->AddCell ({2, 1}, Colors::red, Colors::red_shade);
+    dBlockLeft->AddCell ({2, 0}, Colors::cyan, Colors::cyan_shade);
+    dBlockLeft->AddCell ({2, 1}, Colors::purple, Colors::purple_shade);
+    dBlockLeft->AddCell ({2, 2}, Colors::yellow, Colors::yellow_shade);
+    dBlockLeft->AddCell ({2, 3}, Colors::yellow, Colors::yellow_shade);
+    dBlockLeft->AddCell ({3, 0}, Colors::purple, Colors::purple_shade);
+    dBlockLeft->AddCell ({3, 1}, Colors::purple, Colors::purple_shade);
+    dBlockLeft->AddCell ({3, 2}, Colors::yellow, Colors::yellow_shade);
+    dBlockLeft->AddCell ({3, 3}, Colors::yellow, Colors::yellow_shade);
+    dBlockLeft->AddCell ({3, 4}, Colors::orange, Colors::orange_shade);
+    //dBlockLeft->AddCell ({4, 0}, Colors::purple, Colors::purple_shade);
+    //dBlockLeft->AddCell ({4, 1}, Colors::green, Colors::green_shade);
+    //dBlockLeft->AddCell ({4, 2}, Colors::green, Colors::green_shade);
+    //dBlockLeft->AddCell ({4, 3}, Colors::green, Colors::green_shade);
+    //dBlockLeft->AddCell ({4, 4}, Colors::orange, Colors::orange_shade);
 
     m_ownerContainer->AddDrawableObject ({ownerBBox.Min().x, ownerBBox.Max().y}, DrawPosition::BottomLeft, std::move (dBlockLeft));
 
@@ -83,8 +94,8 @@ void Game::Reset()
 void Game::Draw()
 {
     if (m_activeBlock) {
-        Drawer::DrawGhostBlock (m_gameGrid->GetPosition().x, m_gameGrid->GetPosition().y, m_ghostBlock.get(), m_drawSettings);
-        Drawer::DrawBlock (m_gameGrid->GetPosition().x, m_gameGrid->GetPosition().y, m_activeBlock.get(), m_drawSettings);
+        Drawer::DrawGhostBlock (m_gameGrid->GetPosition().x, m_gameGrid->GetPosition().y, m_ghostBlock.get(), m_cellSize);
+        Drawer::DrawBlock (m_gameGrid->GetPosition().x, m_gameGrid->GetPosition().y, m_activeBlock.get(), m_cellSize);
     }
 }
 
@@ -236,12 +247,12 @@ void Game::UpdateFallingBlock()
 
 int Game::GetGridHeight()
 {
-    return m_gameGrid->GetGridHeight() * m_drawSettings.GetCellSize();
+    return m_gameGrid->GetGridHeight() * m_cellSize;
 }
 
 int Game::GetGridWidth()
 {
-    return m_gameGrid->GetGridWidth() * m_drawSettings.GetCellSize();
+    return m_gameGrid->GetGridWidth() * m_cellSize;
 }
 
 int Game::GetGameHeight()

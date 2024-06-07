@@ -1,20 +1,19 @@
-#include <core/grid.h>
+#include <tetris_game/grid.h>
 
-#include <core/drawer.h>
-#include <engine/game_state.h>
+#include <tetris_game/drawer.h>
 #include <graphics/drawable_container.h>
 #include <cassert>
 #include <unordered_set>
 
-Grid::Grid (const DrawSettings& settings):
+Grid::Grid (int cellSize):
     m_pos {0., 0.},
     m_grid (0),
-    m_settings (settings)
+    m_cellSize (cellSize)
 {}
 
 bool Grid::IsOutsideGrid (const GridPositionBBox& bbox) const
 {
-    if (bbox.min.m_col < 0 || bbox.max.m_col > Settings::_colNum - 1) {
+    if (bbox.min.m_col < 0 || bbox.max.m_col > GetGridWidth() - 1) {
         return true;
     }
     return false;
@@ -23,7 +22,7 @@ bool Grid::IsOutsideGrid (const GridPositionBBox& bbox) const
 bool Grid::IsCollided (const std::vector<GridPosition>& cells) const
 {
     for (auto& cell : cells) {
-        if (cell.m_row > Settings::_rowNum - 1) {
+        if (cell.m_row > GetGridHeight() - 1) {
             return true;
         }
         if (cell.m_row >= 0 && cell.m_col >= 0 && m_grid.Value (cell.m_row, cell.m_col) != 0) {
@@ -132,12 +131,12 @@ int Grid::RemoveRows (const GridPositionBBox& hint)
 
 void Grid::Draw() const
 {
-    Drawer::DrawGrid (m_pos.x, m_pos.y, *this, m_settings);
+    Drawer::DrawGrid (m_pos.x, m_pos.y, *this, m_cellSize);
 }
 
 BoundingBox2d Grid::GetBoundingBox() const
 {
-    return {m_pos, {m_pos.x + GetGridWidth() * m_settings.GetCellSize(), m_pos.y + GetGridHeight() * m_settings.GetCellSize()}};
+    return {m_pos, {m_pos.x + GetGridWidth() * m_cellSize, m_pos.y + GetGridHeight() * m_cellSize}};
 }
 
 void Grid::Translate (const Vector2& translation)

@@ -1,8 +1,9 @@
 #pragma once
-#include <graphics/ui_element.h>
-#include <engine/game_state.h>
+#include <ui/ui_element.h>
+#include <array>
 
 class Block;
+class Grid;
 namespace shapes {
 class Text;
 }
@@ -13,20 +14,13 @@ public:
     class HUDGroup: public UIElement <CTGSObserver>
     {
     public:
-        HUDGroup (std::string name, DrawableContainer* ownerContainer):
-            m_HUDGroupName (std::move (name)),
-            m_ownerContainer (ownerContainer)
-        {}
-        virtual void FillGraphics() override;
-    protected:
-        std::string              m_HUDGroupName;
-        const DrawableContainer* m_ownerContainer;
+        HUDGroup (std::string name, const DrawableContainer* ownerContainer);
     };
 
     class HUDWithBlock: public HUDGroup
     {
     public:
-        HUDWithBlock (std::string HUDGroupName, DrawableContainer* ownerContainer,  int cellSize):
+        HUDWithBlock (std::string HUDGroupName, const DrawableContainer* ownerContainer,  int cellSize):
             HUDGroup (HUDGroupName, ownerContainer),
             m_cellSize (cellSize),
             m_block (nullptr)
@@ -40,10 +34,7 @@ public:
     class Score: public HUDGroup
     {
     public:
-        Score (DrawableContainer* ownerContainer):
-            HUDGroup ("Score:", ownerContainer)
-        {}
-        virtual void FillGraphics() override;
+        Score (const DrawableContainer* ownerContainer);
         virtual void onNotify (const Object& obj, Event e) override;
     private:
         shapes::Text* m_text;
@@ -52,7 +43,7 @@ public:
     class NextBlock: public HUDWithBlock
     {
     public:
-        NextBlock (DrawableContainer* ownerContainer, int cellSize):
+        NextBlock (const DrawableContainer* ownerContainer, int cellSize):
             HUDWithBlock ("Next:", ownerContainer, cellSize)
         {}
         virtual void onNotify (const Object& obj, Event e) override;
@@ -61,7 +52,7 @@ public:
     class HoldBlock: public HUDWithBlock
     {
     public:
-        HoldBlock (DrawableContainer* ownerContainer, int cellSize):
+        HoldBlock (const DrawableContainer* ownerContainer, int cellSize):
             HUDWithBlock ("Hold:", ownerContainer, cellSize)
         {}
         virtual void onNotify (const Object& obj, Event e) override;
@@ -70,10 +61,7 @@ public:
     class SpeedLVL: public HUDGroup
     {
     public:
-        SpeedLVL (DrawableContainer* ownerContainer):
-            HUDGroup ("Level:", ownerContainer)
-        {}
-        virtual void FillGraphics() override;
+        SpeedLVL (const DrawableContainer* ownerContainer);
         virtual void onNotify (const Object& obj, Event e) override;
 
     private:
@@ -83,10 +71,7 @@ public:
     class Combo: public HUDGroup
     {
     public:
-        Combo (DrawableContainer* ownerContainer):
-            HUDGroup ("Combo:", ownerContainer)
-        {}
-        virtual void FillGraphics() override;
+        Combo (const DrawableContainer* ownerContainer);
         virtual void onNotify (const Object& obj, Event e) override;
 
     private:
@@ -96,20 +81,14 @@ public:
     class NumRemovedLines: public HUDGroup
     {
     public:
-        NumRemovedLines (DrawableContainer* ownerContainer):
-            HUDGroup ("Line:", ownerContainer)
-        {}
-        virtual void FillGraphics() override;
+        NumRemovedLines (const DrawableContainer* ownerContainer);
         virtual void onNotify (const Object& obj, Event e) override;
 
     private:
         shapes::Text* m_text;
     };
 
-    GridHUD (const Grid* grid, DrawableContainer* ownerContainer);
-
-    virtual void FillGraphics() override;
-    void Init();
+    GridHUD (const Grid* grid);
 
     virtual void onNotify (const Object& obj, Event e) override;
 

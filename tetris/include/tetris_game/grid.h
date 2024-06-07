@@ -1,9 +1,7 @@
 #pragma once
 #include <core/bounding_box_2d.h>
-#include <core/drawable_object.h>
-#include <engine/game_state.h>
-#include <functional/settings.h>
-#include <functional/tools.h>
+#include <core/tools.h>
+#include <graphics/drawable_object.h>
 
 class DrawableContainer;
 
@@ -19,17 +17,17 @@ struct GridPositionBBox
     GridPosition max;
 };
 
-class Grid : public IDrawableObject
+class Grid : public DrawableObject
 {
 public:
 
-    using GridType = Tools::multi_array<int, Settings::_rowNum, Settings::_colNum>;
+    using GridType = Tools::multi_array<int, 20, 10>;
 
-    Grid (const DrawSettings& settings);
+    Grid (int cellSize);
 
 
-    int GetGridHeight() const { return Settings::_rowNum; }
-    int GetGridWidth() const { return Settings::_colNum; }
+    int GetGridHeight() const { return m_grid.Dim<0>(); }
+    int GetGridWidth() const { return  m_grid.Dim<1>(); }
 
     bool IsOutsideGrid (const GridPositionBBox& bbox) const;
     bool IsCollided (const std::vector <GridPosition>& cells) const;
@@ -52,7 +50,7 @@ public:
     const Vector2& GetPosition() { return m_pos; }
 
 private:
-    Vector2             m_pos;
-    GridType            m_grid;
-    const DrawSettings& m_settings;
+    Vector2  m_pos;
+    GridType m_grid;
+    int      m_cellSize;
 };

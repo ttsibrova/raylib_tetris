@@ -1,17 +1,14 @@
 #pragma once
-#include <core/drawable_object.h>
-#include <graphics/drawable_container.h>
-#include <functional/colors.h>
+#include <graphics/drawable_object.h>
+#include <graphics/colors.h>
 #include <string>
 
 namespace shapes {
 
-class Shape: public IDrawableObject
+class Shape: public DrawableObject
 {
 public:
-    Shape (DrawPosition align):
-        m_pos {0., 0.},
-        m_align (align),
+    Shape():
         m_color (Colors::lightBlue)
     {}
 
@@ -21,9 +18,6 @@ public:
 protected:
     void UpdatePosition (const BoundingBox2d& oldBBox, const BoundingBox2d& newBBox);
 
-protected:
-    Vector2      m_pos;
-    DrawPosition m_align;
 private:
     Color        m_color;
 };
@@ -31,8 +25,7 @@ private:
 class Text: public Shape
 {
 public:
-    Text (DrawPosition align, std::string str, int fontSize) :
-        Shape (align),
+    Text (std::string str, int fontSize) :
         m_str (std::move (str)),
         m_fontSize (fontSize)
     {}
@@ -55,8 +48,8 @@ protected:
 class ShadedText: public Text
 {
 public:
-    ShadedText (DrawPosition align, const char* str, int fontSize, const Color& shadeColor):
-        Text (align, str, fontSize),
+    ShadedText (const char* str, int fontSize, const Color& shadeColor):
+        Text (str, fontSize),
         m_shadeColor (shadeColor)
     {}
 
@@ -69,12 +62,11 @@ private:
 class Rectangle: public Shape
 {
 public:
-    Rectangle (DrawPosition align, float width, float height):
-        Shape (align),
+    Rectangle (float width, float height):
         m_width (width),
         m_height (height)
     {}
-    Rectangle (DrawPosition align, const BoundingBox2d& bbox);
+    Rectangle (const BoundingBox2d& bbox);
 
     virtual void Draw() const override;
     virtual BoundingBox2d GetBoundingBox() const override;
@@ -89,12 +81,12 @@ protected:
 class RectangleRounded: public Rectangle
 {
 public:
-    RectangleRounded (DrawPosition align, float width, float height, float roundness):
-        Rectangle (align, width, height),
+    RectangleRounded (float width, float height, float roundness):
+        Rectangle (width, height),
         m_roundness (roundness)
     {}
-    RectangleRounded (DrawPosition align, const BoundingBox2d& bbox, float roundness):
-        Rectangle (align, bbox),
+    RectangleRounded (const BoundingBox2d& bbox, float roundness):
+        Rectangle (bbox),
         m_roundness (roundness)
     {}
 

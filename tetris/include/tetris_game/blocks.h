@@ -1,6 +1,6 @@
 #pragma once
-#include <core/block.h>
-#include <functional/colors.h>
+#include <tetris_game/block.h>
+#include <graphics/colors.h>
 
 
 class LBlock: public Block

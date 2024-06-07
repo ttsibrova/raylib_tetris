@@ -1,8 +1,7 @@
-#include <core/drawer.h>
+#include <tetris_game/drawer.h>
 
-#include <core/block.h>
-#include <engine/game_state.h>
-#include <functional/colors.h>
+#include <tetris_game/block.h>
+#include <graphics/colors.h>
 #include <raylib/raylib.h>
 
 namespace {
@@ -22,30 +21,28 @@ namespace {
     }
 }
 
-void Drawer::DrawGrid (int posX, int posY, const Grid& grid, const DrawSettings& state)
+void Drawer::DrawGrid (int posX, int posY, const Grid& grid, int cellSize)
 {
-    DrawRectangle (posX, posY, grid.GetGridWidth() * state.GetCellSize() + 1 , grid.GetGridHeight() * state.GetCellSize() + 1, Colors::darkGrey);
+    DrawRectangle (posX, posY, grid.GetGridWidth() * cellSize + 1 , grid.GetGridHeight() * cellSize + 1, Colors::darkGrey);
     auto mArr = grid.GetRawArr();
 
     for (size_t i = 0; i < mArr.Dim<0>(); i++) {
         for (size_t j = 0; j < mArr.Dim<1>(); j++) {
-            DrawShadedBlock (posX + j * state.GetCellSize(), posY + i * state.GetCellSize(), state.GetCellSize(), mArr.Value (i, j));
+            DrawShadedBlock (posX + j * cellSize, posY + i * cellSize, cellSize, mArr.Value (i, j));
         }
     }
 }
 
-void Drawer::DrawBlock (int posX, int posY, const Block* block, const DrawSettings& settings)
+void Drawer::DrawBlock (int posX, int posY, const Block* block, int cellSize)
 {
-    auto cellSize = settings.GetCellSize();
     const auto& cells = block->GetCurrentCells();
     for (auto& cell : cells) {
         DrawShadedBlock (posX + cell.m_col * cellSize, posY + cell.m_row * cellSize, cellSize, block->GetColorId());
     }
 }
 
-void Drawer::DrawGhostBlock (int posX, int posY, const Block* block, const DrawSettings& settings)
+void Drawer::DrawGhostBlock (int posX, int posY, const Block* block, int cellSize)
 {
-        auto cellSize = settings.GetCellSize ();
         const auto& cells = block->GetCurrentCells ();
 
         for (auto& cell : cells) {

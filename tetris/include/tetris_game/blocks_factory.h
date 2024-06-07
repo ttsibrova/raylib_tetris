@@ -1,6 +1,6 @@
 #pragma once
 
-#include <core/block.h>
+#include <tetris_game/block.h>
 #include <memory>
 #include <random>
 

@@ -1,8 +1,6 @@
 #pragma once
-#include <engine/game.h>
 #include <engine/game_object.h>
 #include <graphics/drawable_container.h>
-#include <functional/observer.h>
 
 
 struct ScreenSize {

@@ -1,10 +1,9 @@
 #pragma once
-#include <core/grid.h>
-#include <engine/blocks_factory.h>
+#include <tetris_game/grid.h>
+#include <tetris_game/blocks_factory.h>
+#include <tetris_game/hud.h>
 #include <engine/game_object.h>
-#include <engine/game_state.h>
-#include <engine/hud.h>
-#include <functional/observer.h>
+#include <engine/observer.h>
 #include <memory>
 
 class DrawableContainer;
@@ -54,7 +53,7 @@ private:
     void UpdateGhostBlock();
 
 private:
-    DrawSettings              m_drawSettings;
+    int                       m_cellSize;
     Grid*                     m_gameGrid;
     std::unique_ptr <Block>   m_activeBlock;
     std::unique_ptr <Block>   m_nextBlock;

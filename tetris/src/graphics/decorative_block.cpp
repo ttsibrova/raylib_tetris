@@ -1,5 +1,15 @@
 #include <graphics/decorative_block.h>
 
+Cell::Cell (int cellSize, const Color& mainColor, const Color& shadeColor)
+{
+    int shadeSize = cellSize / 10;
+    m_graphics->AddRectangle (m_pos, DrawPosition::TopLeft, cellSize, cellSize, shadeColor);
+    m_graphics->AddRectangle ({m_pos.x + shadeSize, m_pos.y + shadeSize},
+                               DrawPosition::TopLeft,
+                               cellSize - shadeSize * 2, cellSize - shadeSize * 2,
+                               mainColor);
+}
+
 void DecorativeBlock::AddCell (const GridPosition& pos, const Color& mainColor, const Color& shadeColor)
 {
     float posX = m_pos.x + pos.m_col * (m_cellSize + 1);
@@ -7,11 +17,9 @@ void DecorativeBlock::AddCell (const GridPosition& pos, const Color& mainColor, 
 
     m_positions.push_back (pos);
 
-    auto cell = std::make_unique <Cell> (DrawPosition::TopLeft, m_cellSize, mainColor, shadeColor);
-    cell->FillGraphics();
-    cell->Translate ({posX, posY});
+    auto cell = std::make_unique <Cell> (m_cellSize, mainColor, shadeColor);
 
-    m_graphics->AddDrawableObject (std::move (cell));
+    m_graphics->AddDrawableObject ({posX, posY}, DrawPosition::TopLeft, std::move (cell));
 }
 
 void DecorativeBlock::SetOutline (const Color& outlineColor, int outlineSize)
@@ -25,19 +33,6 @@ void DecorativeBlock::SetExternalShade (const Color& extShadeColor, int extShade
     m_externalShadeColor = extShadeColor;
     m_extShadeOffset = extShadeOffset;
 }
-
-void Cell::FillGraphics()
-{
-    int shadeSize = m_cellSize / 10;
-    m_graphics->AddRectangle (m_pos, DrawPosition::TopLeft, m_cellSize, m_cellSize, m_internalShadeColor);
-    m_graphics->AddRectangle ({m_pos.x + shadeSize, m_pos.y + shadeSize},
-                               DrawPosition::TopLeft,
-                               m_cellSize - shadeSize * 2, m_cellSize - shadeSize * 2,
-                               m_mainColor);
-}
-
-void DecorativeBlock::FillGraphics() //intentionally empty
-{}
 
 void DecorativeBlock::Draw() const
 {

@@ -1,5 +1,6 @@
-#include <core/blocks.h>
-#include <engine/blocks_factory.h>
+#include <tetris_game/blocks_factory.h>
+
+#include <tetris_game/blocks.h>
 #include <ctime>
 
 BlocksFactory::BlocksFactory ():

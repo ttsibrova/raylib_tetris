@@ -1,5 +1,5 @@
 #pragma once
-#include <core/grid.h>
+#include <tetris_game/grid.h>
 #include <array>
 #include <vector>
 

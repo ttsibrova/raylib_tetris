@@ -1,5 +1,6 @@
-#include <engine/classic_tetris_game_screen.h>
-#include <functional/colors.h>
+#include <tetris_game/classic_tetris_game_screen.h>
+
+#include <graphics/colors.h>
 
 ClassicTetrisGameScreen::ClassicTetrisGameScreen (const ScreenSize& screenSize):
     m_classicTetrisGame (&m_screenGraphics)

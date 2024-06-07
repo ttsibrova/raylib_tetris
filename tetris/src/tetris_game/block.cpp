@@ -1,4 +1,4 @@
-#include <core/block.h>
+#include <tetris_game/block.h>
 
 const std::vector<GridPosition> Block::GetCurrentCells() const
 {
