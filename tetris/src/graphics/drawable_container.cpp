@@ -39,10 +39,10 @@ void DrawableContainer::Scale (float scale)
 DrawableObject* DrawableContainer::AddRectangle (
     Vector2 pixelPos,
     DrawPosition alignPos,
-    int height, int widght,
+    float height, float width,
     const Color& color)
 {
-    auto Rectangle = std::make_unique <shapes::Rectangle> (widght, height);
+    auto Rectangle = std::make_unique <shapes::Rectangle> (width, height);
     Rectangle->SetAlign (alignPos);
     Rectangle->SetColor (color);
 
@@ -77,7 +77,7 @@ DrawableObject* DrawableContainer::AddRectangleRounded (
     float roundness,
     const Color& color)
 {
-    auto Rectangle = std::make_unique <shapes::RectangleRounded> (height, width, roundness);
+    auto Rectangle = std::make_unique <shapes::RectangleRounded> (width, height, roundness);
     Rectangle->SetAlign (alignPos);
     Rectangle->SetColor (color);
 
@@ -122,6 +122,32 @@ DrawableObject* DrawableContainer::AddShadedText (
     auto currentAdjustedPos = GraphicsHelper::ComputePosition (alignPos, bbox);
     Text->Translate (GraphicsHelper::ComputeTranslation (currentAdjustedPos, pixelPos));
     m_objects.push_back (std::move (Text));
+    return m_objects.back().get();
+}
+
+DrawableObject* DrawableContainer::AddCircle (Vector2 pixelPos, DrawPosition align, float radius, const Color& color)
+{
+    auto circle = std::make_unique <shapes::Circle> (radius);
+    circle->SetAlign (align);
+    circle->SetColor (color);
+
+    auto bbox = circle->GetBoundingBox();
+    auto currentAdjustedPos = GraphicsHelper::ComputePosition (align, bbox);
+    circle->Translate (GraphicsHelper::ComputeTranslation (currentAdjustedPos, pixelPos));
+    m_objects.push_back (std::move (circle));
+    return m_objects.back().get();
+}
+
+DrawableObject* DrawableContainer::AddTriangle (Vector2 pixelPos, DrawPosition align, float height, float rotation, const Color& color)
+{
+    auto tri = std::make_unique <shapes::Triangle> (height, rotation);
+    tri->SetAlign (align);
+    tri->SetColor (color);
+
+    auto bbox = tri->GetBoundingBox();
+    auto currentAdjustedPos = GraphicsHelper::ComputePosition (align, bbox);
+    tri->Translate (GraphicsHelper::ComputeTranslation (currentAdjustedPos, pixelPos));
+    m_objects.push_back (std::move (tri));
     return m_objects.back().get();
 }
 

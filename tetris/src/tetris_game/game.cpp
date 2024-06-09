@@ -4,6 +4,7 @@
 #include <tetris_game/blocks.h>
 #include <graphics/drawable_container.h>
 #include <graphics/decorative_block.h>
+#include <graphics/sprites.h>
 
 #include <raylib/raylib.h>
 #include <cassert>
@@ -58,9 +59,9 @@ void Game::Init()
     //dBlockLeft->AddCell ({4, 2}, Colors::green, Colors::green_shade);
     //dBlockLeft->AddCell ({4, 3}, Colors::green, Colors::green_shade);
     //dBlockLeft->AddCell ({4, 4}, Colors::orange, Colors::orange_shade);
+    //dBlockLeft->AddCell ({4, 5}, Colors::yellow, Colors::yellow_shade);
 
     m_ownerContainer->AddDrawableObject ({ownerBBox.Min().x, ownerBBox.Max().y}, DrawPosition::BottomLeft, std::move (dBlockLeft));
-
 
     m_moveSound = LoadSound ("resources/hi_hat.wav");
     m_fallSound = LoadSound ("resources/snare.wav");

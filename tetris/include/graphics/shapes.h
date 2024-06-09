@@ -15,6 +15,8 @@ public:
     const Color& GetColor() const  { return m_color; }
     void SetColor (const Color& color) { m_color = color; }
 
+    virtual void Translate (const Vector2& translation) override;
+
 protected:
     void UpdatePosition (const BoundingBox2d& oldBBox, const BoundingBox2d& newBBox);
 
@@ -37,7 +39,6 @@ public:
 
     virtual void Draw() const override;
     virtual BoundingBox2d GetBoundingBox() const override;
-    virtual void Translate (const Vector2& translation) override;
     virtual void Scale (float scale) override;
 
 protected:
@@ -70,7 +71,6 @@ public:
 
     virtual void Draw() const override;
     virtual BoundingBox2d GetBoundingBox() const override;
-    virtual void Translate (const Vector2& translation) override;
     virtual void Scale (float scale) override;
 
 protected:
@@ -96,11 +96,36 @@ private:
     float m_roundness;
 };
 
+class Circle: public Shape
+{
+public:
+    Circle (float radius):
+        m_radius (radius)
+    {}
+
+    virtual void Draw() const override;
+    virtual BoundingBox2d GetBoundingBox() const override;
+    virtual void Scale (float scale) override;
+
+private:
+    float m_radius;
+};
+
 
 class Triangle: public Shape
 {
+public:
+    Triangle (float height, float rot):
+        m_height (height),
+        m_rotation (rot)
+    {}
+
+    virtual void Draw() const override;
+    virtual BoundingBox2d GetBoundingBox() const override;
+    virtual void Scale (float scale) override;
 
 private:
-
+    float m_height;
+    float m_rotation;
 };
 }
