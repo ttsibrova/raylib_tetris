@@ -43,22 +43,22 @@ void Drawer::DrawBlock (int posX, int posY, const Block* block, int cellSize)
 
 void Drawer::DrawGhostBlock (int posX, int posY, const Block* block, int cellSize)
 {
-        const auto& cells = block->GetCurrentCells ();
+    const auto& cells = block->GetCurrentCells ();
 
-        for (auto& cell : cells) {
-            DrawRectangle (posX + cell.m_col * cellSize - 2,
-                           posY + cell.m_row * cellSize - 2,
-                           cellSize + 4,
-                           cellSize + 4,
-                           Colors::_colors_shade[block->GetColorId()]);
-        }
-        for (auto& cell : cells) {
-            DrawRectangle (posX + cell.m_col * cellSize,
-                           posY + cell.m_row * cellSize,
-                           cellSize,
-                           cellSize,
-                           Colors::_colors[block->GetColorId()]);
-        }
+    for (auto& cell : cells) {
+        DrawRectangle (posX + cell.m_col * cellSize - 2,
+                        posY + cell.m_row * cellSize - 2,
+                        cellSize + 4,
+                        cellSize + 4,
+                        Colors::_colors_shade[block->GetColorId()]);
+    }
+    for (auto& cell : cells) {
+        DrawRectangle (posX + cell.m_col * cellSize,
+                        posY + cell.m_row * cellSize,
+                        cellSize,
+                        cellSize,
+                        Colors::_colors[block->GetColorId()]);
+    }
 }
 
 void Drawer::DrawBlockShade (int posX, int posY, const Block* block, int cellSize, const Color& color)

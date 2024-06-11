@@ -1,5 +1,10 @@
 #include <core/bounding_box_2d.h>
 
+bool BoundingBox2d::IsOutside (const Vector2& pnt)
+{
+    return (pnt.x > m_max.x || pnt.x < m_min.x) && (pnt.y > m_max.y || pnt.y < m_min.y);
+}
+
 void BoundingBox2d::Expand (const BoundingBox2d& other)
 {
     if (other.Min().x < m_min.x) {

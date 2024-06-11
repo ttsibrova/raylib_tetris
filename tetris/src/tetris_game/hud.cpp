@@ -1,8 +1,8 @@
 #include <tetris_game/hud.h>
 
+#include <tetris_game/classic_tetris_game.h>
 #include <tetris_game/drawer.h>
 #include <tetris_game/grid.h>
-#include <tetris_game/game.h>
 #include <graphics/colors.h>
 #include <graphics/graphics_helper.h> 
 #include <ui/ui_group_container.h>
@@ -180,7 +180,7 @@ GridHUD::NumRemovedLines::NumRemovedLines (const DrawableContainer* ownerContain
 void GridHUD::Score::onNotify (const Object& obj, Event e)
 {
     if (e == Event::SCORE_UPDATED) {
-        if (auto game = dynamic_cast <const Game*> (&obj)) {
+        if (auto game = dynamic_cast <const ClassicTetrisGame*> (&obj)) {
             std::string newText = std::to_string (game->GetScore());
             m_text->UpdateText (newText);
         }
@@ -190,7 +190,7 @@ void GridHUD::Score::onNotify (const Object& obj, Event e)
 void GridHUD::NumRemovedLines::onNotify (const Object& obj, Event e)
 {
     if (e == Event::NUM_REMOVED_LINES_UPDATED) {
-        if (auto game = dynamic_cast <const Game*> (&obj)) {
+        if (auto game = dynamic_cast <const ClassicTetrisGame*> (&obj)) {
             std::string newText = std::to_string (game->GetNumLinesRemoved());
             m_text->UpdateText (newText);
         }
@@ -200,7 +200,7 @@ void GridHUD::NumRemovedLines::onNotify (const Object& obj, Event e)
 void GridHUD::SpeedLVL::onNotify (const Object& obj, Event e)
 {
     if (e == Event::SPEED_LVL_UPDATED) {
-        if (auto game = dynamic_cast <const Game*> (&obj)) {
+        if (auto game = dynamic_cast <const ClassicTetrisGame*> (&obj)) {
             std::string newText = std::to_string (game->GetSpeedLevel());
             m_text->UpdateText (newText);
         }
@@ -210,7 +210,7 @@ void GridHUD::SpeedLVL::onNotify (const Object& obj, Event e)
 void GridHUD::NextBlock::onNotify (const Object& obj, Event e)
 {
     if (e == Event::NEXT_BLOCK_UPDATED) {
-        if (auto game = dynamic_cast <const Game*> (&obj)) {
+        if (auto game = dynamic_cast <const ClassicTetrisGame*> (&obj)) {
             std::string newText = std::to_string (game->GetScore());
             m_block = game->GetNextBlock();
         }
@@ -219,7 +219,7 @@ void GridHUD::NextBlock::onNotify (const Object& obj, Event e)
 void GridHUD::HoldBlock::onNotify (const Object& obj, Event e)
 {
     if (e == Event::HOLD_BLOCK_UPDATED) {
-        if (auto game = dynamic_cast <const Game*> (&obj)) {
+        if (auto game = dynamic_cast <const ClassicTetrisGame*> (&obj)) {
             std::string newText = std::to_string (game->GetScore());
             m_block = game->GetHoldBlock();
         }
@@ -229,7 +229,7 @@ void GridHUD::HoldBlock::onNotify (const Object& obj, Event e)
 void GridHUD::Combo::onNotify (const Object& obj, Event e)
 {
     if (e == Event::COMBO_UPDATED) {
-        if (auto game = dynamic_cast <const Game*> (&obj)) {
+        if (auto game = dynamic_cast <const ClassicTetrisGame*> (&obj)) {
 
             size_t newCombo = game->GetComboNum();
             if (newCombo == 0) { // combo reset

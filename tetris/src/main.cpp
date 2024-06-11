@@ -11,6 +11,7 @@ int main() {
 
     InitAudioDevice();
     SetTargetFPS (60);
+    SetExitKey (KEY_NULL);
 
     ClassicTetrisGameScreen aGameScreen (screenSize);
     aGameScreen.Init();

@@ -20,6 +20,8 @@ public:
     float Width () const { return m_max.x - m_min.x; }
     float Height() const { return m_max.y - m_min.y; }
 
+    bool IsOutside (const Vector2& pnt);
+
     void Expand (const BoundingBox2d& other);
     BoundingBox2d Translated (const Vector2& trl);
     void Translate (const Vector2& trl);

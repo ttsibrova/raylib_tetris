@@ -10,5 +10,6 @@ enum class ClassicTetrisGameScreenEvent
     NUM_REMOVED_LINES_UPDATED,
     SPEED_LVL_UPDATED,
     GAME_OVER,
-    PAUSE
+    PAUSE,
+    UNPAUSE
 };
