@@ -19,20 +19,17 @@ public:
         virtual ~PauseSubScreen();
     private:
         Menu*         m_pauseMenu;
-        InputHandler* m_inputHandler;
         InputLayer    m_inputLayer;
     };
 
-    ClassicTetrisGameScreen (const ScreenSize& screenSize);
+    ClassicTetrisGameScreen (const ScreenSize& screenSize, InputHandler* iHandler);
 
-    void Init();
+    //void Init();
     virtual void Tick() override;
-
     virtual void onNotify (const Object& obj, Event e) override;
 
 private:
-    PauseSubScreen*                  m_pauseScreen;
-    std::unique_ptr <InputHandler>   m_inputHandler;
-    ClassicTetrisGame                m_classicTetrisGame;
-    ScreenSize                       m_screenSize;
+    PauseSubScreen*   m_pauseScreen;
+    ClassicTetrisGame m_classicTetrisGame;
+    ScreenSize        m_screenSize;
 };

@@ -1,6 +1,6 @@
 
 #include <graphics/colors.h>
-#include <tetris_game/classic_tetris_game_screen.h>
+#include <engine/screen_manager.h>
 
 #include <raylib/raylib.h>
 
@@ -13,14 +13,13 @@ int main() {
     SetTargetFPS (60);
     SetExitKey (KEY_NULL);
 
-    ClassicTetrisGameScreen aGameScreen (screenSize);
-    aGameScreen.Init();
+    ScreenManager manager (screenSize);
 
-    while (!WindowShouldClose()) {
+    while (!WindowShouldClose() && !manager.ShouldClose()) {
         BeginDrawing();
-        aGameScreen.Tick();
-        ClearBackground (Colors::darkGrey);
+        //ClearBackground (Colors::darkGrey);
 
+        manager.Tick();
         EndDrawing();
     }
     CloseAudioDevice();

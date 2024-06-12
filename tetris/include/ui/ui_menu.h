@@ -1,5 +1,6 @@
 #pragma once
 #include <engine/game_object.h>
+#include <engine/input_handler.h>
 #include <ui/ui_menu_element.h>
 
 #include <array>
@@ -70,6 +71,10 @@ public:
     virtual void Translate (const Vector2& translation) override;
     virtual void Scale (float scale) override;
 
+    static InputLayer GetStandardMenuInputLayer();
+    void SetInputLayer (InputLayer&& layer) { m_inputLayer = std::move (layer); }
+    InputLayer* GetInputLayer() { return &m_inputLayer; }
+
 private:
     bool IsElementExist (size_t col, size_t row);
 
@@ -77,6 +82,7 @@ private:
     float m_columnWidth[2] = {0.f, 0.f};
     float m_rowHeight = 0;
     size_t m_activeElement[2] = {0, 0};
-    std::unique_ptr <CommandWithContext>       m_exitCommand;
+    InputLayer                                                  m_inputLayer;
+    std::unique_ptr <CommandWithContext>                        m_exitCommand;
     std::array <std::vector <std::unique_ptr <MenuElement>>, 2> m_menuGrid;
 };

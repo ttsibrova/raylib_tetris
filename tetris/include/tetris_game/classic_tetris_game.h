@@ -87,6 +87,7 @@ class ClassicTetrisGame : public GameObject, public Subject <CTGSObserver>
 public:
     ClassicTetrisGame (DrawableContainer* ownerContainer,
                        InputHandler* inputHandler,
+                       float scale,
                        const Settings::GamepadMappings& gmap,
                        const Settings::KeyboardMappings& kmap);
 

@@ -1,14 +1,9 @@
 #pragma once
 #include <engine/command.h>
 #include <engine/game_object.h>
+#include <engine/screen_manager.h>
 #include <graphics/drawable_container.h>
 
-
-struct ScreenSize {
-    int   m_width;
-    int   m_height;
-    float m_scale = 1.0;
-};
 
 enum class ScreenState {
     ACTIVE,
@@ -18,17 +13,24 @@ enum class ScreenState {
 class Screen : public GameObject
 {
 public:
-    Screen ():
-        m_state (ScreenState::ACTIVE)
+    Screen (InputHandler* iHandler):
+        m_state (ScreenState::ACTIVE),
+        m_inputHandler (iHandler),
+        m_nextScreen {false, Screens::NONE}
     {}
 
     void Draw() { m_screenGraphics.Draw(); }
     void SetToClose() { m_state = ScreenState::SET_TO_CLOSE; }
     bool IsActive() { return m_state == ScreenState::ACTIVE; }
+    bool DoesWantToChangeScreen() { return m_nextScreen.first; }
+    Screens GetNextScreen() { return m_nextScreen.second;}
+    void SetNextScreen (Screens nextScreen) { m_nextScreen.first = true; m_nextScreen.second = nextScreen; }
 
 protected:
-    ScreenState       m_state;
-    DrawableContainer m_screenGraphics;
+    ScreenState               m_state;
+    DrawableContainer         m_screenGraphics;
+    InputHandler*             m_inputHandler;
+    std::pair <bool, Screens> m_nextScreen;
 };
 
 class ScreenCloseCommand: public CommandWithContext
@@ -48,12 +50,33 @@ public:
     }
 };
 
-
-class TitleScreen : public Screen
+class ScreenChangeCommand: public CommandWithContext
 {
 public:
-    virtual void Tick() override;
+    ScreenChangeCommand (Screens nextScreen, Screen* currentScreen):
+        CommandWithContext (currentScreen),
+        m_nextScreen (nextScreen)
+    {}
 
+    virtual bool Execute (Object* obj) override
+    {
+        if (auto screen = dynamic_cast <Screen*> (obj)) {
+            screen->SetNextScreen (m_nextScreen);
+            return true;
+        }
+        return false;
+    }
+
+private:
+    Screens m_nextScreen;
+};
+
+class MainMenuScreen : public Screen
+{
+public:
+    MainMenuScreen (InputHandler* iHandler, const ScreenSize& screenSize);
+    ~MainMenuScreen();
+    virtual void Tick() override;
 };
 
 
