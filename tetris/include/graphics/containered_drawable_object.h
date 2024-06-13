@@ -5,16 +5,15 @@
 class ContaineredDrawableObject: public DrawableObject
 {
 public:
-    ContaineredDrawableObject ():
-        m_graphics (std::make_unique <DrawableContainer> ())
+    ContaineredDrawableObject()
     {}
 
     // DrawableObject interface
-    virtual void Draw () const override;
-    virtual BoundingBox2d GetBoundingBox () const override;
+    virtual void Draw() const override;
+    virtual BoundingBox2d GetBoundingBox() const override;
     virtual void Translate (const Vector2& translation) override;
     virtual void Scale (float scale) override;
 
 protected:
-    std::unique_ptr <DrawableContainer> m_graphics;
+    DrawableContainer m_graphics;
 };

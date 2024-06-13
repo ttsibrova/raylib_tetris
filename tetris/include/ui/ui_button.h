@@ -13,6 +13,7 @@ public:
         m_grahicsSelected = SpriteGraphicGenerator::GetButtonHover (name, width);
         m_grahicsPressed = SpriteGraphicGenerator::GetButtonPressed (name, width);
     }
+    ~Button();
 
     bool IsClicked();
 
@@ -22,7 +23,7 @@ public:
     virtual void Scale (float scale);
 
 private:
-    std::unique_ptr <DrawableObject> m_grahicsButton;
-    std::unique_ptr <DrawableObject> m_grahicsSelected;
-    std::unique_ptr <DrawableObject> m_grahicsPressed;
+    DrawableObject* m_grahicsButton;
+    DrawableObject* m_grahicsSelected;
+    DrawableObject* m_grahicsPressed;
 };

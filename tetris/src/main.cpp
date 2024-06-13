@@ -6,7 +6,7 @@
 
 int main() {
 
-    ScreenSize screenSize {1000, 850, 1.};
+    ScreenSize screenSize {1007, 850, 1.};
     InitWindow (screenSize.m_width * screenSize.m_scale, screenSize.m_height * screenSize.m_scale, "Raylib Tetris");
 
     InitAudioDevice();

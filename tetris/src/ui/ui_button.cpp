@@ -1,5 +1,21 @@
 #include <ui/ui_button.h>
 
+Button::~Button()
+{
+    if (m_grahicsButton) {
+        delete m_grahicsButton;
+        m_grahicsButton = nullptr;
+    }
+    if (m_grahicsPressed) {
+        delete m_grahicsPressed;
+        m_grahicsPressed = nullptr;
+    }
+    if (m_grahicsSelected) {
+        delete m_grahicsSelected;
+        m_grahicsSelected = nullptr;
+    }
+}
+
 bool Button::IsClicked()
 {
     auto mousePos = GetMousePosition();
@@ -16,7 +32,7 @@ void Button::Draw() const
        m_grahicsSelected->Draw();
        return;
    }
-   if (m_bIsSelected) {
+   if (m_bIsPressed) {
        m_grahicsPressed->Draw();
        return;
    }

@@ -1,13 +1,13 @@
 #include <graphics/decorative_block.h>
 
-Cell::Cell (int cellSize, const Color& mainColor, const Color& shadeColor)
+Cell::Cell (float cellSize, const Color& mainColor, const Color& shadeColor)
 {
-    int shadeSize = cellSize / 10;
-    m_graphics->AddRectangle (m_pos, DrawPosition::TopLeft, cellSize, cellSize, shadeColor);
-    m_graphics->AddRectangle ({m_pos.x + shadeSize, m_pos.y + shadeSize},
-                               DrawPosition::TopLeft,
-                               cellSize - shadeSize * 2, cellSize - shadeSize * 2,
-                               mainColor);
+    float shadeSize = cellSize / 7;
+    m_graphics.AddRectangle (m_pos, DrawPosition::TopLeft, cellSize, cellSize, shadeColor);
+    m_graphics.AddRectangle ({m_pos.x + shadeSize, m_pos.y + shadeSize},
+                              DrawPosition::TopLeft,
+                              cellSize - shadeSize * 2, cellSize - shadeSize * 2,
+                              mainColor);
 }
 
 void DecorativeBlock::AddCell (const GridPosition& pos, const Color& mainColor, const Color& shadeColor)
@@ -17,9 +17,9 @@ void DecorativeBlock::AddCell (const GridPosition& pos, const Color& mainColor, 
 
     m_positions.push_back (pos);
 
-    auto cell = std::make_unique <Cell> (m_cellSize, mainColor, shadeColor);
+    auto cell = new Cell (m_cellSize, mainColor, shadeColor);
 
-    m_graphics->AddDrawableObject ({posX, posY}, DrawPosition::TopLeft, std::move (cell));
+    m_graphics.AddDrawableObject ({posX, posY}, DrawPosition::TopLeft, cell);
 }
 
 void DecorativeBlock::SetOutline (const Color& outlineColor, int outlineSize)
@@ -65,12 +65,12 @@ void DecorativeBlock::Draw() const
         }
     }
 
-    m_graphics->Draw();
+    m_graphics.Draw();
 }
 
 void DecorativeBlock::Translate (const Vector2& translation)
 {
     m_pos.x += translation.x;
     m_pos.y += translation.y;
-    m_graphics->Translate (translation);
+    m_graphics.Translate (translation);
 }

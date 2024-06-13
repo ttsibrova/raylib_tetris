@@ -2,12 +2,14 @@
 #include <graphics/drawable_object.h>
 #include <core/bounding_box_2d.h>
 
-#include <memory>
 #include <vector>
 #include <string>
 
 class DrawableContainer: public DrawableObject
 {
+public:
+    ~DrawableContainer();
+
 public:
     DrawableObject* AddRectangle (Vector2 pixelPos, DrawPosition alignPos, float height, float width, const Color& color);
     DrawableObject* AddRectangle (Vector2 pixelPos, DrawPosition alignPos, const BoundingBox2d& bbox, const Color& color);
@@ -18,8 +20,7 @@ public:
     DrawableObject* AddTriangle (Vector2 pixelPos, DrawPosition align, float height, float rotation, const Color& color);
 
 public:
-    void AddDrawableObject (Vector2 pixelPos, DrawPosition alignPos, std::unique_ptr <DrawableObject>&& obj);
-    //void AddDrawableObject (std::unique_ptr <DrawableObject>&& obj);
+    void AddDrawableObject (Vector2 pixelPos, DrawPosition alignPos, DrawableObject* obj);
 
 public:
     virtual void Draw() const override;
@@ -30,6 +31,6 @@ public:
     bool IsEmpty() { return m_objects.empty(); }
 
 protected:
-    std::vector <std::unique_ptr <DrawableObject>> m_objects;
+    std::vector <DrawableObject*> m_objects;
 };
 

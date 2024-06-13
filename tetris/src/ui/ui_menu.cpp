@@ -122,12 +122,12 @@ InputLayer Menu::GetStandardMenuInputLayer()
 {
     InputLayer inputLayer;
 
-    inputLayer.AddAction (GAMEPAD_BUTTON_LEFT_FACE_DOWN, KEY_ENTER, ActionType::PRESS, std::make_unique <MenuSelectCommand>());
-    inputLayer.AddAction (GAMEPAD_BUTTON_RIGHT_FACE_DOWN, KEY_DOWN, ActionType::PRESS, std::make_unique <MenuMoveDownCommand>());
-    inputLayer.AddAction (GAMEPAD_BUTTON_RIGHT_FACE_UP, KEY_UP, ActionType::PRESS, std::make_unique <MenuMoveUpCommand>());
-    inputLayer.AddAction (GAMEPAD_BUTTON_RIGHT_FACE_LEFT, KEY_LEFT, ActionType::PRESS, std::make_unique <MenuMoveLeftCommand>());
-    inputLayer.AddAction (GAMEPAD_BUTTON_RIGHT_FACE_RIGHT, KEY_RIGHT, ActionType::PRESS, std::make_unique <MenuMoveRightCommand>());
-    inputLayer.AddAction (GAMEPAD_BUTTON_LEFT_FACE_RIGHT, KEY_ESCAPE, ActionType::PRESS, std::make_unique <MenuExitCommand>());
+    inputLayer.AddAction (GAMEPAD_BUTTON_RIGHT_FACE_DOWN, KEY_ENTER, ActionType::PRESS, std::make_unique <MenuSelectCommand>());
+    inputLayer.AddAction (GAMEPAD_BUTTON_LEFT_FACE_DOWN, KEY_DOWN, ActionType::PRESS, std::make_unique <MenuMoveDownCommand>());
+    inputLayer.AddAction (GAMEPAD_BUTTON_LEFT_FACE_UP, KEY_UP, ActionType::PRESS, std::make_unique <MenuMoveUpCommand>());
+    inputLayer.AddAction (GAMEPAD_BUTTON_LEFT_FACE_LEFT, KEY_LEFT, ActionType::PRESS, std::make_unique <MenuMoveLeftCommand>());
+    inputLayer.AddAction (GAMEPAD_BUTTON_LEFT_FACE_RIGHT, KEY_RIGHT, ActionType::PRESS, std::make_unique <MenuMoveRightCommand>());
+    inputLayer.AddAction (GAMEPAD_BUTTON_RIGHT_FACE_RIGHT, KEY_ESCAPE, ActionType::PRESS, std::make_unique <MenuExitCommand>());
 
     return inputLayer;
 }

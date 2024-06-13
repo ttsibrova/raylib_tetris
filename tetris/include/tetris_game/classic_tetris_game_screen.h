@@ -14,7 +14,11 @@ public:
     class PauseSubScreen: public Screen
     {
     public:
-        PauseSubScreen (const ScreenSize& size, Vector2 posCenter, InputHandler* iHandler);
+        PauseSubScreen (const ScreenSize& size,
+                        Vector2 posCenter,
+                        InputHandler* iHandler,
+                        const Settings::KeyboardMappings& kMap,
+                        const Settings::GamepadMappings& gMap);
         virtual void Tick() override {}
         virtual ~PauseSubScreen();
     private:

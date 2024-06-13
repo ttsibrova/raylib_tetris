@@ -2,46 +2,93 @@
 
 #include <graphics/colors.h>
 #include <graphics/decorative_block.h>
+#include <graphics/graphics_helper.h>
 
-std::unique_ptr<DrawableObject> SpriteGraphicGenerator::GetXBoxButtonX (float radius)
+DrawableObject* SpriteGraphicGenerator::GetXBoxButton (GamepadButton button, float height)
 {
-    auto cont = std::make_unique <DrawableContainer>();
+    switch (button)
+    {
+    //case GAMEPAD_BUTTON_UNKNOWN:
+    case GAMEPAD_BUTTON_LEFT_FACE_UP:
+        return GetXBoxUP (height/2);
+    case GAMEPAD_BUTTON_LEFT_FACE_RIGHT: 
+        return GetXBoxRIGHT (height/2);
+    case GAMEPAD_BUTTON_LEFT_FACE_DOWN:  
+        return GetXBoxDOWN (height/2);
+    case GAMEPAD_BUTTON_LEFT_FACE_LEFT:  
+        return GetXBoxLEFT (height/2);
+    case GAMEPAD_BUTTON_RIGHT_FACE_UP:
+        return GetXBoxButtonY (height / 2);
+    case GAMEPAD_BUTTON_RIGHT_FACE_RIGHT:
+        return GetXBoxButtonB (height / 2);
+    case GAMEPAD_BUTTON_RIGHT_FACE_DOWN: 
+        return GetXBoxButtonA (height / 2);
+    case GAMEPAD_BUTTON_RIGHT_FACE_LEFT: 
+        return GetXBoxButtonX (height / 2);
+    case GAMEPAD_BUTTON_LEFT_TRIGGER_1:
+        return GetXBoxLB (height * 1.3);
+    case GAMEPAD_BUTTON_LEFT_TRIGGER_2:  
+        return GetXBoxLT (height * 1.3);
+    case GAMEPAD_BUTTON_RIGHT_TRIGGER_1: 
+        return GetXBoxRB (height * 1.3);
+    case GAMEPAD_BUTTON_RIGHT_TRIGGER_2: 
+        return GetXBoxRT (height * 1.3);
+    case GAMEPAD_BUTTON_MIDDLE_LEFT:     
+    case GAMEPAD_BUTTON_MIDDLE:          
+    case GAMEPAD_BUTTON_MIDDLE_RIGHT:    
+    case GAMEPAD_BUTTON_LEFT_THUMB:      
+    case GAMEPAD_BUTTON_RIGHT_THUMB:
+    default:
+        break;
+    }
+    auto empty = new DrawableContainer();
+    return empty;
+}
+
+DrawableObject* SpriteGraphicGenerator::GetXBoxButtonX (float radius)
+{
+    auto cont = new DrawableContainer();
+    cont->AddRectangle ({0., 0.}, DrawPosition::Center, radius * 2, radius * 2, {0, 0, 0, 0});
     cont->AddCircle ({0, 0}, DrawPosition::Center, radius, Colors::blue);
     cont->AddCircle ({0, 0}, DrawPosition::Center, radius * 0.9 , BLACK);
     cont->AddText ({0, 0}, DrawPosition::Center, "X", (int) radius * 1.5 , Colors::blue);
     return cont;
 }
 
-std::unique_ptr<DrawableObject> SpriteGraphicGenerator::GetXBoxButtonY (float radius)
+DrawableObject* SpriteGraphicGenerator::GetXBoxButtonY (float radius)
 {
-    auto cont = std::make_unique <DrawableContainer>();
+    auto cont = new DrawableContainer();
+    cont->AddRectangle ({0., 0.}, DrawPosition::Center, radius * 2, radius * 2, {0, 0, 0, 0});
     cont->AddCircle ({0, 0}, DrawPosition::Center, radius, Colors::yellow);
     cont->AddCircle ({0, 0}, DrawPosition::Center, radius * 0.9 , BLACK);
     cont->AddText ({0, 0}, DrawPosition::Center, "Y", (int) radius * 1.5 , Colors::yellow);
     return cont;
 }
 
-std::unique_ptr<DrawableObject> SpriteGraphicGenerator::GetXBoxButtonA (float radius)
+DrawableObject* SpriteGraphicGenerator::GetXBoxButtonA (float radius)
 {
-    auto cont = std::make_unique <DrawableContainer>();
+    auto cont = new DrawableContainer();
+    cont->AddRectangle ({0., 0.}, DrawPosition::Center, radius * 2, radius * 2, {0, 0, 0, 0});
     cont->AddCircle ({0, 0}, DrawPosition::Center, radius, Colors::green);
     cont->AddCircle ({0, 0}, DrawPosition::Center, radius * 0.9 , BLACK);
     cont->AddText ({0, 0}, DrawPosition::Center, "A", (int) radius * 1.5 , Colors::green);
     return cont;
 }
 
-std::unique_ptr<DrawableObject> SpriteGraphicGenerator::GetXBoxButtonB (float radius)
+DrawableObject* SpriteGraphicGenerator::GetXBoxButtonB (float radius)
 {
-    auto cont = std::make_unique <DrawableContainer>();
+    auto cont = new DrawableContainer();
+    cont->AddRectangle ({0., 0.}, DrawPosition::Center, radius * 2, radius * 2, {0, 0, 0, 0});
     cont->AddCircle ({0, 0}, DrawPosition::Center, radius, Colors::red);
     cont->AddCircle ({0, 0}, DrawPosition::Center, radius * 0.9 , BLACK);
     cont->AddText ({0, 0}, DrawPosition::Center, "B", (int) radius * 1.5 , Colors::red);
     return cont;
 }
 
-std::unique_ptr<DrawableObject> SpriteGraphicGenerator::GetXBoxUP (float radius)
+DrawableObject* SpriteGraphicGenerator::GetXBoxUP (float radius)
 {
-    auto cont = std::make_unique <DrawableContainer>();
+    auto cont = new DrawableContainer();
+    cont->AddRectangle ({0., 0.}, DrawPosition::Center, radius * 2, radius * 2, {0, 0, 0, 0});
     cont->AddCircle ({0, 0}, DrawPosition::Center, radius, RAYWHITE);
     cont->AddCircle ({0, 0}, DrawPosition::Center, radius * 0.9 , BLACK);
     cont->AddRectangle ({0, 0}, DrawPosition::Center, radius * 1.5, radius * 0.6, RAYWHITE);
@@ -55,9 +102,10 @@ std::unique_ptr<DrawableObject> SpriteGraphicGenerator::GetXBoxUP (float radius)
     return cont;
 }
 
-std::unique_ptr<DrawableObject> SpriteGraphicGenerator::GetXBoxDOWN (float radius)
+DrawableObject* SpriteGraphicGenerator::GetXBoxDOWN (float radius)
 {
-    auto cont = std::make_unique <DrawableContainer>();
+    auto cont = new DrawableContainer();
+    cont->AddRectangle ({0., 0.}, DrawPosition::Center, radius * 2, radius * 2, {0, 0, 0, 0});
     cont->AddCircle ({0, 0}, DrawPosition::Center, radius, RAYWHITE);
     cont->AddCircle ({0, 0}, DrawPosition::Center, radius * 0.9 , BLACK);
     cont->AddRectangle ({0, 0}, DrawPosition::Center, radius * 1.5, radius * 0.6, RAYWHITE);
@@ -71,9 +119,10 @@ std::unique_ptr<DrawableObject> SpriteGraphicGenerator::GetXBoxDOWN (float radiu
     return cont;
 }
 
-std::unique_ptr<DrawableObject> SpriteGraphicGenerator::GetXBoxLEFT (float radius)
+DrawableObject* SpriteGraphicGenerator::GetXBoxLEFT (float radius)
 {
-    auto cont = std::make_unique <DrawableContainer>();
+    auto cont = new DrawableContainer();
+    cont->AddRectangle ({0., 0.}, DrawPosition::Center, radius * 2, radius * 2, {0, 0, 0, 0});
     cont->AddCircle ({0, 0}, DrawPosition::Center, radius, RAYWHITE);
     cont->AddCircle ({0, 0}, DrawPosition::Center, radius * 0.9, BLACK);
     cont->AddRectangle ({0, 0}, DrawPosition::Center, radius * 1.5, radius * 0.6, RAYWHITE);
@@ -87,9 +136,10 @@ std::unique_ptr<DrawableObject> SpriteGraphicGenerator::GetXBoxLEFT (float radiu
     return cont;
 }
 
-std::unique_ptr<DrawableObject> SpriteGraphicGenerator::GetXBoxRIGHT (float radius)
+DrawableObject* SpriteGraphicGenerator::GetXBoxRIGHT (float radius)
 {
-    auto cont = std::make_unique <DrawableContainer>();
+    auto cont = new DrawableContainer();
+    cont->AddRectangle ({0., 0.}, DrawPosition::Center, radius * 2, radius * 2, {0, 0, 0, 0});
     cont->AddCircle ({0, 0}, DrawPosition::Center, radius, RAYWHITE);
     cont->AddCircle ({0, 0}, DrawPosition::Center, radius * 0.9, BLACK);
     cont->AddRectangle ({0, 0}, DrawPosition::Center, radius * 1.5, radius * 0.6, RAYWHITE);
@@ -103,9 +153,10 @@ std::unique_ptr<DrawableObject> SpriteGraphicGenerator::GetXBoxRIGHT (float radi
     return cont;
 }
 
-std::unique_ptr<DrawableObject> SpriteGraphicGenerator::GetXBoxLB (float width)
+DrawableObject* SpriteGraphicGenerator::GetXBoxLB (float width)
 {
-    auto cont = std::make_unique <DrawableContainer>();
+    auto cont = new DrawableContainer();
+    cont->AddRectangle ({0., 0.}, DrawPosition::Center, width, width, {0, 0, 0, 0});
     cont->AddRectangleRounded ({0, 0}, DrawPosition::Center, width * 0.5, width, 0.6, RAYWHITE);
     auto rInt = cont->AddRectangleRounded ({0, 0}, DrawPosition::Center, width * 0.4, width * 0.9, 0.6, BLACK);
     auto bbox = rInt->GetBoundingBox();
@@ -114,9 +165,10 @@ std::unique_ptr<DrawableObject> SpriteGraphicGenerator::GetXBoxLB (float width)
     return cont;
 }
 
-std::unique_ptr<DrawableObject> SpriteGraphicGenerator::GetXBoxRB (float width)
+DrawableObject* SpriteGraphicGenerator::GetXBoxRB (float width)
 {
-    auto cont = std::make_unique <DrawableContainer>();
+    auto cont = new DrawableContainer();
+    cont->AddRectangle ({0., 0.}, DrawPosition::Center, width, width, {0, 0, 0, 0});
     cont->AddRectangleRounded ({0, 0}, DrawPosition::Center, width * 0.5, width, 0.6, RAYWHITE);
     auto rInt = cont->AddRectangleRounded ({0, 0}, DrawPosition::Center, width * 0.4, width * 0.9, 0.6, BLACK);
     auto bbox = rInt->GetBoundingBox();
@@ -125,9 +177,10 @@ std::unique_ptr<DrawableObject> SpriteGraphicGenerator::GetXBoxRB (float width)
     return cont;
 }
 
-std::unique_ptr<DrawableObject> SpriteGraphicGenerator::GetXBoxLT (float height)
+DrawableObject* SpriteGraphicGenerator::GetXBoxLT (float height)
 {
-    auto cont = std::make_unique <DrawableContainer>();
+    auto cont = new DrawableContainer();
+    cont->AddRectangle ({0., 0.}, DrawPosition::Center, height, height, {0, 0, 0, 0});
     cont->AddRectangleRounded ({0, 0}, DrawPosition::Center, height , height * 0.5, 0.6, RAYWHITE);
     auto rInt = cont->AddRectangleRounded ({0, 0}, DrawPosition::Center, height * 0.9, height * 0.4, 0.6, BLACK);
     auto bbox = rInt->GetBoundingBox();
@@ -136,9 +189,10 @@ std::unique_ptr<DrawableObject> SpriteGraphicGenerator::GetXBoxLT (float height)
     return cont;
 }
 
-std::unique_ptr<DrawableObject> SpriteGraphicGenerator::GetXBoxRT (float height)
+DrawableObject* SpriteGraphicGenerator::GetXBoxRT (float height)
 {
-    auto cont = std::make_unique <DrawableContainer>();
+    auto cont = new DrawableContainer();
+    cont->AddRectangle ({0., 0.}, DrawPosition::Center, height, height, {0, 0, 0, 0});
     cont->AddRectangleRounded ({0, 0}, DrawPosition::Center, height , height * 0.5, 0.6, RAYWHITE);
     auto rInt = cont->AddRectangleRounded ({0, 0}, DrawPosition::Center, height * 0.9, height * 0.4, 0.6, BLACK);
     auto bbox = rInt->GetBoundingBox();
@@ -147,9 +201,9 @@ std::unique_ptr<DrawableObject> SpriteGraphicGenerator::GetXBoxRT (float height)
     return cont;
 }
 
-std::unique_ptr<DrawableObject> SpriteGraphicGenerator::GetKeybordKey (KeyboardKey key, float size)
+DrawableObject* SpriteGraphicGenerator::GetKeybordKey (KeyboardKey key, float size)
 {
-    auto cont = std::make_unique <DrawableContainer>();
+    auto cont = new DrawableContainer();
     if (key > 38 && key < 91) {
         cont->AddRectangleRounded ({0., 0.}, DrawPosition::Top, size, size, 0.4, RAYWHITE);
         auto rInt = cont->AddRectangleRounded ({0., size * 0.08f}, DrawPosition::Top, size * 0.75, size * 0.9, 0.4, BLACK);
@@ -215,27 +269,29 @@ std::unique_ptr<DrawableObject> SpriteGraphicGenerator::GetKeybordKey (KeyboardK
     switch (key)
     {
     case KEY_UP:
-        AddArrow (-90.f, size, cont.get());
+        AddArrow (-90.f, size, cont);
         break;
     case KEY_DOWN:
-        AddArrow (90.f, size, cont.get());
+        AddArrow (90.f, size, cont);
         break;
     case KEY_RIGHT:
-        AddArrow (0.f, size, cont.get());
+        AddArrow (0.f, size, cont);
         break;
     case KEY_LEFT:
-        AddArrow (180.f, size, cont.get());
+        AddArrow (180.f, size, cont);
         break;
     default:
         break;
     }
 
+    Vector2 currCenter = GraphicsHelper::ComputePosition (DrawPosition::Center, cont->GetBoundingBox());
+    cont->Translate (GraphicsHelper::ComputeTranslation (currCenter, {0., 0.}));
     return cont;
 }
 
-std::unique_ptr<DrawableObject> SpriteGraphicGenerator::GetBlockLetterT (int cellSize, const Color& mainColor, const Color& shadeColor)
+DrawableObject* SpriteGraphicGenerator::GetBlockLetterT (int cellSize, const Color& mainColor, const Color& shadeColor)
 {
-    auto block = std::make_unique <DecorativeBlock> (cellSize);
+    auto block = new DecorativeBlock (cellSize);
     block->AddCell ({0, 0}, mainColor, shadeColor);
     block->AddCell ({0, 1}, mainColor, shadeColor);
     block->AddCell ({0, 2}, mainColor, shadeColor);
@@ -244,13 +300,13 @@ std::unique_ptr<DrawableObject> SpriteGraphicGenerator::GetBlockLetterT (int cel
     block->AddCell ({3, 1}, mainColor, shadeColor);
     block->AddCell ({4, 1}, mainColor, shadeColor);
 
-    block->SetOutline (RAYWHITE, cellSize/10);
+    block->SetOutline (RAYWHITE, cellSize/7);
     return block;
 }
 
-std::unique_ptr<DrawableObject> SpriteGraphicGenerator::GetBlockLetterE (int cellSize, const Color& mainColor, const Color& shadeColor)
+DrawableObject* SpriteGraphicGenerator::GetBlockLetterE (int cellSize, const Color& mainColor, const Color& shadeColor)
 {
-    auto block = std::make_unique <DecorativeBlock> (cellSize);
+    auto block = new DecorativeBlock (cellSize);
     block->AddCell ({0, 0}, mainColor, shadeColor);
     block->AddCell ({0, 1}, mainColor, shadeColor);
     block->AddCell ({0, 2}, mainColor, shadeColor);
@@ -262,13 +318,13 @@ std::unique_ptr<DrawableObject> SpriteGraphicGenerator::GetBlockLetterE (int cel
     block->AddCell ({3, 0}, mainColor, shadeColor);
     block->AddCell ({2, 1}, mainColor, shadeColor);
 
-    block->SetOutline (RAYWHITE, cellSize / 10);
+    block->SetOutline (RAYWHITE, cellSize / 7);
     return block;
 }
 
-std::unique_ptr<DrawableObject> SpriteGraphicGenerator::GetBlockLetterR (int cellSize, const Color& mainColor, const Color& shadeColor)
+DrawableObject* SpriteGraphicGenerator::GetBlockLetterR (int cellSize, const Color& mainColor, const Color& shadeColor)
 {
-    auto block = std::make_unique <DecorativeBlock> (cellSize);
+    auto block = new DecorativeBlock (cellSize);
     block->AddCell ({0, 0}, mainColor, shadeColor);
     block->AddCell ({0, 1}, mainColor, shadeColor);
     block->AddCell ({0, 2}, mainColor, shadeColor);
@@ -281,26 +337,26 @@ std::unique_ptr<DrawableObject> SpriteGraphicGenerator::GetBlockLetterR (int cel
     block->AddCell ({3, 2}, mainColor, shadeColor);
     block->AddCell ({4, 2}, mainColor, shadeColor);
 
-    block->SetOutline (RAYWHITE, cellSize / 10);
+    block->SetOutline (RAYWHITE, cellSize / 7);
     return block;
 }
 
-std::unique_ptr<DrawableObject> SpriteGraphicGenerator::GetBlockLetterI (int cellSize, const Color& mainColor, const Color& shadeColor)
+DrawableObject* SpriteGraphicGenerator::GetBlockLetterI (int cellSize, const Color& mainColor, const Color& shadeColor)
 {
-    auto block = std::make_unique <DecorativeBlock> (cellSize);
+    auto block = new DecorativeBlock (cellSize);
     block->AddCell ({0, 0}, mainColor, shadeColor);
     block->AddCell ({1, 0}, mainColor, shadeColor);
     block->AddCell ({2, 0}, mainColor, shadeColor);
     block->AddCell ({3, 0}, mainColor, shadeColor);
     block->AddCell ({4, 0}, mainColor, shadeColor);
 
-    block->SetOutline (RAYWHITE, cellSize / 10);
+    block->SetOutline (RAYWHITE, cellSize / 7);
     return block;
 }
 
-std::unique_ptr<DrawableObject> SpriteGraphicGenerator::GetBlockLetterS (int cellSize, const Color& mainColor, const Color& shadeColor)
+DrawableObject* SpriteGraphicGenerator::GetBlockLetterS (int cellSize, const Color& mainColor, const Color& shadeColor)
 {
-    auto block = std::make_unique <DecorativeBlock> (cellSize);
+    auto block = new DecorativeBlock (cellSize);
     block->AddCell ({0, 0}, mainColor, shadeColor);
     block->AddCell ({0, 1}, mainColor, shadeColor);
     block->AddCell ({0, 2}, mainColor, shadeColor);
@@ -313,13 +369,13 @@ std::unique_ptr<DrawableObject> SpriteGraphicGenerator::GetBlockLetterS (int cel
     block->AddCell ({4, 1}, mainColor, shadeColor);
     block->AddCell ({4, 2}, mainColor, shadeColor);
 
-    block->SetOutline (RAYWHITE, cellSize / 10);
+    block->SetOutline (RAYWHITE, cellSize / 7);
     return block;
 }
 
-std::unique_ptr<DrawableObject> SpriteGraphicGenerator::GetButton (const std::string& text, float width)
+DrawableObject* SpriteGraphicGenerator::GetButton (const std::string& text, float width)
 {
-    auto cont = std::make_unique <DrawableContainer> ();
+    auto cont = new DrawableContainer();
 
     cont->AddRectangle ({0., 0.}, DrawPosition::Center, width * 0.25, width, {72, 88, 130, 255});
     cont->AddText ({0., 0.}, DrawPosition::Center, text, width * 0.15, RAYWHITE);
@@ -327,9 +383,9 @@ std::unique_ptr<DrawableObject> SpriteGraphicGenerator::GetButton (const std::st
     return cont;
 }
 
-std::unique_ptr<DrawableObject> SpriteGraphicGenerator::GetButtonHover (const std::string& text, float width)
+DrawableObject* SpriteGraphicGenerator::GetButtonHover (const std::string& text, float width)
 {
-    auto cont = std::make_unique <DrawableContainer> ();
+    auto cont = new DrawableContainer();
 
     cont->AddRectangle ({0., 0.}, DrawPosition::Center, width * 0.3, width * 1.05, RAYWHITE);
     cont->AddRectangle ({0., 0.}, DrawPosition::Center, width * 0.25, width, {72, 88, 130, 255});
@@ -338,9 +394,9 @@ std::unique_ptr<DrawableObject> SpriteGraphicGenerator::GetButtonHover (const st
     return cont;
 }
 
-std::unique_ptr<DrawableObject> SpriteGraphicGenerator::GetButtonPressed (const std::string& text, float width)
+DrawableObject* SpriteGraphicGenerator::GetButtonPressed (const std::string& text, float width)
 {
-    auto cont = std::make_unique <DrawableContainer> ();
+    auto cont = new DrawableContainer();
     Color shadedPressed {53, 74, 115,  255};
     Color shade {33, 40, 58, 255};
 
@@ -350,6 +406,108 @@ std::unique_ptr<DrawableObject> SpriteGraphicGenerator::GetButtonPressed (const 
     cont->AddText ({0., 0.}, DrawPosition::Center, text, width * 0.15, RAYWHITE);
 
     return cont;
+}
+
+DrawableObject* SpriteGraphicGenerator::GetMenuDecorativeBlock (int cellSize)
+{
+    auto block = new DecorativeBlock (cellSize);
+    block->AddCell ({0, 1}, Colors::blue, Colors::blue_shade);
+    block->AddCell ({0, 4}, Colors::yellow, Colors::yellow_shade);
+    block->AddCell ({0, 5}, Colors::yellow, Colors::yellow_shade);
+    block->AddCell ({1, 0}, Colors::blue, Colors::blue_shade);
+    block->AddCell ({1, 1}, Colors::blue, Colors::blue_shade);
+    block->AddCell ({1, 3}, Colors::cyan, Colors::cyan_shade);
+    block->AddCell ({1, 4}, Colors::yellow, Colors::yellow_shade);
+    block->AddCell ({1, 5}, Colors::yellow, Colors::yellow_shade);
+    block->AddCell ({2, 0}, Colors::blue, Colors::blue_shade);
+    block->AddCell ({2, 1}, Colors::cyan, Colors::cyan_shade);
+    block->AddCell ({2, 2}, Colors::cyan, Colors::cyan_shade);
+    block->AddCell ({2, 3}, Colors::cyan, Colors::cyan_shade);
+    block->AddCell ({2, 4}, Colors::cyan, Colors::cyan_shade);
+    block->AddCell ({2, 5}, Colors::green, Colors::green_shade);
+    block->AddCell ({2, 6}, Colors::yellow, Colors::yellow_shade);
+    block->AddCell ({2, 7}, Colors::yellow, Colors::yellow_shade);
+    block->AddCell ({3, 0}, Colors::cyan, Colors::cyan_shade);
+    block->AddCell ({3, 1}, Colors::cyan, Colors::cyan_shade);
+    block->AddCell ({3, 2}, Colors::cyan, Colors::cyan_shade);
+    block->AddCell ({3, 3}, Colors::green, Colors::green_shade);
+    block->AddCell ({3, 4}, Colors::green, Colors::green_shade);
+    block->AddCell ({3, 5}, Colors::green, Colors::green_shade);
+    block->AddCell ({3, 6}, Colors::yellow, Colors::yellow_shade);
+    block->AddCell ({3, 7}, Colors::yellow, Colors::yellow_shade);
+    block->AddCell ({4, 0}, Colors::red, Colors::red_shade);
+    block->AddCell ({4, 1}, Colors::yellow, Colors::yellow_shade);
+    block->AddCell ({4, 2}, Colors::yellow, Colors::yellow_shade);
+    block->AddCell ({4, 3}, Colors::purple, Colors::purple_shade);
+    block->AddCell ({4, 4}, Colors::cyan, Colors::cyan_shade);
+    block->AddCell ({4, 5}, Colors::orange, Colors::orange_shade);
+    block->AddCell ({4, 6}, Colors::orange, Colors::orange_shade);
+    block->AddCell ({4, 7}, Colors::red, Colors::red_shade);
+    block->AddCell ({4, 8}, Colors::red, Colors::red_shade);
+    block->AddCell ({5, 0}, Colors::orange, Colors::orange_shade);
+    block->AddCell ({5, 1}, Colors::yellow, Colors::yellow_shade);
+    block->AddCell ({5, 2}, Colors::yellow, Colors::yellow_shade);
+    block->AddCell ({5, 3}, Colors::purple, Colors::purple_shade);
+    block->AddCell ({5, 4}, Colors::purple, Colors::purple_shade);
+    block->AddCell ({5, 5}, Colors::orange, Colors::orange_shade);
+    block->AddCell ({5, 6}, Colors::orange, Colors::orange_shade);
+    block->AddCell ({5, 7}, Colors::red, Colors::red_shade);
+    block->AddCell ({5, 8}, Colors::red, Colors::red_shade);
+
+    return block;
+}
+
+DrawableObject* SpriteGraphicGenerator::GetMenuDecorativeBlockInversed (int cellSize)
+{
+    auto block = new DecorativeBlock (cellSize);
+    block->AddCell ({0, 7}, Colors::blue, Colors::blue_shade);
+    block->AddCell ({0, 4}, Colors::yellow, Colors::yellow_shade);
+    block->AddCell ({0, 3}, Colors::yellow, Colors::yellow_shade);
+    block->AddCell ({1, 8}, Colors::blue, Colors::blue_shade);
+    block->AddCell ({1, 7}, Colors::blue, Colors::blue_shade);
+    block->AddCell ({1, 5}, Colors::cyan, Colors::cyan_shade);
+    block->AddCell ({1, 4}, Colors::yellow, Colors::yellow_shade);
+    block->AddCell ({1, 3}, Colors::yellow, Colors::yellow_shade);
+    block->AddCell ({2, 9}, Colors::orange, Colors::orange_shade);
+    block->AddCell ({2, 8}, Colors::blue, Colors::blue_shade);
+    block->AddCell ({2, 7}, Colors::cyan, Colors::cyan_shade);
+    block->AddCell ({2, 6}, Colors::cyan, Colors::cyan_shade);
+    block->AddCell ({2, 5}, Colors::cyan, Colors::cyan_shade);
+    block->AddCell ({2, 4}, Colors::cyan, Colors::cyan_shade);
+    block->AddCell ({2, 3}, Colors::green, Colors::green_shade);
+    block->AddCell ({2, 2}, Colors::yellow, Colors::yellow_shade);
+    block->AddCell ({2, 1}, Colors::yellow, Colors::yellow_shade);
+    block->AddCell ({3, 9}, Colors::orange, Colors::orange_shade);
+    block->AddCell ({3, 8}, Colors::cyan, Colors::cyan_shade);
+    block->AddCell ({3, 7}, Colors::cyan, Colors::cyan_shade);
+    block->AddCell ({3, 6}, Colors::cyan, Colors::cyan_shade);
+    block->AddCell ({3, 5}, Colors::green, Colors::green_shade);
+    block->AddCell ({3, 4}, Colors::green, Colors::green_shade);
+    block->AddCell ({3, 3}, Colors::green, Colors::green_shade);
+    block->AddCell ({3, 2}, Colors::yellow, Colors::yellow_shade);
+    block->AddCell ({3, 1}, Colors::yellow, Colors::yellow_shade);
+    block->AddCell ({4, 9}, Colors::red, Colors::red_shade);
+    block->AddCell ({4, 8}, Colors::yellow, Colors::yellow_shade);
+    block->AddCell ({4, 7}, Colors::yellow, Colors::yellow_shade);
+    block->AddCell ({4, 6}, Colors::purple, Colors::purple_shade);
+    block->AddCell ({4, 5}, Colors::cyan, Colors::cyan_shade);
+    block->AddCell ({4, 4}, Colors::orange, Colors::orange_shade);
+    block->AddCell ({4, 3}, Colors::orange, Colors::orange_shade);
+    block->AddCell ({4, 2}, Colors::red, Colors::red_shade);
+    block->AddCell ({4, 1}, Colors::red, Colors::red_shade);
+    block->AddCell ({4, 0}, Colors::purple, Colors::purple_shade);
+    block->AddCell ({5, 9}, Colors::orange, Colors::orange_shade);
+    block->AddCell ({5, 8}, Colors::yellow, Colors::yellow_shade);
+    block->AddCell ({5, 7}, Colors::yellow, Colors::yellow_shade);
+    block->AddCell ({5, 6}, Colors::purple, Colors::purple_shade);
+    block->AddCell ({5, 5}, Colors::purple, Colors::purple_shade);
+    block->AddCell ({5, 4}, Colors::orange, Colors::orange_shade);
+    block->AddCell ({5, 3}, Colors::orange, Colors::orange_shade);
+    block->AddCell ({5, 2}, Colors::red, Colors::red_shade);
+    block->AddCell ({5, 1}, Colors::red, Colors::red_shade);
+    block->AddCell ({5, 0}, Colors::purple, Colors::purple_shade);
+
+    return block;
 }
 
 

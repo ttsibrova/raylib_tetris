@@ -29,13 +29,19 @@ public:
 public:
     DrawableObject ():
         m_pos{0., 0.},
-        m_align (DrawPosition::TopLeft)
+        m_align (DrawPosition::TopLeft),
+        m_bIsVisible (true)
     {}
 
     void SetAlign (DrawPosition align) { m_align = align; }
+    void SetVisible() { m_bIsVisible = true; }
+    void SetInvisible() { m_bIsVisible = false; }
+    bool IsVisible() const { return m_bIsVisible; }
+    const Vector2 GetPosition() const { return m_pos; }
 
 protected:
     Vector2      m_pos;
     DrawPosition m_align;
+    bool         m_bIsVisible;
 };
 

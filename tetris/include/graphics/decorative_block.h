@@ -8,7 +8,7 @@
 class Cell : public ContaineredDrawableObject
 {
 public:
-    Cell (int cellSize, const Color& mainColor, const Color& shadeColor);
+    Cell (float cellSize, const Color& mainColor, const Color& shadeColor);
 };
 
 class DecorativeBlock: public ContaineredDrawableObject
@@ -27,11 +27,11 @@ public:
     virtual void Translate (const Vector2& translation) override;
 
 private:
-    int                        m_cellSize;
+    float                        m_cellSize;
     std::vector <GridPosition> m_positions;
     std::optional <Color>      m_outlineColor;
-    int                        m_outlineSize = 2;
+    float                      m_outlineSize = 2.f;
     std::optional <Color>      m_externalShadeColor;
-    int                        m_extShadeOffset = 3;
+    float                      m_extShadeOffset = 3.f;
 };
 

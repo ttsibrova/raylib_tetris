@@ -38,7 +38,7 @@ bool InputHandler::CheckGamepadInputs()
             }
             break;
         case ActionType::PRESS:
-            if (IsGamepadButtonPressed (m_gamepadId, action.m_mappedKButton)) {
+            if (IsGamepadButtonPressed (m_gamepadId, action.m_mappedGButton)) {
                 action.m_command->Execute (m_objectsStack.top());
                 return true;
             }

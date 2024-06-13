@@ -52,6 +52,8 @@ public:
     void PushObject (Object* obj);
     bool PopObject();
 
+    Device GetActiveDevice() const { return m_lastActiveDevice; }
+
 private:
     bool CheckKeyboardInputs();
     bool CheckGamepadInputs();

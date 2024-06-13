@@ -142,44 +142,43 @@ ClassicTetrisGame::ClassicTetrisGame (DrawableContainer* ownerContainer,
 
     m_inputHandler->PushInputLayer (m_gameInputLayer.get());
     m_inputHandler->PushObject (this);
-}
-
-void ClassicTetrisGame::Init()
-{
-    //Graphics registering
-    auto grid = std::make_unique <Grid> (m_cellSize);
-    m_gameGrid = grid.get();
-
-    auto ownerBBox = m_ownerContainer->GetBoundingBox();
-    Vector2 gridPixelPos {ownerBBox.Min().x + (ownerBBox.Max().x - ownerBBox.Min().x) / 2, ownerBBox.Min().y};
-
-    m_ownerContainer->AddRectangle ({gridPixelPos.x+1, gridPixelPos.y}, DrawPosition::Top, GetGridHeight() + 4, GetGridWidth() + 7, Colors::lightBlue_dimmer);
-    m_ownerContainer->AddDrawableObject (gridPixelPos, DrawPosition::Top, std::move (grid));
-
-    auto gameHUD = std::make_unique <GridHUD> (m_gameGrid);
-    AddObserver (gameHUD.get());
-    m_ownerContainer->AddDrawableObject (gridPixelPos, DrawPosition::Top, std::move (gameHUD));
-
-    auto dBlockLeft = std::make_unique <DecorativeBlock> (m_cellSize);
-    dBlockLeft->AddCell ({0, 0}, Colors::cyan, Colors::cyan_shade);
-    dBlockLeft->AddCell ({1, 0}, Colors::cyan, Colors::cyan_shade);
-    dBlockLeft->AddCell ({1, 1}, Colors::cyan, Colors::cyan_shade);
-    dBlockLeft->AddCell ({2, 0}, Colors::cyan, Colors::cyan_shade);
-    dBlockLeft->AddCell ({2, 1}, Colors::purple, Colors::purple_shade);
-    dBlockLeft->AddCell ({2, 2}, Colors::yellow, Colors::yellow_shade);
-    dBlockLeft->AddCell ({2, 3}, Colors::yellow, Colors::yellow_shade);
-    dBlockLeft->AddCell ({3, 0}, Colors::purple, Colors::purple_shade);
-    dBlockLeft->AddCell ({3, 1}, Colors::purple, Colors::purple_shade);
-    dBlockLeft->AddCell ({3, 2}, Colors::yellow, Colors::yellow_shade);
-    dBlockLeft->AddCell ({3, 3}, Colors::yellow, Colors::yellow_shade);
-    dBlockLeft->AddCell ({3, 4}, Colors::orange, Colors::orange_shade);
-
-    m_ownerContainer->AddDrawableObject ({ownerBBox.Min().x, ownerBBox.Max().y}, DrawPosition::BottomLeft, std::move (dBlockLeft));
 
     m_moveSound = LoadSound ("resources/hi_hat.wav");
     m_fallSound = LoadSound ("resources/snare.wav");
     m_tetrisSound = LoadSound ("resources/ta_da.wav");
     m_holdSound = LoadSound ("resources/808_click.wav");
+}
+
+void ClassicTetrisGame::Init()
+{
+    //Graphics registering
+    m_gameGrid = new Grid (m_cellSize);
+
+    auto ownerBBox = m_ownerContainer->GetBoundingBox();
+    Vector2 gridPixelPos {ownerBBox.Min().x + (ownerBBox.Max().x - ownerBBox.Min().x) / 2, ownerBBox.Min().y};
+
+    m_ownerContainer->AddRectangle ({gridPixelPos.x+1, gridPixelPos.y}, DrawPosition::Top, GetGridHeight() + 4, GetGridWidth() + 7, Colors::lightBlue_dimmer);
+    m_ownerContainer->AddDrawableObject (gridPixelPos, DrawPosition::Top, m_gameGrid);
+
+    auto gameHUD = new GridHUD (m_gameGrid);
+    AddObserver (gameHUD);
+    m_ownerContainer->AddDrawableObject (gridPixelPos, DrawPosition::Top, gameHUD);
+
+    //auto dBlockLeft = std::make_unique <DecorativeBlock> (m_cellSize);
+    //dBlockLeft->AddCell ({0, 0}, Colors::cyan, Colors::cyan_shade);
+    //dBlockLeft->AddCell ({1, 0}, Colors::cyan, Colors::cyan_shade);
+    //dBlockLeft->AddCell ({1, 1}, Colors::cyan, Colors::cyan_shade);
+    //dBlockLeft->AddCell ({2, 0}, Colors::cyan, Colors::cyan_shade);
+    //dBlockLeft->AddCell ({2, 1}, Colors::purple, Colors::purple_shade);
+    //dBlockLeft->AddCell ({2, 2}, Colors::yellow, Colors::yellow_shade);
+    //dBlockLeft->AddCell ({2, 3}, Colors::yellow, Colors::yellow_shade);
+    //dBlockLeft->AddCell ({3, 0}, Colors::purple, Colors::purple_shade);
+    //dBlockLeft->AddCell ({3, 1}, Colors::purple, Colors::purple_shade);
+    //dBlockLeft->AddCell ({3, 2}, Colors::yellow, Colors::yellow_shade);
+    //dBlockLeft->AddCell ({3, 3}, Colors::yellow, Colors::yellow_shade);
+    //dBlockLeft->AddCell ({3, 4}, Colors::orange, Colors::orange_shade);
+
+    //m_ownerContainer->AddDrawableObject ({ownerBBox.Min().x, ownerBBox.Max().y}, DrawPosition::BottomLeft, std::move (dBlockLeft));
 
 }
 

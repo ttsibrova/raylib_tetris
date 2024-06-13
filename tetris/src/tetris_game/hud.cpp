@@ -16,44 +16,33 @@ GridHUD::GridHUD (const Grid* grid):
     auto gridBBox = m_grid->GetBoundingBox();
     float width = gridBBox.Max().x - gridBBox.Min().x;
     float height = gridBBox.Max().y - gridBBox.Min().y;
-    //Vector2 min {gridBBox.Min().x + 1.2 * width, gridBBox.Min().y};
-    //Vector2 max {gridBBox.Max().x + 1.2 * width, gridBBox.Max().y};
 
-    Vector2 min{0, 0};
-    Vector2 max{2.2 * width, height};
+    Vector2 min {0, 0};
+    Vector2 max {2.2f * width, height};
+    auto groupContainer = new UIGroupContainer (min, max);
+    m_graphics.AddDrawableObject ({0., 0.}, DrawPosition::TopLeft, groupContainer);
 
-    auto groupContainer = std::make_unique <UIGroupContainer> (min, max);
-    m_graphics->AddDrawableObject ({0., 0.}, DrawPosition::TopLeft, std::move (groupContainer));
-
-    float posXHUDRight = max.x - 0.3 * width;
-    float posXHUDLeft = min.x + 0.3 * width;
     float posY = 0.1 * height;
     float posYoffset = 0.18 * height;
     int cellSize = width / 20;
 
-    auto nextBlockDisplay = std::make_unique <NextBlock> (m_graphics.get(), cellSize);
-    m_children[0] = nextBlockDisplay.get();
-    m_graphics->AddDrawableObject ({max.x, posY}, DrawPosition::Right, std::move (nextBlockDisplay));
+    m_children[0] = new NextBlock (&m_graphics, cellSize);
+    m_graphics.AddDrawableObject ({max.x, posY}, DrawPosition::Right, m_children[0]);
 
-    auto scoreDisplay = std::make_unique <Score> (m_graphics.get());
-    m_children[1] = scoreDisplay.get();
-    m_graphics->AddDrawableObject ({max.x, posY + posYoffset}, DrawPosition::Right, std::move (scoreDisplay));
+    m_children[1] = new Score (&m_graphics);
+    m_graphics.AddDrawableObject ({max.x, posY + posYoffset}, DrawPosition::Right, m_children[1]);
 
-    auto holdBlockDisplay = std::make_unique <HoldBlock> (m_graphics.get(), cellSize);
-    m_children[2] = holdBlockDisplay.get();
-    m_graphics->AddDrawableObject ({min.x, posY}, DrawPosition::Left, std::move (holdBlockDisplay));
+    m_children[2] = new HoldBlock (&m_graphics, cellSize);
+    m_graphics.AddDrawableObject ({min.x, posY}, DrawPosition::Left, m_children[2]);
 
-    auto linesRemovedDisplay = std::make_unique <NumRemovedLines> (m_graphics.get());
-    m_children[3] = linesRemovedDisplay.get();
-    m_graphics->AddDrawableObject ({max.x, posY + posYoffset * 2}, DrawPosition::Right, std::move (linesRemovedDisplay));
+    m_children[3] = new NumRemovedLines (&m_graphics);
+    m_graphics.AddDrawableObject ({max.x, posY + posYoffset * 2}, DrawPosition::Right, m_children[3]);
 
-    auto speedLvlDisplay = std::make_unique <SpeedLVL> (m_graphics.get());
-    m_children[4] = speedLvlDisplay.get();
-    m_graphics->AddDrawableObject ({max.x, posY + posYoffset * 3}, DrawPosition::Right, std::move (speedLvlDisplay));
+    m_children[4] = new SpeedLVL (&m_graphics);
+    m_graphics.AddDrawableObject ({max.x, posY + posYoffset * 3}, DrawPosition::Right, m_children[4]);
 
-    auto comboDisplay = std::make_unique <Combo> (m_graphics.get());
-    m_children[5] = comboDisplay.get();
-    m_graphics->AddDrawableObject ({min.x, posY + posYoffset}, DrawPosition::Left, std::move (comboDisplay));
+    m_children[5] = new Combo (&m_graphics);
+    m_graphics.AddDrawableObject ({min.x, posY + posYoffset}, DrawPosition::Left, m_children[5]);
 }
 
 
@@ -74,22 +63,20 @@ GridHUD::HUDGroup::HUDGroup (std::string name, const DrawableContainer* ownerCon
 
     int fontSize = height * 0.3;
     float posStaticTextY = height * 0.2;
-    float posScoreY = height * 0.7;
     float offsetX = 0;//width * 0.08;
 
-    Vector2 minCorner{0, 0};
-    Vector2 maxCorner{width, height};
-    auto groupContainer = std::make_unique <UIGroupContainer> (minCorner, maxCorner);
-    //m_graphics->AddRectangle (minCorner, DrawPosition::TopLeft, BoundingBox2d (minCorner, maxCorner), DARKGREEN);
-    m_graphics->AddDrawableObject (minCorner, DrawPosition::TopLeft, std::move (groupContainer));
-    m_graphics->AddShadedText ({offsetX, posStaticTextY}, DrawPosition::Left, name, fontSize, Colors::lightBlue, BLACK);
+    Vector2 minCorner {0, 0};
+    Vector2 maxCorner {width, height};
+    auto groupContainer = new UIGroupContainer (minCorner, maxCorner);
+    m_graphics.AddDrawableObject (minCorner, DrawPosition::TopLeft, groupContainer);
+    m_graphics.AddShadedText ({offsetX, posStaticTextY}, DrawPosition::Left, name, fontSize, Colors::lightBlue, BLACK);
 }
 
 
 GridHUD::Score::Score (const DrawableContainer* ownerContainer):
     HUDGroup ("Score:", ownerContainer)
 {
-    auto blockBBox = m_graphics->GetBoundingBox();
+    auto blockBBox = m_graphics.GetBoundingBox();
     float height = blockBBox.Height();
     float width = blockBBox.Width();
 
@@ -99,19 +86,18 @@ GridHUD::Score::Score (const DrawableContainer* ownerContainer):
 
     Vector2 minCorner {0, 0};
 
-    m_graphics->AddRectangle ({offsetX, posScoreY}, DrawPosition::Left, fontSize + 3, width, GRAY);
-    m_graphics->AddRectangle ({offsetX + 3, posScoreY}, DrawPosition::Left, fontSize - 3, width - 6, BLACK);
+    m_graphics.AddRectangle ({offsetX, posScoreY}, DrawPosition::Left, fontSize + 3, width, GRAY);
+    m_graphics.AddRectangle ({offsetX + 3, posScoreY}, DrawPosition::Left, fontSize - 3, width - 6, BLACK);
 
-    auto scoreText = std::make_unique <shapes::Text> ("0", fontSize);
-    scoreText->SetColor (Colors::yellow);
-    m_text = scoreText.get();
-    m_graphics->AddDrawableObject ({width - offsetX - 8, posScoreY + 2}, DrawPosition::Right, std::move (scoreText));
+    m_text = new shapes::Text ("0", fontSize);
+    m_text->SetColor (Colors::yellow);
+    m_graphics.AddDrawableObject ({width - offsetX - 8, posScoreY + 2}, DrawPosition::Right, m_text);
 }
 
 GridHUD::SpeedLVL::SpeedLVL (const DrawableContainer* ownerContainer):
     HUDGroup ("Level:", ownerContainer)
 {
-    auto blockBBox = m_graphics->GetBoundingBox();
+    auto blockBBox = m_graphics.GetBoundingBox();
     float height = blockBBox.Height();
     float width = blockBBox.Width();
 
@@ -122,20 +108,19 @@ GridHUD::SpeedLVL::SpeedLVL (const DrawableContainer* ownerContainer):
     Vector2 minCorner {0, 0};
 
     float fieldWidth = MeasureText ("000", fontSize);
-    m_graphics->AddRectangle ({offsetX, posScoreY}, DrawPosition::Left, fontSize + 3, fieldWidth + 6, GRAY);
-    auto blackField = m_graphics->AddRectangle ({offsetX + 3, posScoreY}, DrawPosition::Left, fontSize - 3, fieldWidth, BLACK);
+    m_graphics.AddRectangle ({offsetX, posScoreY}, DrawPosition::Left, fontSize + 3, fieldWidth + 6, GRAY);
+    auto blackField = m_graphics.AddRectangle ({offsetX + 3, posScoreY}, DrawPosition::Left, fontSize - 3, fieldWidth, BLACK);
     Vector2 textPos = GraphicsHelper::ComputePosition (DrawPosition::Right, blackField->GetBoundingBox());
 
-    auto speedText = std::make_unique <shapes::Text> ("1", fontSize);
-    speedText->SetColor (Colors::purple);
-    m_text = speedText.get();
-    m_graphics->AddDrawableObject ({textPos.x - 4, textPos.y + 2}, DrawPosition::Right, std::move (speedText));
+    m_text = new shapes::Text ("1", fontSize);
+    m_text->SetColor (Colors::purple);
+    m_graphics.AddDrawableObject ({textPos.x - 4, textPos.y + 2}, DrawPosition::Right, m_text);
 }
 
 GridHUD::Combo::Combo (const DrawableContainer* ownerContainer):
     HUDGroup ("Combo:", ownerContainer)
 {
-    auto blockBBox = m_graphics->GetBoundingBox();
+    auto blockBBox = m_graphics.GetBoundingBox();
     float height = blockBBox.Height();
     float width = blockBBox.Width();
 
@@ -145,20 +130,19 @@ GridHUD::Combo::Combo (const DrawableContainer* ownerContainer):
 
     Vector2 minCorner {0, 0};
 
-    m_graphics->AddRectangle ({offsetX, posScoreY}, DrawPosition::Left, fontSize + 3, width, GRAY);
-    m_graphics->AddRectangle ({offsetX + 3, posScoreY}, DrawPosition::Left, fontSize - 3, width - 6, BLACK);
+    m_graphics.AddRectangle ({offsetX, posScoreY}, DrawPosition::Left, fontSize + 3, width, GRAY);
+    m_graphics.AddRectangle ({offsetX + 3, posScoreY}, DrawPosition::Left, fontSize - 3, width - 6, BLACK);
 
-    auto comboText = std::make_unique <shapes::Text> ("", fontSize);
-    comboText->SetColor (Colors::yellow);
-    m_text = comboText.get();
-    m_graphics->AddDrawableObject ({width - offsetX - 8, posScoreY + 2}, DrawPosition::Right, std::move (comboText));
+    m_text = new shapes::Text ("", fontSize);
+    m_text->SetColor (Colors::yellow);
+    m_graphics.AddDrawableObject ({width - offsetX - 8, posScoreY + 2}, DrawPosition::Right, m_text);
 }
 
 
 GridHUD::NumRemovedLines::NumRemovedLines (const DrawableContainer* ownerContainer):
     HUDGroup ("Line:", ownerContainer)
 {
-    auto blockBBox = m_graphics->GetBoundingBox();
+    auto blockBBox = m_graphics.GetBoundingBox();
     float height = blockBBox.Height();
     float width = blockBBox.Width();
 
@@ -168,13 +152,12 @@ GridHUD::NumRemovedLines::NumRemovedLines (const DrawableContainer* ownerContain
 
     Vector2 minCorner {0, 0};
 
-    m_graphics->AddRectangle ({offsetX, posScoreY}, DrawPosition::Left, fontSize + 3, width, GRAY);
-    m_graphics->AddRectangle ({offsetX + 3, posScoreY}, DrawPosition::Left, fontSize - 3, width - 6, BLACK);
+    m_graphics.AddRectangle ({offsetX, posScoreY}, DrawPosition::Left, fontSize + 3, width, GRAY);
+    m_graphics.AddRectangle ({offsetX + 3, posScoreY}, DrawPosition::Left, fontSize - 3, width - 6, BLACK);
 
-    auto linesText = std::make_unique <shapes::Text> ("0", fontSize);
-    linesText->SetColor (Colors::green);
-    m_text = linesText.get();
-    m_graphics->AddDrawableObject ({width - offsetX - 8, posScoreY + 2}, DrawPosition::Right, std::move (linesText));
+    m_text = new shapes::Text ("0", fontSize);
+    m_text->SetColor (Colors::green);
+    m_graphics.AddDrawableObject ({width - offsetX - 8, posScoreY + 2}, DrawPosition::Right, m_text);
 }
 
 void GridHUD::Score::onNotify (const Object& obj, Event e)
@@ -250,7 +233,7 @@ void GridHUD::HUDWithBlock::Draw() const
     if (!m_block) {
         return;
     }
-    auto bbox = m_graphics->GetBoundingBox();
+    auto bbox = m_graphics.GetBoundingBox();
 
     auto blockBBox = m_block->GetBBox();
     int blockSizeX = blockBBox.max.m_col - blockBBox.min.m_col + 1;
