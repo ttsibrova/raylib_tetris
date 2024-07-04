@@ -24,55 +24,6 @@ void Sequence::PerformAnimation (DrawableObject* obj)
     m_currentFrame++;
 }
 
-void Sequence::AddMoveCommand (int frameLength, Vector2 translation)
-{
-    m_sequenceLength = std::max (frameLength, m_sequenceLength);
-    auto command = new MoveAnimationCommand (translation, frameLength);
-    m_animationCommands.push_back (command);
-}
-
-void Sequence::AddScaleCommand (int frameLength, float scale)
-{
-    m_sequenceLength = std::max (frameLength, m_sequenceLength);
-    auto command = new ScaleCommand (scale, frameLength);
-    m_animationCommands.push_back (command);
-}
-
-void Sequence::AddSetPositionCommand (int frameLength, Vector2 targetPosition)
-{
-    m_sequenceLength = std::max (frameLength, m_sequenceLength);
-    auto command = new SetPositionAnimationCommand (targetPosition, frameLength);
-    m_animationCommands.push_back (command);
-}
-
-void Sequence::AddChangeColorCommand (int frameLength, Color targetColor)
-{
-    m_sequenceLength = std::max (frameLength, m_sequenceLength);
-    auto command = new ShapeChangeColorCommand (targetColor, frameLength);
-    m_animationCommands.push_back (command);
-}
-
-void Sequence::AddChangeOpacityCommand (int frameLength, unsigned char opacity)
-{
-    m_sequenceLength = std::max (frameLength, m_sequenceLength);
-    auto command = new ChangeOpacityCommand (opacity, frameLength);
-    m_animationCommands.push_back (command);
-}
-
-void Sequence::AddSetOpacityCommand (int frameLength, unsigned char opacity)
-{
-    m_sequenceLength = std::max (frameLength, m_sequenceLength);
-    auto command = new SetOpacityCommand (opacity, frameLength);
-    m_animationCommands.push_back (command);
-}
-
-void Sequence::AddSetColorCommand (int frameLength, Color targetColor)
-{
-    m_sequenceLength = std::max (frameLength, m_sequenceLength);
-    auto command = new ShapeSetColorCommand (targetColor, frameLength);
-    m_animationCommands.push_back (command);
-}
-
 void Animation::Tick()
 {
     if (m_bIsPlaying) {
@@ -119,6 +70,46 @@ void Animation::Translate (const Vector2& translation)
 void Animation::Scale (float scale)
 {
     m_obj->Scale (scale);
+}
+
+void Animation::AddMoveAnimStep (int frameLength, Vector2 translation, bool joinWithPrevious)
+{
+    AddSequence <MoveAnimationCommand> (joinWithPrevious, frameLength, translation);
+}
+
+void Animation::AddScaleAnimStep (int frameLength, float scale, bool joinWithPrevious)
+{
+    AddSequence <ScaleCommand> (joinWithPrevious, frameLength, scale);
+}
+
+void Animation::AddSetPositionAnimStep (int frameLength, Vector2 targetPosition, bool joinWithPrevious)
+{
+    AddSequence <SetPositionAnimationCommand> (joinWithPrevious, frameLength, targetPosition);
+}
+
+void Animation::AddChangeColorAnimStep (int frameLength, Color targetColor, bool joinWithPrevious)
+{
+    AddSequence <ShapeChangeColorCommand> (joinWithPrevious, frameLength, targetColor);
+}
+
+void Animation::AddChangeOpacityAnimStep (int frameLength, unsigned char opacity, bool joinWithPrevious)
+{
+    AddSequence <ChangeOpacityCommand> (joinWithPrevious, frameLength, opacity);
+}
+
+void Animation::AddSetOpacityAnimStep (int frameLength, unsigned char opacity, bool joinWithPrevious)
+{
+    AddSequence <SetOpacityCommand> (joinWithPrevious, frameLength, opacity);
+}
+
+void Animation::AddSetColorAnimStep (int frameLength, Color targetColor, bool joinWithPrevious)
+{
+    AddSequence <ShapeSetColorCommand> (joinWithPrevious, frameLength, targetColor);
+}
+
+void Animation::AddWaitAnimStep (int frameLength, bool joinWithPrevious)
+{
+    AddSequence <WaitCommand> (joinWithPrevious, frameLength);
 }
 
 void Animation::ResetObjectState()

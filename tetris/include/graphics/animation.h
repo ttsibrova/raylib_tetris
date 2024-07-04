@@ -47,19 +47,29 @@ public:
     int GetFrameLength() const { return m_sequenceLength; }
     void Reset() { m_currentFrame = 0; }
 
-public:
-    void AddMoveCommand (int frameLength, Vector2 translation);
-    void AddScaleCommand (int frameLength, float scale);
-    void AddSetPositionCommand (int frameLength, Vector2 targetPosition);
-    void AddChangeColorCommand (int frameLength, Color targetColor);
-    void AddChangeOpacityCommand (int frameLength, unsigned char opacity);
-    void AddSetOpacityCommand (int frameLength, unsigned char opacity);
-    void AddSetColorCommand (int frameLength, Color targetColor);
+protected:
+    template <typename CommandType, typename ... Ts>
+    void AddCommand (int frameLength, Ts... Args)
+    {
+        m_sequenceLength = std::max (frameLength, m_sequenceLength);
+        auto command = new CommandType (frameLength, Args...);
+        m_animationCommands.push_back (command);
+    }
+
+    //void AddMoveCommand (int frameLength, Vector2 translation);
+    //void AddScaleCommand (int frameLength, float scale);
+    //void AddSetPositionCommand (int frameLength, Vector2 targetPosition);
+    //void AddChangeColorCommand (int frameLength, Color targetColor);
+    //void AddChangeOpacityCommand (int frameLength, unsigned char opacity);
+    //void AddSetOpacityCommand (int frameLength, unsigned char opacity);
+    //void AddSetColorCommand (int frameLength, Color targetColor);
 
 private:
     int                             m_currentFrame;
     int                             m_sequenceLength;
     std::vector <AnimationCommand*> m_animationCommands;
+
+    friend class Animation;
 };
 
 
@@ -89,10 +99,30 @@ public:
     virtual void Translate (const Vector2& translation) override;
     virtual void Scale (float scale) override;
 
-protected:
+public:
+    void AddMoveAnimStep          (int frameLength, Vector2 translation   , bool joinWithPrevious = false);
+    void AddScaleAnimStep         (int frameLength, float scale           , bool joinWithPrevious = false);
+    void AddSetPositionAnimStep   (int frameLength, Vector2 targetPosition, bool joinWithPrevious = false);
+    void AddChangeColorAnimStep   (int frameLength, Color targetColor     , bool joinWithPrevious = false);
+    void AddChangeOpacityAnimStep (int frameLength, unsigned char opacity , bool joinWithPrevious = false);
+    void AddSetOpacityAnimStep    (int frameLength, unsigned char opacity , bool joinWithPrevious = false);
+    void AddSetColorAnimStep      (int frameLength, Color targetColor     , bool joinWithPrevious = false);
+    void AddWaitAnimStep          (int frameLength,                         bool joinWithPrevious = false);
+
+private:
+    template <typename Command, typename ... Ts>
+    void AddSequence (bool joinWithPrevious, Ts... Args) {
+        if (joinWithPrevious && m_animationSequences.size() > 0) {
+            m_animationSequences.back().AddCommand <Command> (Args...);
+        } else {
+            Sequence seq;
+            seq.AddCommand <Command> (Args...);
+            m_animationSequences.push_back (std::move (seq));
+        }
+    }
     void ResetObjectState();
 
-protected:
+private:
     DrawableObject*        m_obj;
     Vector2                m_initialPos;
     bool                   m_bIsPlaying;
@@ -105,7 +135,7 @@ protected:
 class MoveAnimationCommand: public AnimationCommand
 {
 public:
-    MoveAnimationCommand (Vector2 translation, int maxFrames):
+    MoveAnimationCommand (int maxFrames, Vector2 translation):
         AnimationCommand (maxFrames),
         m_translation (translation)
     {}
@@ -120,7 +150,7 @@ private:
 class SetPositionAnimationCommand: public AnimationCommand
 {
 public:
-    SetPositionAnimationCommand (Vector2 targetPos, int maxFrames):
+    SetPositionAnimationCommand (int maxFrames, Vector2 targetPos):
         AnimationCommand (maxFrames),
         m_targetPos (targetPos)
     {}
@@ -135,7 +165,7 @@ private:
 class ChangeOpacityCommand: public AnimationCommand
 {
 public:
-    ChangeOpacityCommand (unsigned char targetAlpha, int maxFrames):
+    ChangeOpacityCommand (int maxFrames, unsigned char targetAlpha):
         AnimationCommand (maxFrames),
         m_targetAlpha (targetAlpha)
     {}
@@ -150,7 +180,7 @@ private:
 class SetOpacityCommand: public AnimationCommand
 {
 public:
-    SetOpacityCommand (unsigned char targetAlpha, int maxFrames):
+    SetOpacityCommand (int maxFrames, unsigned char targetAlpha):
         AnimationCommand (maxFrames),
         m_targetAlpha (targetAlpha)
     {}
@@ -165,7 +195,7 @@ private:
 class ShapeChangeColorCommand: public AnimationCommand
 {
 public:
-    ShapeChangeColorCommand (Color targetColor, int maxFrames):
+    ShapeChangeColorCommand (int maxFrames, Color targetColor):
         AnimationCommand (maxFrames),
         m_targetColor (targetColor)
     {}
@@ -180,7 +210,7 @@ private:
 class ShapeSetColorCommand: public AnimationCommand
 {
 public:
-    ShapeSetColorCommand (Color targetColor, int maxFrames):
+    ShapeSetColorCommand (int maxFrames, Color targetColor):
         AnimationCommand (maxFrames),
         m_targetColor (targetColor)
     {}
@@ -195,7 +225,7 @@ private:
 class ScaleCommand: public AnimationCommand
 {
 public:
-    ScaleCommand (float scale, int maxFrames):
+    ScaleCommand (int maxFrames, float scale):
         AnimationCommand (maxFrames),
         m_targetScale (scale)
     {}
@@ -205,5 +235,17 @@ protected:
 
 private:
     float m_targetScale;
+};
+
+class WaitCommand: public AnimationCommand
+{
+public:
+    WaitCommand (int maxFrames):
+        AnimationCommand (maxFrames)
+    {}
+
+protected:
+    virtual void AnimateFrameImpl (int currentFrame, DrawableObject* obj) override {}
+
 };
 

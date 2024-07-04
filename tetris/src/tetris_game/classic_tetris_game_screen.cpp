@@ -321,21 +321,12 @@ CTGHighScoresScreen::CTGHighScoresScreen (const ScreenSize& screenSize, HighScor
 
 
             auto CreateAnim = [] (shapes::Text* text, std::vector <Animation*>& anims) {
-                Sequence colorChangeToWhite;
-                colorChangeToWhite.AddChangeColorCommand (60, RAYWHITE);
-                Sequence stayWhite;
-                stayWhite.AddSetColorCommand (30, RAYWHITE);
-                Sequence colorChangeToRed;
-                colorChangeToRed.AddChangeColorCommand (60, Colors::red);
-                Sequence stayRed;
-                stayRed.AddSetColorCommand (30, Colors::red);
-
                 auto animation = new Animation (text);
-                animation->AddSequence (std::move (colorChangeToWhite));
-                animation->AddSequence (std::move (stayWhite));
-                animation->AddSequence (std::move (colorChangeToRed));
-                animation->AddSequence (std::move (stayRed));
-                animation->EnableLooping ();
+                animation->AddChangeColorAnimStep (60, RAYWHITE);
+                animation->AddSetColorAnimStep (30, RAYWHITE);
+                animation->AddChangeColorAnimStep (60, Colors::red);
+                animation->AddSetColorAnimStep (30, Colors::red);
+                animation->EnableLooping();
                 animation->Play ();
                 anims.push_back (animation);
                 return animation;

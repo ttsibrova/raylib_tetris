@@ -52,7 +52,7 @@ TitleScreen::TitleScreen (InputHandler* iHandler, const ScreenSize& screenSize):
     auto screenBBox = m_screenGraphics.GetBoundingBox();
     Vector2 topCenter = GraphicsHelper::ComputePosition (DrawPosition::Top, screenBBox);
 
-    Vector2 logoPos {topCenter.x, topCenter.y + height * 0.3};
+    Vector2 logoPos {topCenter.x, topCenter.y + height * 0.3f};
     auto animLogo = new Animation (logoContainer);
     m_screenGraphics.AddDrawableObject (logoPos, DrawPosition::Top, animLogo);
     auto logoBBox = logoContainer->GetBoundingBox();
@@ -63,19 +63,15 @@ TitleScreen::TitleScreen (InputHandler* iHandler, const ScreenSize& screenSize):
         auto bbox = anim->GetBoundingBox();
 
         Vector2 initPos {-(bbox.Width() + 10), pos.y};
-        Sequence setPos;
-        setPos.AddSetPositionCommand (1, initPos);
-        Sequence move;
-        move.AddMoveCommand (25, GraphicsHelper::ComputeTranslation (initPos, pos));
-
-        anim->AddSequence (std::move (setPos));
-        anim->AddSequence (std::move (move));
+        anim->Translate (GraphicsHelper::ComputeTranslation (pos, initPos));
+        anim->AddMoveAnimStep (25, GraphicsHelper::ComputeTranslation (initPos, pos));
         anim->Play();
         anims.push_back (anim);
 
         return anim;
     };
 
+    animRedR->AddWaitAnimStep (40);
     FillMoveAnim (animRedR, m_animsLogo);
     FillMoveAnim (animGreenT, m_animsLogo);
     FillMoveAnim (animYellowE, m_animsLogo);
@@ -85,14 +81,9 @@ TitleScreen::TitleScreen (InputHandler* iHandler, const ScreenSize& screenSize):
     auto posS = animPurpleS->GetPosition();
     auto bboxS = animPurpleS->GetBoundingBox();
 
-    Vector2 initPosS {screenSize.m_width + 2, posS.y};
-    Sequence setPosS;
-    setPosS.AddSetPositionCommand (1, initPosS);
-    Sequence moveS;
-    moveS.AddMoveCommand (34, GraphicsHelper::ComputeTranslation (initPosS, posS));
-
-    animPurpleS->AddSequence (std::move (setPosS));
-    animPurpleS->AddSequence (std::move (moveS));
+    Vector2 initPosS {screenSize.m_width + 2.f, posS.y};
+    animPurpleS->Translate (GraphicsHelper::ComputeTranslation (posS, initPosS));
+    animPurpleS->AddMoveAnimStep (34, GraphicsHelper::ComputeTranslation (initPosS, posS));
     animPurpleS->Play();
     m_animsLogo.push_back (animPurpleS);
 
@@ -100,19 +91,11 @@ TitleScreen::TitleScreen (InputHandler* iHandler, const ScreenSize& screenSize):
     auto bboxI = animCyanI->GetBoundingBox();
 
     Vector2 initPosI {posI.x, -(bboxI.Height() + 10)};
-    Sequence setPosI;
-    setPosI.AddSetPositionCommand (27, initPosI);
-    Sequence moveI;
-    moveI.AddMoveCommand (25, GraphicsHelper::ComputeTranslation (initPosI, posI));
-
-    animCyanI->AddSequence (std::move (setPosI));
-    animCyanI->AddSequence (std::move (moveI));
+    animCyanI->Translate (GraphicsHelper::ComputeTranslation (posI, initPosI));
+    animCyanI->AddWaitAnimStep (27);
+    animCyanI->AddMoveAnimStep (25, GraphicsHelper::ComputeTranslation (initPosI, posI));
     animCyanI->Play();
     m_animsLogo.push_back (animCyanI);
-
-    for (auto& anim : m_animsLogo) {
-        anim->Tick();
-    }
 
     int dBlockCellSize = 35 * screenSize.m_scale;
     auto block1 = SpriteGraphicGenerator::GetMenuDecorativeBlock (dBlockCellSize);
@@ -134,17 +117,9 @@ TitleScreen::TitleScreen (InputHandler* iHandler, const ScreenSize& screenSize):
         auto pos = anim->GetPosition();
         auto bbox = anim->GetBoundingBox();
 
-        Vector2 initPos {pos.x, screenSize.m_height};
-        Sequence setPos;
-        setPos.AddSetPositionCommand (1, initPos);
-        Sequence move;
-        move.AddMoveCommand (52, GraphicsHelper::ComputeTranslation (initPos, pos));
-
-        anim->AddSequence (std::move (setPos));
-        anim->AddSequence (std::move (move));
-        anim->Play();
-        anim->Tick();
-        anim->Pause();
+        Vector2 initPos {pos.x, (float)screenSize.m_height};
+        anim->Translate (GraphicsHelper::ComputeTranslation (pos, initPos));
+        anim->AddMoveAnimStep (52, GraphicsHelper::ComputeTranslation (initPos, pos));
         anims.push_back (anim);
 
         return anim;
@@ -154,22 +129,14 @@ TitleScreen::TitleScreen (InputHandler* iHandler, const ScreenSize& screenSize):
     FillBlockAnim (animBlock2, m_animsBlocks);
     FillBlockAnim (animBlock3, m_animsBlocks);
 
-    Vector2 pressPlayPos {topCenter.x, topCenter.y + height * 0.6};
+    Vector2 pressPlayPos {topCenter.x, topCenter.y + height * 0.6f};
     auto pressText = m_screenGraphics.AddText (pressPlayPos, DrawPosition::Top, "Press ENTER to play", screenSize.m_height * 0.05f, RAYWHITE);
     pressText->SetAlpha (0);
     auto animPress = new Animation (pressText);
-    Sequence pauseNoColor;
-    pauseNoColor.AddSetOpacityCommand (20, 0);
-    Sequence pauseColor;
-    pauseColor.AddSetOpacityCommand (20, 255);
-    Sequence fadeIn;
-    fadeIn.AddChangeOpacityCommand (100, 255);
-    Sequence fadeOut;
-    fadeOut.AddChangeOpacityCommand (100, 0);
-    animPress->AddSequence (std::move (pauseNoColor));
-    animPress->AddSequence (std::move (fadeIn));
-    animPress->AddSequence (std::move (pauseColor));
-    animPress->AddSequence (std::move (fadeOut));
+    animPress->AddSetOpacityAnimStep (20, 0);
+    animPress->AddChangeOpacityAnimStep (100, 255);
+    animPress->AddSetOpacityAnimStep (20, 255);
+    animPress->AddChangeOpacityAnimStep (100, 0);
     m_animPress = animPress;
 
     Vector2 flashMin {logoBBox.Min().x-logoBBox.Width() * 0.5f, logoBBox.Min().y - logoBBox.Height() * 0.6f};
@@ -181,19 +148,13 @@ TitleScreen::TitleScreen (InputHandler* iHandler, const ScreenSize& screenSize):
     auto animFlash = new Animation (flash);
     auto AddFlashSequence = [animFlash] (unsigned char opacity) {
         int length = 6;
-        Sequence up;
-        up.AddChangeOpacityCommand (length, opacity);
-        up.AddScaleCommand (length, 1.3f);
-        Sequence down;
-        down.AddChangeOpacityCommand (length, 0);
-        down.AddScaleCommand (length, 1.3f);
-        animFlash->AddSequence (std::move (up));
-        animFlash->AddSequence (std::move (down));
+        animFlash->AddChangeOpacityAnimStep (length, opacity);
+        animFlash->AddScaleAnimStep (length, 1.3f, true);
+        animFlash->AddChangeOpacityAnimStep (length, 0);
+        animFlash->AddScaleAnimStep (length, 1.3f, true);
     };
 
-    Sequence setOp;
-    setOp.AddSetOpacityCommand (1, 160);
-    animFlash->AddSequence (std::move (setOp));
+    //animFlash->SetAlpha (160);
 
     AddFlashSequence (250);
     AddFlashSequence (220);
@@ -204,12 +165,8 @@ TitleScreen::TitleScreen (InputHandler* iHandler, const ScreenSize& screenSize):
     m_animsLogo.push_back (animFlash);
 
     Sequence idleMoveUp;
-    idleMoveUp.AddMoveCommand (160, {0.f, -10.f});
-    Sequence idleMoveDown;
-    idleMoveDown.AddMoveCommand (160, {0.f, 10.f});
-
-    animLogo->AddSequence (std::move (idleMoveUp));
-    animLogo->AddSequence (std::move (idleMoveDown));
+    animLogo->AddMoveAnimStep (160, {0.f, -10.f});
+    animLogo->AddMoveAnimStep (160, {0.f, 10.f});
     animLogo->EnableLooping();
     animLogo->Play();
     m_animsLogo.push_back (animLogo);
