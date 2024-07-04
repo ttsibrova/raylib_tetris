@@ -2,6 +2,7 @@
 #include <engine/command.h>
 #include <graphics/drawable_object.h>
 
+
 class MenuElement: public DrawableObject
 {
 public:
@@ -14,12 +15,7 @@ public:
     void SetSelected() { m_bIsSelected = true; }
     void SetDeselected() { m_bIsSelected = false; }
 
-    void ExecuteInteracion()
-    {
-        m_bIsPressed = true;
-        m_bIsSelected = false;
-        m_interaction->ExecuteContext();
-    }
+    void ExecuteInteracion();
 
 protected:
     bool  m_bIsSelected;

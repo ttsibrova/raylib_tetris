@@ -12,13 +12,10 @@ public:
         m_color (Colors::lightBlue)
     {}
 
-    const Color& GetColor() const  { return m_color; }
-    void SetColor (const Color& color) { m_color = color; }
+    Color GetColor() const  { return { m_color.r, m_color.g, m_color.b, GetAlpha() }; }
+    void SetColor (const Color& color) { m_color = color; m_alphaCh = m_color.a; }
 
     virtual void Translate (const Vector2& translation) override;
-
-protected:
-    void UpdatePosition (const BoundingBox2d& oldBBox, const BoundingBox2d& newBBox);
 
 private:
     Color        m_color;

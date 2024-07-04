@@ -1,6 +1,6 @@
 #pragma once
-#include <tetris_game/grid.h>
 #include <tetris_game/blocks_factory.h>
+#include <tetris_game/grid.h>
 #include <tetris_game/hud.h>
 #include <engine/game_object.h>
 #include <engine/input_handler.h>
@@ -88,8 +88,8 @@ public:
     ClassicTetrisGame (DrawableContainer* ownerContainer,
                        InputHandler* inputHandler,
                        float scale,
-                       const Settings::GamepadMappings& gmap,
-                       const Settings::KeyboardMappings& kmap);
+                       const settings::GamepadMappings& gmap,
+                       const settings::KeyboardMappings& kmap);
 
     void Init();
     void Start();
@@ -130,6 +130,7 @@ private:
     void UpdateFallTime();
     void UpdateGhostBlock();
     void UpdateFallingBlock();
+    bool TestBlock (const GridPosition& offset);
 
 private:
     int                          m_cellSize;
@@ -147,15 +148,10 @@ private:
     const double                 m_baseFallTime = 0.85;
     double                       m_lastFallStarted;
     char                         m_speedLvl;
-                                 
+
     BlocksFactory                m_blockFactory;
     InputHandler*                m_inputHandler;
     std::unique_ptr <InputLayer> m_gameInputLayer;
     DrawableContainer*           m_ownerContainer;
-
-    Sound                     m_moveSound;
-    Sound                     m_fallSound;
-    Sound                     m_tetrisSound;
-    Sound                     m_holdSound;
 };
 

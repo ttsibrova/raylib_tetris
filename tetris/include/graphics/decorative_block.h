@@ -25,9 +25,10 @@ public:
 
     virtual void Draw() const override;
     virtual void Translate (const Vector2& translation) override;
+    virtual void Scale (float scale) override;
 
 private:
-    float                        m_cellSize;
+    float                      m_cellSize;
     std::vector <GridPosition> m_positions;
     std::optional <Color>      m_outlineColor;
     float                      m_outlineSize = 2.f;

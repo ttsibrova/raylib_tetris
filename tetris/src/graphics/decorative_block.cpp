@@ -1,5 +1,8 @@
 #include <graphics/decorative_block.h>
 
+#include <graphics/graphics_helper.h>
+
+
 Cell::Cell (float cellSize, const Color& mainColor, const Color& shadeColor)
 {
     float shadeSize = cellSize / 7;
@@ -73,4 +76,25 @@ void DecorativeBlock::Translate (const Vector2& translation)
     m_pos.x += translation.x;
     m_pos.y += translation.y;
     m_graphics.Translate (translation);
+}
+
+void DecorativeBlock::Scale (float scale)
+{
+    auto oldBBox = GetBoundingBox();
+    m_cellSize *= scale;
+    m_graphics.Scale (scale);
+
+    auto newBBox = GetBoundingBox();
+    UpdatePosition (oldBBox, newBBox);
+
+    //size_t idx (0);
+    //for (auto& obj : GetObjects()) {
+    //    float posX = m_pos.x + m_positions[idx].m_col * (m_cellSize + 1);
+    //    float posY = m_pos.y + m_positions[idx].m_row * (m_cellSize + 1);
+
+    //    auto currPos = obj->GetPosition();
+    //    auto trsl = GraphicsHelper::ComputeTranslation (currPos, {posX, posY});
+    //    obj->Translate (trsl);
+    //    idx++;
+    //}
 }

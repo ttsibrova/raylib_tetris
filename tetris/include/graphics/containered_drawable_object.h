@@ -15,5 +15,8 @@ public:
     virtual void Scale (float scale) override;
 
 protected:
+    std::vector <DrawableObject*> GetObjects() { return m_graphics.m_objects; }
+
+protected:
     DrawableContainer m_graphics;
 };

@@ -1,7 +1,9 @@
 #pragma once
 #include <raylib/raylib.h>
 
-namespace Settings {
+#include <utility>
+
+namespace settings {
 struct GamepadMappings
 {
     GamepadButton m_HoldButton     = GAMEPAD_BUTTON_LEFT_TRIGGER_1;
@@ -18,3 +20,39 @@ struct KeyboardMappings {
     KeyboardKey m_MoveDown      = KEY_DOWN;
 };
 }
+
+class Settings
+{
+public:
+    static Settings& GetInstance();
+    static void Init();
+
+    void SetKeyboardMappings (settings::KeyboardMappings&& kmap) { m_kmap = std::move (kmap); }
+    void SetGamepadMappings (settings::GamepadMappings&& gmap) { m_gmap = std::move (gmap); }
+    void SetScale (float scale) { m_scale = scale; }
+    void SetIsAudioEnabled (bool bIsAudioEnabled) { m_bIsAudioEnabled = bIsAudioEnabled; }
+
+    const settings::KeyboardMappings& GetKeyboardMappings() const { return m_kmap; }
+    settings::KeyboardMappings& GetKeyboardMappings() { return m_kmap; }
+    const settings::GamepadMappings& GetGamepadMappings() const { return m_gmap; }
+    settings::GamepadMappings& GetGamepadMappings() { return m_gmap; }
+    float GetScale() { return m_scale; }
+    bool IsAudioEnabled() { return m_bIsAudioEnabled; }
+
+    Settings (Settings const&) = delete;
+    void operator= (Settings const&) = delete;
+
+private:
+    Settings():
+        m_scale (1.f),
+        m_bIsAudioEnabled (true)
+    {}
+
+private:
+    float            m_scale;
+    bool             m_bIsAudioEnabled;
+    settings::GamepadMappings  m_gmap;
+    settings::KeyboardMappings m_kmap;
+};
+
+

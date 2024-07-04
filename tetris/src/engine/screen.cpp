@@ -74,8 +74,6 @@ MainMenuScreen::MainMenuScreen (InputHandler* iHandler, const ScreenSize& screen
 
     Vector2 menuPos {topCenter.x, topCenter.y + height * 0.45};
     m_screenGraphics.AddDrawableObject (menuPos, DrawPosition::Top, menu);
-
-
 }
 
 MainMenuScreen::~MainMenuScreen()

@@ -23,6 +23,7 @@ public:
     void AddDrawableObject (Vector2 pixelPos, DrawPosition alignPos, DrawableObject* obj);
 
 public:
+    virtual void SetAlpha (unsigned char alpha) override;
     virtual void Draw() const override;
     virtual BoundingBox2d GetBoundingBox() const override;
     virtual void Translate (const Vector2& translation) override;
@@ -32,5 +33,7 @@ public:
 
 protected:
     std::vector <DrawableObject*> m_objects;
+
+    friend class ContaineredDrawableObject;
 };
 

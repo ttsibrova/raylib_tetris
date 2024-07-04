@@ -7,7 +7,9 @@ enum class Screens
 {
     NONE,
     MAIN_MENU,
+    TITLE,
     TETRIS_GAME,
+    TETRIS_HIGHSCORES,
     SETTINGS
 };
 
@@ -16,6 +18,7 @@ struct ScreenSize {
     int   m_height;
     float m_scale = 1.0;
 };
+
 
 class ScreenManager : public GameObject
 {

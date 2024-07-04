@@ -54,7 +54,9 @@ project(Tetris)
 # Tetris Project
 #===========================
 set_project (Tetris "${solution_path}/tetris")
-target_link_libraries (Tetris raylibdll)
+target_link_libraries (Tetris raylib
+                              winmm)
+
 
 #===========================
 # Test Project

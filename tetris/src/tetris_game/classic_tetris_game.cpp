@@ -2,6 +2,7 @@
 
 #include <tetris_game/drawer.h>
 #include <tetris_game/blocks.h>
+#include <engine/audio_manager.h>
 #include <graphics/drawable_container.h>
 #include <graphics/decorative_block.h>
 #include <graphics/sprites.h>
@@ -115,8 +116,8 @@ bool CTGPauseCommand::Execute (Object* obj)
 ClassicTetrisGame::ClassicTetrisGame (DrawableContainer* ownerContainer,
                                       InputHandler* inputHandler,
                                       float scale,
-                                      const Settings::GamepadMappings& gmap,
-                                      const Settings::KeyboardMappings& kmap):
+                                      const settings::GamepadMappings& gmap,
+                                      const settings::KeyboardMappings& kmap):
     m_cellSize (40 * scale),
     m_gameGrid (nullptr),
     m_activeBlock (nullptr),
@@ -142,11 +143,6 @@ ClassicTetrisGame::ClassicTetrisGame (DrawableContainer* ownerContainer,
 
     m_inputHandler->PushInputLayer (m_gameInputLayer.get());
     m_inputHandler->PushObject (this);
-
-    m_moveSound = LoadSound ("resources/hi_hat.wav");
-    m_fallSound = LoadSound ("resources/snare.wav");
-    m_tetrisSound = LoadSound ("resources/ta_da.wav");
-    m_holdSound = LoadSound ("resources/808_click.wav");
 }
 
 void ClassicTetrisGame::Init()
@@ -164,22 +160,6 @@ void ClassicTetrisGame::Init()
     AddObserver (gameHUD);
     m_ownerContainer->AddDrawableObject (gridPixelPos, DrawPosition::Top, gameHUD);
 
-    //auto dBlockLeft = std::make_unique <DecorativeBlock> (m_cellSize);
-    //dBlockLeft->AddCell ({0, 0}, Colors::cyan, Colors::cyan_shade);
-    //dBlockLeft->AddCell ({1, 0}, Colors::cyan, Colors::cyan_shade);
-    //dBlockLeft->AddCell ({1, 1}, Colors::cyan, Colors::cyan_shade);
-    //dBlockLeft->AddCell ({2, 0}, Colors::cyan, Colors::cyan_shade);
-    //dBlockLeft->AddCell ({2, 1}, Colors::purple, Colors::purple_shade);
-    //dBlockLeft->AddCell ({2, 2}, Colors::yellow, Colors::yellow_shade);
-    //dBlockLeft->AddCell ({2, 3}, Colors::yellow, Colors::yellow_shade);
-    //dBlockLeft->AddCell ({3, 0}, Colors::purple, Colors::purple_shade);
-    //dBlockLeft->AddCell ({3, 1}, Colors::purple, Colors::purple_shade);
-    //dBlockLeft->AddCell ({3, 2}, Colors::yellow, Colors::yellow_shade);
-    //dBlockLeft->AddCell ({3, 3}, Colors::yellow, Colors::yellow_shade);
-    //dBlockLeft->AddCell ({3, 4}, Colors::orange, Colors::orange_shade);
-
-    //m_ownerContainer->AddDrawableObject ({ownerBBox.Min().x, ownerBBox.Max().y}, DrawPosition::BottomLeft, std::move (dBlockLeft));
-
 }
 
 void ClassicTetrisGame::Start()
@@ -195,13 +175,19 @@ void ClassicTetrisGame::Reset()
 {
     m_gameGrid->Clear();
     m_gameScore = 0;
+    Notify (*this, Event::SCORE_UPDATED);
     m_comboNum = 0;
+    Notify (*this, Event::COMBO_UPDATED);
     m_bCanPlay = false;
     m_activeBlock = nullptr;
     m_nextBlock = nullptr;
+    Notify (*this, Event::NEXT_BLOCK_UPDATED);
     m_holdBlock = nullptr;
+    Notify (*this, Event::HOLD_BLOCK_UPDATED);
     m_speedLvl = 1;
+    Notify (*this, Event::SPEED_LVL_UPDATED);
     m_numRemovedLines = 0;
+    Notify (*this, Event::NUM_REMOVED_LINES_UPDATED);
 }
 
 void ClassicTetrisGame::Draw()
@@ -235,36 +221,30 @@ void ClassicTetrisGame::MoveBlockDown()
 void ClassicTetrisGame::MoveBlockRight()
 {
     m_activeBlock->Move (1, 0);
-    m_ghostBlock->Move (1, 0);
     if (m_gameGrid->IsOutsideGrid (m_activeBlock->GetBBox())) {
         m_activeBlock->Move (-1, 0);
-        m_ghostBlock->Move (-1, 0);
         return;
     }
     if (m_gameGrid->IsCollided (m_activeBlock->GetCurrentCells())) {
         m_activeBlock->Move (-1, 0);
-        m_ghostBlock->Move (-1, 0);
         return;
     }
-    PlaySound (m_moveSound);
+    AudioManager::GetInstance().Play ("block_move");
     UpdateGhostBlock();
 }
 
 void ClassicTetrisGame::MoveBlockLeft()
 {
     m_activeBlock->Move (-1, 0);
-    m_ghostBlock->Move (-1, 0);
     if (m_gameGrid->IsOutsideGrid (m_activeBlock->GetBBox())) {
         m_activeBlock->Move (1, 0);
-        m_ghostBlock->Move (1, 0);
         return;
     }
     if (m_gameGrid->IsCollided (m_activeBlock->GetCurrentCells())) {
         m_activeBlock->Move (1, 0);
-        m_ghostBlock->Move (1, 0);
         return;
     }
-    PlaySound (m_moveSound);
+    AudioManager::GetInstance().Play ("block_move");
     UpdateGhostBlock();
 }
 
@@ -283,16 +263,28 @@ void ClassicTetrisGame::RotateBlock()
     m_activeBlock->Rotate();
     m_ghostBlock->Rotate();
     if (m_gameGrid->IsOutsideGrid (m_activeBlock->GetBBox())) {
-        m_activeBlock->RotateLeft();
-        m_ghostBlock->RotateLeft();
-        return;
+
+        bool bBordersTest = false;
+        if (TestBlock ({0, 1})) {
+            bBordersTest = true;
+        } else if (TestBlock ({0, -1})) {
+            bBordersTest = true;
+        } else if (TestBlock ({0, 2})) { // I block rotation case
+            bBordersTest = true;
+        }
+
+        if (!bBordersTest) {
+            m_activeBlock->RotateLeft();
+            m_ghostBlock->RotateLeft();
+            return;
+        }
     }
     if (m_gameGrid->IsCollided (m_activeBlock->GetCurrentCells())) {
         m_activeBlock->RotateLeft();
         m_ghostBlock->RotateLeft();
         return;
     }
-    PlaySound (m_moveSound);
+    AudioManager::GetInstance().Play ("block_move");
     UpdateGhostBlock();
 }
 
@@ -303,6 +295,16 @@ void ClassicTetrisGame::UpdateFallingBlock()
         MoveBlockDown();
         m_lastFallStarted = GetTime();
     }
+}
+
+bool ClassicTetrisGame::TestBlock (const GridPosition& offset)
+{
+    m_activeBlock->Move (offset.m_col, offset.m_row);
+    if (m_gameGrid->IsOutsideGrid (m_activeBlock->GetBBox())) {
+        m_activeBlock->Move (-offset.m_col, -offset.m_row);
+        return false;
+    }
+    return true;
 }
 
 int ClassicTetrisGame::GetGridHeight()
@@ -329,11 +331,6 @@ ClassicTetrisGame::~ClassicTetrisGame()
 {
     m_inputHandler->PopInputLayer();
     m_inputHandler->PopObject();
-
-    UnloadSound (m_moveSound);
-    UnloadSound (m_fallSound);
-    UnloadSound (m_tetrisSound);
-    UnloadSound (m_holdSound);
 }
 
 void ClassicTetrisGame::PrepareBlock (Block* block)
@@ -371,11 +368,12 @@ void ClassicTetrisGame::UpdateElements()
     PrepareBlock (m_activeBlock.get());
     if (m_gameGrid->IsCollided (m_activeBlock->GetCurrentCells())) {
         m_bCanPlay = false;
+        Notify (*this, Event::GAME_OVER);
     }
     CreateNextBlock();
     m_bCanHold = true;
 
-    PlaySound (m_fallSound);
+    AudioManager::GetInstance().Play ("block_drop");
 }
 
 void ClassicTetrisGame::UpdateScore (int numRemovedLines)
@@ -404,7 +402,7 @@ void ClassicTetrisGame::UpdateScore (int numRemovedLines)
         m_comboNum++;
     }
     if (numRemovedLines == 4) {
-        PlaySound (m_tetrisSound);
+        AudioManager::GetInstance().Play ("tetris");
     }
 
     if (oldScore != m_gameScore)
@@ -428,7 +426,7 @@ void ClassicTetrisGame::HoldBlock()
     m_holdBlock->ResetOffset();
     m_bCanHold = false;
     Notify (*this, Event::HOLD_BLOCK_UPDATED);
-    PlaySound (m_holdSound);
+    AudioManager::GetInstance().Play ("block_hold");
 }
 
 void ClassicTetrisGame::Pause()

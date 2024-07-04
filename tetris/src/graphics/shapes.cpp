@@ -11,13 +11,6 @@ void Shape::Translate (const Vector2& translation)
     m_pos.x += translation.x;
     m_pos.y += translation.y;
 }
-void Shape::UpdatePosition (const BoundingBox2d& oldBBox, const BoundingBox2d& newBBox)
-{
-    Vector2 oldTargetPos = GraphicsHelper::ComputePosition (m_align, oldBBox);
-    Vector2 newPos = GraphicsHelper::ComputePosition (m_align, newBBox);
-
-    Translate (GraphicsHelper::ComputeTranslation (newPos, oldTargetPos));
-}
 
 Rectangle::Rectangle (const BoundingBox2d& bbox)
 {
@@ -81,7 +74,7 @@ void Text::Scale (float scale)
 
 void ShadedText::Draw() const
 {
-    DrawText (m_str.c_str(), m_pos.x + 4, m_pos.y + 3, (int)m_fontSize+2, m_shadeColor);
+    DrawText (m_str.c_str (), m_pos.x + 4, m_pos.y + 3, (int)m_fontSize + 2, {m_shadeColor.r, m_shadeColor.g, m_shadeColor.b, GetAlpha()});
     Text::Draw();
 }
 

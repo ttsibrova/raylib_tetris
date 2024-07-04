@@ -2,6 +2,15 @@
 #include <graphics/graphics_helper.h>
 #include <graphics/shapes.h>
 
+void DrawableContainer::SetAlpha (unsigned char alpha)
+{
+    m_alphaCh = alpha;
+    for (const auto& obj : m_objects) {
+        obj->SetAlpha (GetAlpha());
+        obj->Draw();
+    }
+}
+
 void DrawableContainer::Draw() const
 {
     if (!IsVisible())
