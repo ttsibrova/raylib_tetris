@@ -36,6 +36,8 @@ BoundingBox2d DrawableContainer::GetBoundingBox() const
 
 void DrawableContainer::Translate (const Vector2& translation)
 {
+    m_pos.x += translation.x;
+    m_pos.y += translation.y;
     for (auto& obj : m_objects) {
         obj->Translate (translation);
     }

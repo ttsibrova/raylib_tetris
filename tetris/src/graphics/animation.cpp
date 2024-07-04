@@ -28,13 +28,14 @@ void Animation::Tick()
 {
     if (m_bIsPlaying) {
         if (m_animationSequences[m_currentSequenceIdx].CanPerform()) {
-            m_animationSequences[m_currentSequenceIdx].PerformAnimation (m_obj);
+            m_animationSequences[m_currentSequenceIdx].PerformAnimation (m_obj.get());
         } else if (m_currentSequenceIdx+1 < m_animationSequences.size()) {
             m_currentSequenceIdx++;
-            m_animationSequences[m_currentSequenceIdx].PerformAnimation (m_obj);
+            m_animationSequences[m_currentSequenceIdx].PerformAnimation (m_obj.get());
         } else {
             if (!m_bIsLooping) {
                 m_bIsPlaying = false;
+                m_bIsCompleted = true;
             }
             m_currentSequenceIdx = 0;
             for (auto& seq : m_animationSequences) {
@@ -52,7 +53,9 @@ void Animation::SetAlpha (unsigned char alpha)
 
 void Animation::Draw() const
 {
-    m_obj->Draw();
+    if (IsVisible()) {
+        m_obj->Draw();
+    }
 }
 
 BoundingBox2d Animation::GetBoundingBox() const
@@ -75,6 +78,11 @@ void Animation::Scale (float scale)
 void Animation::AddMoveAnimStep (int frameLength, Vector2 translation, bool joinWithPrevious)
 {
     AddSequence <MoveAnimationCommand> (joinWithPrevious, frameLength, translation);
+}
+
+void Animation::AddMoveToAnimStep (int frameLength, Vector2 targetPos, bool joinWithPrevious)
+{
+    AddSequence <MoveToAnimationCommand> (joinWithPrevious, frameLength, targetPos);
 }
 
 void Animation::AddScaleAnimStep (int frameLength, float scale, bool joinWithPrevious)
@@ -122,6 +130,15 @@ void MoveAnimationCommand::AnimateFrameImpl (int /*currentFrame*/, DrawableObjec
 {
     Vector2 frameTsl {m_translation.x/m_maxFrames, m_translation.y/m_maxFrames};
     obj->Translate (frameTsl);
+}
+
+
+void MoveToAnimationCommand::AnimateFrameImpl (int currentFrame, DrawableObject* obj)
+{
+    auto& pos = obj->GetPosition();
+    auto trsl = GraphicsHelper::ComputeTranslation (pos, m_targetPos);
+    Vector2 frameTrsl {trsl.x / (m_maxFrames - currentFrame), trsl.y / (m_maxFrames - currentFrame)};
+    obj->Translate (frameTrsl);
 }
 
 void SetPositionAnimationCommand::AnimateFrameImpl (int currentFrame, DrawableObject* obj)

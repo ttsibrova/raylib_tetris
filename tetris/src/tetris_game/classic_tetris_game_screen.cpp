@@ -312,15 +312,15 @@ CTGHighScoresScreen::CTGHighScoresScreen (const ScreenSize& screenSize, HighScor
             containerScore->AddText ({0.f, 0.f}, DrawPosition::Center, std::to_string (record.score), tableCellHeight * 0.8f, Colors::yellow);
             containerLines->AddText ({0.f, 0.f}, DrawPosition::Center, std::to_string (record.lines), tableCellHeight * 0.8f, Colors::green);
         } else {
-            auto idxText = new shapes::Text (std::to_string (idx++), tableCellHeight * 0.8f);
-            auto scoreText = new shapes::Text (std::to_string (record.score), tableCellHeight * 0.8f);
-            auto linesText = new shapes::Text (std::to_string (record.lines), tableCellHeight * 0.8f);
+            auto idxText = std::make_shared <shapes::Text> (std::to_string (idx++), tableCellHeight * 0.8f);
+            auto scoreText = std::make_shared <shapes::Text> (std::to_string (record.score), tableCellHeight * 0.8f);
+            auto linesText = std::make_shared <shapes::Text> (std::to_string (record.lines), tableCellHeight * 0.8f);
             idxText->SetColor (Colors::red);
             scoreText->SetColor (Colors::red);
             linesText->SetColor (Colors::red);
 
 
-            auto CreateAnim = [] (shapes::Text* text, std::vector <Animation*>& anims) {
+            auto CreateAnim = [] (std::shared_ptr <shapes::Text>& text, std::vector <Animation*>& anims) {
                 auto animation = new Animation (text);
                 animation->AddChangeColorAnimStep (60, RAYWHITE);
                 animation->AddSetColorAnimStep (30, RAYWHITE);

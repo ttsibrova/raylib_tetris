@@ -71,12 +71,16 @@ private:
     Screens m_nextScreen;
 };
 
+class Animation;
 class MainMenuScreen : public Screen
 {
 public:
     MainMenuScreen (InputHandler* iHandler, const ScreenSize& screenSize);
     ~MainMenuScreen();
     virtual void Tick() override;
+
+private:
+    Animation* m_animLogo;
 };
 
 

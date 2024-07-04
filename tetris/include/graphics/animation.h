@@ -56,14 +56,6 @@ protected:
         m_animationCommands.push_back (command);
     }
 
-    //void AddMoveCommand (int frameLength, Vector2 translation);
-    //void AddScaleCommand (int frameLength, float scale);
-    //void AddSetPositionCommand (int frameLength, Vector2 targetPosition);
-    //void AddChangeColorCommand (int frameLength, Color targetColor);
-    //void AddChangeOpacityCommand (int frameLength, unsigned char opacity);
-    //void AddSetOpacityCommand (int frameLength, unsigned char opacity);
-    //void AddSetColorCommand (int frameLength, Color targetColor);
-
 private:
     int                             m_currentFrame;
     int                             m_sequenceLength;
@@ -76,20 +68,22 @@ private:
 class Animation: public DrawableObject, public GameObject
 {
 public:
-    Animation (DrawableObject* obj):
+    Animation (std::shared_ptr <DrawableObject> obj):
         m_obj (obj),
         m_initialPos (obj->GetPosition()),
         m_bIsPlaying (false),
         m_bIsLooping (false),
+        m_bIsCompleted (false),
         m_currentSequenceIdx (0)
     {
         m_pos = obj->GetPosition();
     }
 
     virtual void Tick() override;
-    void Play() { m_bIsPlaying = true; }
+    void Play() { m_bIsPlaying = true; m_bIsCompleted = false; }
     void Pause() { m_bIsPlaying = false;}
     bool IsPlaying() const { return m_bIsPlaying; }
+    bool IsCompleted() const { return m_bIsCompleted; }
     void EnableLooping() { m_bIsLooping = true; };
     void AddSequence (Sequence&& seq) { m_animationSequences.push_back (std::move (seq)); }
 
@@ -101,6 +95,7 @@ public:
 
 public:
     void AddMoveAnimStep          (int frameLength, Vector2 translation   , bool joinWithPrevious = false);
+    void AddMoveToAnimStep        (int frameLength, Vector2 targetPos     , bool joinWithPrevious = false);
     void AddScaleAnimStep         (int frameLength, float scale           , bool joinWithPrevious = false);
     void AddSetPositionAnimStep   (int frameLength, Vector2 targetPosition, bool joinWithPrevious = false);
     void AddChangeColorAnimStep   (int frameLength, Color targetColor     , bool joinWithPrevious = false);
@@ -123,12 +118,13 @@ private:
     void ResetObjectState();
 
 private:
-    DrawableObject*        m_obj;
-    Vector2                m_initialPos;
-    bool                   m_bIsPlaying;
-    bool                   m_bIsLooping;
-    size_t                 m_currentSequenceIdx;
-    std::vector <Sequence> m_animationSequences;
+    std::shared_ptr <DrawableObject> m_obj;
+    Vector2                          m_initialPos;
+    bool                             m_bIsPlaying;
+    bool                             m_bIsCompleted;
+    bool                             m_bIsLooping;
+    size_t                           m_currentSequenceIdx;
+    std::vector <Sequence>           m_animationSequences;
 };
 
 
@@ -145,6 +141,21 @@ protected:
 
 private:
     Vector2 m_translation;
+};
+
+class MoveToAnimationCommand: public AnimationCommand
+{
+public:
+    MoveToAnimationCommand (int maxFrames, Vector2 targetPos):
+        AnimationCommand (maxFrames),
+        m_targetPos (targetPos)
+    {}
+
+protected:
+    virtual void AnimateFrameImpl (int currentFrame, DrawableObject* obj) override;
+
+private:
+    Vector2 m_targetPos;
 };
 
 class SetPositionAnimationCommand: public AnimationCommand

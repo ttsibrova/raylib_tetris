@@ -1,5 +1,6 @@
 #include <ui/ui_mapped_key.h>
 
+#include <graphics/drawable_container.h>
 #include <graphics/sprites.h>
 
 MappedKey::MappedKey (KeyboardKey key, GamepadButton button, const InputHandler* iHandler, float size):

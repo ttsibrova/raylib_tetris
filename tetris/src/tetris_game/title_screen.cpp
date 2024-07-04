@@ -8,16 +8,20 @@
 #include <graphics/graphics_helper.h>
 #include <graphics/sprites.h>
 
+#include <ui/ui_menu.h>
+#include <ui/ui_button.h>
+
 TitleScreen::TitleScreen (InputHandler* iHandler, const ScreenSize& screenSize):
     Screen (iHandler),
-    m_animIdx (0)
+    m_animIdx (0),
+    m_bIsreadyForGame (false)
 {
     float height = screenSize.m_height * screenSize.m_scale;
     float width = screenSize.m_width * screenSize.m_scale;
     m_screenGraphics.AddRectangle ({0.f, 0.f}, DrawPosition::TopLeft, height, width, Colors::darkBlue);
 
     int cellSize = 35 * screenSize.m_scale;
-    auto logoContainer = new DrawableContainer();
+    auto logoContainer = std::make_shared <DrawableContainer>();
 
     auto AddLetter = [cellSize] (DrawableContainer* cont, DrawableObject* letter) {
         auto bbox = cont->GetBoundingBox();
@@ -25,29 +29,29 @@ TitleScreen::TitleScreen (InputHandler* iHandler, const ScreenSize& screenSize):
         cont->AddDrawableObject ({prevPos.x + cellSize/2, prevPos.y}, DrawPosition::TopLeft, letter);
     };
 
-    auto blueT = SpriteGraphicGenerator::GetBlockLetterT (cellSize, Colors::blue, Colors::blue_shade);
+    std::shared_ptr <DrawableObject> blueT (SpriteGraphicGenerator::GetBlockLetterT (cellSize, Colors::blue, Colors::blue_shade));
     auto animBlueT = new Animation (blueT);
-    AddLetter (logoContainer, animBlueT);
+    AddLetter (logoContainer.get(), animBlueT);
 
-    auto yellowE = SpriteGraphicGenerator::GetBlockLetterE (cellSize, Colors::yellow, Colors::yellow_shade);
+    std::shared_ptr <DrawableObject>  yellowE (SpriteGraphicGenerator::GetBlockLetterE (cellSize, Colors::yellow, Colors::yellow_shade));
     auto animYellowE = new Animation (yellowE);
-    AddLetter (logoContainer, animYellowE);
+    AddLetter (logoContainer.get(), animYellowE);
 
-    auto greenT = SpriteGraphicGenerator::GetBlockLetterT (cellSize, Colors::green, Colors::green_shade);
+    std::shared_ptr <DrawableObject>  greenT (SpriteGraphicGenerator::GetBlockLetterT (cellSize, Colors::green, Colors::green_shade));
     auto animGreenT = new Animation (greenT);
-    AddLetter (logoContainer, animGreenT);
+    AddLetter (logoContainer.get(), animGreenT);
 
-    auto redR = SpriteGraphicGenerator::GetBlockLetterR (cellSize, Colors::red, Colors::red_shade);
+    std::shared_ptr <DrawableObject>  redR (SpriteGraphicGenerator::GetBlockLetterR (cellSize, Colors::red, Colors::red_shade));
     auto animRedR = new Animation (redR);
-    AddLetter (logoContainer, animRedR);
+    AddLetter (logoContainer.get(), animRedR);
 
-    auto cyanI = SpriteGraphicGenerator::GetBlockLetterI (cellSize, Colors::cyan, Colors::cyan_shade);
+    std::shared_ptr <DrawableObject>  cyanI (SpriteGraphicGenerator::GetBlockLetterI (cellSize, Colors::cyan, Colors::cyan_shade));
     auto animCyanI = new Animation (cyanI);
-    AddLetter (logoContainer, animCyanI);
+    AddLetter (logoContainer.get(), animCyanI);
 
-    auto purpleS = SpriteGraphicGenerator::GetBlockLetterS (cellSize, Colors::purple, Colors::purple_shade);
+    std::shared_ptr <DrawableObject>  purpleS (SpriteGraphicGenerator::GetBlockLetterS (cellSize, Colors::purple, Colors::purple_shade));
     auto animPurpleS = new Animation (purpleS);
-    AddLetter (logoContainer, animPurpleS);
+    AddLetter (logoContainer.get(), animPurpleS);
 
     auto screenBBox = m_screenGraphics.GetBoundingBox();
     Vector2 topCenter = GraphicsHelper::ComputePosition (DrawPosition::Top, screenBBox);
@@ -77,7 +81,6 @@ TitleScreen::TitleScreen (InputHandler* iHandler, const ScreenSize& screenSize):
     FillMoveAnim (animYellowE, m_animsLogo);
     FillMoveAnim (animBlueT, m_animsLogo);
 
-
     auto posS = animPurpleS->GetPosition();
     auto bboxS = animPurpleS->GetBoundingBox();
 
@@ -98,17 +101,17 @@ TitleScreen::TitleScreen (InputHandler* iHandler, const ScreenSize& screenSize):
     m_animsLogo.push_back (animCyanI);
 
     int dBlockCellSize = 35 * screenSize.m_scale;
-    auto block1 = SpriteGraphicGenerator::GetMenuDecorativeBlock (dBlockCellSize);
+    std::shared_ptr <DrawableObject> block1 (SpriteGraphicGenerator::GetMenuDecorativeBlock (dBlockCellSize));
     auto animBlock1 = new Animation (block1);
     float posX = block1->GetBoundingBox().Width() + 1;
     m_screenGraphics.AddDrawableObject ({0, height}, DrawPosition::BottomLeft, animBlock1);
-    auto block2 = SpriteGraphicGenerator::GetMenuDecorativeBlockInversed (dBlockCellSize);
+    std::shared_ptr <DrawableObject> block2 (SpriteGraphicGenerator::GetMenuDecorativeBlockInversed (dBlockCellSize));
     auto animBlock2 = new Animation (block2);
-    if (auto bl = dynamic_cast <DecorativeBlock*> (block2)) {
+    if (auto bl = dynamic_cast <DecorativeBlock*> (block2.get())) {
         bl->AddCell ({3,0}, Colors::purple, Colors::purple_shade);
     }
     m_screenGraphics.AddDrawableObject ({posX, height + (dBlockCellSize + 1) * 2}, DrawPosition::BottomLeft, animBlock2);
-    auto block3 = SpriteGraphicGenerator::GetMenuDecorativeBlockInversed (dBlockCellSize);
+    std::shared_ptr <DrawableObject> block3 (SpriteGraphicGenerator::GetMenuDecorativeBlockInversed (dBlockCellSize));
     auto animBlock3 = new Animation (block3);
     m_screenGraphics.AddDrawableObject ({width, height}, DrawPosition::BottomRight, animBlock3);
 
@@ -130,22 +133,32 @@ TitleScreen::TitleScreen (InputHandler* iHandler, const ScreenSize& screenSize):
     FillBlockAnim (animBlock3, m_animsBlocks);
 
     Vector2 pressPlayPos {topCenter.x, topCenter.y + height * 0.6f};
-    auto pressText = m_screenGraphics.AddText (pressPlayPos, DrawPosition::Top, "Press ENTER to play", screenSize.m_height * 0.05f, RAYWHITE);
-    pressText->SetAlpha (0);
-    auto animPress = new Animation (pressText);
+    auto pressPlay = std::make_shared <DrawableContainer>();
+    pressPlay->AddText ({0.f, 0.f}, DrawPosition::Left, "Press  ", height * 0.04f, RAYWHITE);
+    pressPlay->AddDrawableObject (GraphicsHelper::ComputePosition (DrawPosition::Right, pressPlay->GetBoundingBox()), DrawPosition::Left, SpriteGraphicGenerator::GetKeybordKey (KEY_ENTER, 39 * screenSize.m_scale));
+    pressPlay->AddText (GraphicsHelper::ComputePosition (DrawPosition::Right, pressPlay->GetBoundingBox()), DrawPosition::Left, " / ", height * 0.04f, RAYWHITE);
+    pressPlay->AddDrawableObject (GraphicsHelper::ComputePosition (DrawPosition::Right, pressPlay->GetBoundingBox()), DrawPosition::Left, SpriteGraphicGenerator::GetXBoxButtonA (29 * screenSize.m_scale));
+    pressPlay->AddText (GraphicsHelper::ComputePosition (DrawPosition::Right, pressPlay->GetBoundingBox()), DrawPosition::Left, "  to start", height * 0.04f, RAYWHITE);
+    pressPlay->SetAlpha (0);
+    auto animPress = new Animation (pressPlay);
     animPress->AddSetOpacityAnimStep (20, 0);
     animPress->AddChangeOpacityAnimStep (100, 255);
-    animPress->AddSetOpacityAnimStep (20, 255);
+    animPress->AddSetOpacityAnimStep (40, 255);
     animPress->AddChangeOpacityAnimStep (100, 0);
+    animPress->EnableLooping();
     m_animPress = animPress;
+    m_screenGraphics.AddDrawableObject (pressPlayPos, DrawPosition::Top, animPress);
 
     Vector2 flashMin {logoBBox.Min().x-logoBBox.Width() * 0.5f, logoBBox.Min().y - logoBBox.Height() * 0.6f};
     Vector2 flashMax {logoBBox.Max().x + logoBBox.Width() * 0.5f, logoBBox.Max().y + logoBBox.Height() * 0.6f};
     BoundingBox2d flashBBox (flashMin, flashMax);
-    auto flash = m_screenGraphics.AddRectangle (GraphicsHelper::ComputePosition (DrawPosition::Center, logoBBox), DrawPosition::Center, flashBBox.Height(), flashBBox.Width(), RAYWHITE);
+    auto flash = std::make_shared <shapes::Rectangle> (flashBBox);
+    flash->SetAlign (DrawPosition::Center);
+    flash->SetColor (RAYWHITE);
     flash->SetAlpha (0);
-
     auto animFlash = new Animation (flash);
+    m_screenGraphics.AddDrawableObject (GraphicsHelper::ComputePosition (DrawPosition::Center, logoBBox), DrawPosition::Center, animFlash);
+
     auto AddFlashSequence = [animFlash] (unsigned char opacity) {
         int length = 6;
         animFlash->AddChangeOpacityAnimStep (length, opacity);
@@ -153,8 +166,6 @@ TitleScreen::TitleScreen (InputHandler* iHandler, const ScreenSize& screenSize):
         animFlash->AddChangeOpacityAnimStep (length, 0);
         animFlash->AddScaleAnimStep (length, 1.3f, true);
     };
-
-    //animFlash->SetAlpha (160);
 
     AddFlashSequence (250);
     AddFlashSequence (220);
@@ -164,12 +175,35 @@ TitleScreen::TitleScreen (InputHandler* iHandler, const ScreenSize& screenSize):
     animFlash->Play();
     m_animsLogo.push_back (animFlash);
 
-    Sequence idleMoveUp;
     animLogo->AddMoveAnimStep (160, {0.f, -10.f});
     animLogo->AddMoveAnimStep (160, {0.f, 10.f});
     animLogo->EnableLooping();
     animLogo->Play();
     m_animsLogo.push_back (animLogo);
+
+    auto hiddenMenu = new Menu (10.f, std::make_unique <ScreenCloseCommand> (this));
+    auto startButton = std::make_unique <Button> ("Start", 20.f, std::make_unique <SetReadyCommand> (this));
+    hiddenMenu->AddRow (std::move (startButton));
+
+    InputLayer layer;
+    layer.AddAction (GAMEPAD_BUTTON_RIGHT_FACE_DOWN, KEY_ENTER, ActionType::PRESS, std::make_unique <MenuSelectCommand>());
+    hiddenMenu->SetInputLayer (std::move (layer));
+    hiddenMenu->SetInvisible();
+    m_screenGraphics.AddDrawableObject ({-20.f, -20.f}, DrawPosition::BottomRight, hiddenMenu);
+
+    iHandler->PushInputLayer (hiddenMenu->GetInputLayer());
+    iHandler->PushObject (hiddenMenu);
+
+    m_screenExitAnimation = new Animation (logoContainer);
+    Vector2 menuLogoPos {logoContainer->GetPosition().x, topCenter.y + height * 0.15};
+    m_screenExitAnimation->AddWaitAnimStep (27);
+    m_screenExitAnimation->AddMoveToAnimStep (60, menuLogoPos);
+}
+
+TitleScreen::~TitleScreen()
+{
+    m_inputHandler->PopInputLayer();
+    m_inputHandler->PopObject();
 }
 
 void TitleScreen::Tick()
@@ -189,14 +223,30 @@ void TitleScreen::Tick()
         }
         if (m_animIdx == m_animsLogo.size() - 1) {
             m_animPress->Play();
+            m_animIdx++;
         }
     }
 
     m_animPress->Tick();
+    if (m_animIdx == m_animsLogo.size()) {
+        m_animsLogo.back()->Tick();
+    }
     for (auto& anim: m_animsBlocks) {
         if (anim->IsPlaying()) {
             anim->Tick();
         }
     }
+    if (m_bIsreadyForGame && m_animIdx == m_animsLogo.size()) {
+        m_animsLogo.back()->Pause();
+        m_animPress->Pause();
+        m_animPress->SetInvisible();
+        m_screenExitAnimation->Play();
+    } else if (m_bIsreadyForGame) {
+        SetNextScreen (Screens::MAIN_MENU);
+    }
+    m_screenExitAnimation->Tick();
     m_screenGraphics.Draw();
+    if (m_screenExitAnimation->IsCompleted()) {
+        SetNextScreen (Screens::MAIN_MENU);
+    }
 }

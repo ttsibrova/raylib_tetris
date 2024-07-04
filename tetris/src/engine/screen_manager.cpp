@@ -44,6 +44,11 @@ void ScreenManager::Tick()
                     m_currentScreen = new CTGHighScoresScreen (m_screenSize, scores, m_inputHandler.get());
                 }
                 break;
+            case Screens::TITLE:
+                m_currentState = Screens::TITLE;
+                delete m_currentScreen;
+                m_currentScreen = new TitleScreen (m_inputHandler.get(), m_screenSize);
+                break;
             case Screens::SETTINGS:
             default:
                 break;

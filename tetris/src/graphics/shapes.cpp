@@ -22,7 +22,9 @@ Rectangle::Rectangle (const BoundingBox2d& bbox)
 
 void Rectangle::Draw() const
 {
-    DrawRectangleRec ({m_pos.x, m_pos.y, m_width, m_height}, GetColor());
+    if (IsVisible()) {
+        DrawRectangleRec ({m_pos.x, m_pos.y, m_width, m_height}, GetColor());
+    }
 }
 
 BoundingBox2d Rectangle::GetBoundingBox() const
@@ -52,7 +54,7 @@ void Text::UpdateText (const std::string& newText)
 
 void Text::Draw() const
 {
-    if (!m_str.empty())
+    if (!m_str.empty() && IsVisible())
         DrawText (m_str.c_str(), m_pos.x, m_pos.y, (int)m_fontSize, GetColor());
 }
 
@@ -74,18 +76,24 @@ void Text::Scale (float scale)
 
 void ShadedText::Draw() const
 {
-    DrawText (m_str.c_str (), m_pos.x + 4, m_pos.y + 3, (int)m_fontSize + 2, {m_shadeColor.r, m_shadeColor.g, m_shadeColor.b, GetAlpha()});
-    Text::Draw();
+    if (IsVisible()) {
+        DrawText (m_str.c_str(), m_pos.x + 4, m_pos.y + 3, (int)m_fontSize + 2, {m_shadeColor.r, m_shadeColor.g, m_shadeColor.b, GetAlpha()});
+        Text::Draw();
+    }
 }
 
 void RectangleRounded::Draw() const
 {
-    DrawRectangleRounded ({m_pos.x, m_pos.y, m_width, m_height}, m_roundness, 10, GetColor());
+    if (IsVisible()) {
+        DrawRectangleRounded ({m_pos.x, m_pos.y, m_width, m_height}, m_roundness, 10, GetColor());
+    }
 }
 
 void Circle::Draw() const
 {
-    DrawCircle (m_pos.x, m_pos.y, m_radius, GetColor());
+    if (IsVisible()) {
+        DrawCircle (m_pos.x, m_pos.y, m_radius, GetColor());
+    }
 }
 
 BoundingBox2d Circle::GetBoundingBox() const
@@ -108,7 +116,9 @@ void Circle::Scale (float scale)
 
 void Triangle::Draw() const
 {
-    DrawPoly (m_pos, 3, m_height * 2 / 3, m_rotation, GetColor());
+    if (IsVisible()) {
+        DrawPoly (m_pos, 3, m_height * 2 / 3, m_rotation, GetColor());
+    }
 }
 
 BoundingBox2d Triangle::GetBoundingBox() const

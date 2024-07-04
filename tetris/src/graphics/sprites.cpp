@@ -4,7 +4,7 @@
 #include <graphics/decorative_block.h>
 #include <graphics/graphics_helper.h>
 
-DrawableObject* SpriteGraphicGenerator::GetXBoxButton (GamepadButton button, float height)
+DrawableContainer* SpriteGraphicGenerator::GetXBoxButton (GamepadButton button, float height)
 {
     switch (button)
     {
@@ -45,50 +45,55 @@ DrawableObject* SpriteGraphicGenerator::GetXBoxButton (GamepadButton button, flo
     return empty;
 }
 
-DrawableObject* SpriteGraphicGenerator::GetXBoxButtonX (float radius)
+DrawableContainer* SpriteGraphicGenerator::GetXBoxButtonX (float radius)
 {
     auto cont = new DrawableContainer();
-    cont->AddRectangle ({0., 0.}, DrawPosition::Center, radius * 2, radius * 2, {0, 0, 0, 0});
+    auto r = cont->AddRectangle ({0., 0.}, DrawPosition::Center, radius * 2, radius * 2, {0, 0, 0, 0});
+    r->SetInvisible();
     cont->AddCircle ({0, 0}, DrawPosition::Center, radius, Colors::blue);
     cont->AddCircle ({0, 0}, DrawPosition::Center, radius * 0.9 , BLACK);
     cont->AddText ({0, 0}, DrawPosition::Center, "X", (int) radius * 1.5 , Colors::blue);
     return cont;
 }
 
-DrawableObject* SpriteGraphicGenerator::GetXBoxButtonY (float radius)
+DrawableContainer* SpriteGraphicGenerator::GetXBoxButtonY (float radius)
 {
     auto cont = new DrawableContainer();
-    cont->AddRectangle ({0., 0.}, DrawPosition::Center, radius * 2, radius * 2, {0, 0, 0, 0});
+    auto r = cont->AddRectangle ({0., 0.}, DrawPosition::Center, radius * 2, radius * 2, {0, 0, 0, 0});
+    r->SetInvisible();
     cont->AddCircle ({0, 0}, DrawPosition::Center, radius, Colors::yellow);
     cont->AddCircle ({0, 0}, DrawPosition::Center, radius * 0.9 , BLACK);
     cont->AddText ({0, 0}, DrawPosition::Center, "Y", (int) radius * 1.5 , Colors::yellow);
     return cont;
 }
 
-DrawableObject* SpriteGraphicGenerator::GetXBoxButtonA (float radius)
+DrawableContainer* SpriteGraphicGenerator::GetXBoxButtonA (float radius)
 {
     auto cont = new DrawableContainer();
-    cont->AddRectangle ({0., 0.}, DrawPosition::Center, radius * 2, radius * 2, {0, 0, 0, 0});
+    auto r = cont->AddRectangle ({0., 0.}, DrawPosition::Center, radius * 2, radius * 2, {0, 0, 0, 0});
+    r->SetInvisible();
     cont->AddCircle ({0, 0}, DrawPosition::Center, radius, Colors::green);
     cont->AddCircle ({0, 0}, DrawPosition::Center, radius * 0.9 , BLACK);
     cont->AddText ({0, 0}, DrawPosition::Center, "A", (int) radius * 1.5 , Colors::green);
     return cont;
 }
 
-DrawableObject* SpriteGraphicGenerator::GetXBoxButtonB (float radius)
+DrawableContainer* SpriteGraphicGenerator::GetXBoxButtonB (float radius)
 {
     auto cont = new DrawableContainer();
-    cont->AddRectangle ({0., 0.}, DrawPosition::Center, radius * 2, radius * 2, {0, 0, 0, 0});
+    auto r = cont->AddRectangle ({0., 0.}, DrawPosition::Center, radius * 2, radius * 2, {0, 0, 0, 0});
+    r->SetInvisible();
     cont->AddCircle ({0, 0}, DrawPosition::Center, radius, Colors::red);
     cont->AddCircle ({0, 0}, DrawPosition::Center, radius * 0.9 , BLACK);
     cont->AddText ({0, 0}, DrawPosition::Center, "B", (int) radius * 1.5 , Colors::red);
     return cont;
 }
 
-DrawableObject* SpriteGraphicGenerator::GetXBoxUP (float radius)
+DrawableContainer* SpriteGraphicGenerator::GetXBoxUP (float radius)
 {
     auto cont = new DrawableContainer();
-    cont->AddRectangle ({0., 0.}, DrawPosition::Center, radius * 2, radius * 2, {0, 0, 0, 0});
+    auto r = cont->AddRectangle ({0., 0.}, DrawPosition::Center, radius * 2, radius * 2, {0, 0, 0, 0});
+    r->SetInvisible();
     cont->AddCircle ({0, 0}, DrawPosition::Center, radius, RAYWHITE);
     cont->AddCircle ({0, 0}, DrawPosition::Center, radius * 0.9 , BLACK);
     cont->AddRectangle ({0, 0}, DrawPosition::Center, radius * 1.5, radius * 0.6, RAYWHITE);
@@ -102,10 +107,11 @@ DrawableObject* SpriteGraphicGenerator::GetXBoxUP (float radius)
     return cont;
 }
 
-DrawableObject* SpriteGraphicGenerator::GetXBoxDOWN (float radius)
+DrawableContainer* SpriteGraphicGenerator::GetXBoxDOWN (float radius)
 {
     auto cont = new DrawableContainer();
-    cont->AddRectangle ({0., 0.}, DrawPosition::Center, radius * 2, radius * 2, {0, 0, 0, 0});
+    auto r = cont->AddRectangle ({0., 0.}, DrawPosition::Center, radius * 2, radius * 2, {0, 0, 0, 0});
+    r->SetInvisible();
     cont->AddCircle ({0, 0}, DrawPosition::Center, radius, RAYWHITE);
     cont->AddCircle ({0, 0}, DrawPosition::Center, radius * 0.9 , BLACK);
     cont->AddRectangle ({0, 0}, DrawPosition::Center, radius * 1.5, radius * 0.6, RAYWHITE);
@@ -119,10 +125,11 @@ DrawableObject* SpriteGraphicGenerator::GetXBoxDOWN (float radius)
     return cont;
 }
 
-DrawableObject* SpriteGraphicGenerator::GetXBoxLEFT (float radius)
+DrawableContainer* SpriteGraphicGenerator::GetXBoxLEFT (float radius)
 {
     auto cont = new DrawableContainer();
-    cont->AddRectangle ({0., 0.}, DrawPosition::Center, radius * 2, radius * 2, {0, 0, 0, 0});
+    auto r = cont->AddRectangle ({0., 0.}, DrawPosition::Center, radius * 2, radius * 2, {0, 0, 0, 0});
+    r->SetInvisible();
     cont->AddCircle ({0, 0}, DrawPosition::Center, radius, RAYWHITE);
     cont->AddCircle ({0, 0}, DrawPosition::Center, radius * 0.9, BLACK);
     cont->AddRectangle ({0, 0}, DrawPosition::Center, radius * 1.5, radius * 0.6, RAYWHITE);
@@ -136,10 +143,11 @@ DrawableObject* SpriteGraphicGenerator::GetXBoxLEFT (float radius)
     return cont;
 }
 
-DrawableObject* SpriteGraphicGenerator::GetXBoxRIGHT (float radius)
+DrawableContainer* SpriteGraphicGenerator::GetXBoxRIGHT (float radius)
 {
     auto cont = new DrawableContainer();
-    cont->AddRectangle ({0., 0.}, DrawPosition::Center, radius * 2, radius * 2, {0, 0, 0, 0});
+    auto r = cont->AddRectangle ({0., 0.}, DrawPosition::Center, radius * 2, radius * 2, {0, 0, 0, 0});
+    r->SetInvisible();
     cont->AddCircle ({0, 0}, DrawPosition::Center, radius, RAYWHITE);
     cont->AddCircle ({0, 0}, DrawPosition::Center, radius * 0.9, BLACK);
     cont->AddRectangle ({0, 0}, DrawPosition::Center, radius * 1.5, radius * 0.6, RAYWHITE);
@@ -153,10 +161,11 @@ DrawableObject* SpriteGraphicGenerator::GetXBoxRIGHT (float radius)
     return cont;
 }
 
-DrawableObject* SpriteGraphicGenerator::GetXBoxLB (float width)
+DrawableContainer* SpriteGraphicGenerator::GetXBoxLB (float width)
 {
     auto cont = new DrawableContainer();
-    cont->AddRectangle ({0., 0.}, DrawPosition::Center, width, width, {0, 0, 0, 0});
+    auto r = cont->AddRectangle ({0., 0.}, DrawPosition::Center, width, width, {0, 0, 0, 0});
+    r->SetInvisible();
     cont->AddRectangleRounded ({0, 0}, DrawPosition::Center, width * 0.5, width, 0.6, RAYWHITE);
     auto rInt = cont->AddRectangleRounded ({0, 0}, DrawPosition::Center, width * 0.4, width * 0.9, 0.6, BLACK);
     auto bbox = rInt->GetBoundingBox();
@@ -165,10 +174,11 @@ DrawableObject* SpriteGraphicGenerator::GetXBoxLB (float width)
     return cont;
 }
 
-DrawableObject* SpriteGraphicGenerator::GetXBoxRB (float width)
+DrawableContainer* SpriteGraphicGenerator::GetXBoxRB (float width)
 {
     auto cont = new DrawableContainer();
-    cont->AddRectangle ({0., 0.}, DrawPosition::Center, width, width, {0, 0, 0, 0});
+    auto r = cont->AddRectangle ({0., 0.}, DrawPosition::Center, width, width, {0, 0, 0, 0});
+    r->SetInvisible();
     cont->AddRectangleRounded ({0, 0}, DrawPosition::Center, width * 0.5, width, 0.6, RAYWHITE);
     auto rInt = cont->AddRectangleRounded ({0, 0}, DrawPosition::Center, width * 0.4, width * 0.9, 0.6, BLACK);
     auto bbox = rInt->GetBoundingBox();
@@ -177,10 +187,11 @@ DrawableObject* SpriteGraphicGenerator::GetXBoxRB (float width)
     return cont;
 }
 
-DrawableObject* SpriteGraphicGenerator::GetXBoxLT (float height)
+DrawableContainer* SpriteGraphicGenerator::GetXBoxLT (float height)
 {
     auto cont = new DrawableContainer();
-    cont->AddRectangle ({0., 0.}, DrawPosition::Center, height, height, {0, 0, 0, 0});
+    auto r = cont->AddRectangle ({0., 0.}, DrawPosition::Center, height, height, {0, 0, 0, 0});
+    r->SetInvisible();
     cont->AddRectangleRounded ({0, 0}, DrawPosition::Center, height , height * 0.5, 0.6, RAYWHITE);
     auto rInt = cont->AddRectangleRounded ({0, 0}, DrawPosition::Center, height * 0.9, height * 0.4, 0.6, BLACK);
     auto bbox = rInt->GetBoundingBox();
@@ -189,10 +200,11 @@ DrawableObject* SpriteGraphicGenerator::GetXBoxLT (float height)
     return cont;
 }
 
-DrawableObject* SpriteGraphicGenerator::GetXBoxRT (float height)
+DrawableContainer* SpriteGraphicGenerator::GetXBoxRT (float height)
 {
     auto cont = new DrawableContainer();
-    cont->AddRectangle ({0., 0.}, DrawPosition::Center, height, height, {0, 0, 0, 0});
+    auto r = cont->AddRectangle ({0., 0.}, DrawPosition::Center, height, height, {0, 0, 0, 0});
+    r->SetInvisible();
     cont->AddRectangleRounded ({0, 0}, DrawPosition::Center, height , height * 0.5, 0.6, RAYWHITE);
     auto rInt = cont->AddRectangleRounded ({0, 0}, DrawPosition::Center, height * 0.9, height * 0.4, 0.6, BLACK);
     auto bbox = rInt->GetBoundingBox();
@@ -201,7 +213,7 @@ DrawableObject* SpriteGraphicGenerator::GetXBoxRT (float height)
     return cont;
 }
 
-DrawableObject* SpriteGraphicGenerator::GetKeybordKey (KeyboardKey key, float size)
+DrawableContainer* SpriteGraphicGenerator::GetKeybordKey (KeyboardKey key, float size)
 {
     auto cont = new DrawableContainer();
     if (key > 38 && key < 91) {
@@ -232,6 +244,15 @@ DrawableObject* SpriteGraphicGenerator::GetKeybordKey (KeyboardKey key, float si
         auto bbox = rInt->GetBoundingBox();
 
         cont->AddText ({bbox.Min().x + bbox.Width() * 0.5f, bbox.Min().y + bbox.Height() * 0.1f}, DrawPosition::Top, "SPACE", bbox.Height() * 0.45f, RAYWHITE);
+        break;
+    }
+    case KEY_ENTER:
+    {
+        cont->AddRectangleRounded ({0., 0.}, DrawPosition::Top, size, size * 2, 0.4, RAYWHITE);
+        auto rInt = cont->AddRectangleRounded ({0., size * 0.08f}, DrawPosition::Top, size * 0.75, size * 1.9, 0.4, BLACK);
+        auto bbox = rInt->GetBoundingBox();
+
+        cont->AddText ({bbox.Min().x + bbox.Width() * 0.5f, bbox.Min().y + bbox.Height() * 0.1f}, DrawPosition::Top, "ENTER", bbox.Height() * 0.45f, RAYWHITE);
         break;
     }
     case KEY_LEFT_ALT: case KEY_RIGHT_ALT:
@@ -289,7 +310,7 @@ DrawableObject* SpriteGraphicGenerator::GetKeybordKey (KeyboardKey key, float si
     return cont;
 }
 
-DrawableObject* SpriteGraphicGenerator::GetBlockLetterT (int cellSize, const Color& mainColor, const Color& shadeColor)
+DecorativeBlock* SpriteGraphicGenerator::GetBlockLetterT (int cellSize, const Color& mainColor, const Color& shadeColor)
 {
     auto block = new DecorativeBlock (cellSize);
     block->AddCell ({0, 0}, mainColor, shadeColor);
@@ -304,7 +325,7 @@ DrawableObject* SpriteGraphicGenerator::GetBlockLetterT (int cellSize, const Col
     return block;
 }
 
-DrawableObject* SpriteGraphicGenerator::GetBlockLetterE (int cellSize, const Color& mainColor, const Color& shadeColor)
+DecorativeBlock* SpriteGraphicGenerator::GetBlockLetterE (int cellSize, const Color& mainColor, const Color& shadeColor)
 {
     auto block = new DecorativeBlock (cellSize);
     block->AddCell ({0, 0}, mainColor, shadeColor);
@@ -322,7 +343,7 @@ DrawableObject* SpriteGraphicGenerator::GetBlockLetterE (int cellSize, const Col
     return block;
 }
 
-DrawableObject* SpriteGraphicGenerator::GetBlockLetterR (int cellSize, const Color& mainColor, const Color& shadeColor)
+DecorativeBlock* SpriteGraphicGenerator::GetBlockLetterR (int cellSize, const Color& mainColor, const Color& shadeColor)
 {
     auto block = new DecorativeBlock (cellSize);
     block->AddCell ({0, 0}, mainColor, shadeColor);
@@ -341,7 +362,7 @@ DrawableObject* SpriteGraphicGenerator::GetBlockLetterR (int cellSize, const Col
     return block;
 }
 
-DrawableObject* SpriteGraphicGenerator::GetBlockLetterI (int cellSize, const Color& mainColor, const Color& shadeColor)
+DecorativeBlock* SpriteGraphicGenerator::GetBlockLetterI (int cellSize, const Color& mainColor, const Color& shadeColor)
 {
     auto block = new DecorativeBlock (cellSize);
     block->AddCell ({0, 0}, mainColor, shadeColor);
@@ -354,7 +375,7 @@ DrawableObject* SpriteGraphicGenerator::GetBlockLetterI (int cellSize, const Col
     return block;
 }
 
-DrawableObject* SpriteGraphicGenerator::GetBlockLetterS (int cellSize, const Color& mainColor, const Color& shadeColor)
+DecorativeBlock* SpriteGraphicGenerator::GetBlockLetterS (int cellSize, const Color& mainColor, const Color& shadeColor)
 {
     auto block = new DecorativeBlock (cellSize);
     block->AddCell ({0, 0}, mainColor, shadeColor);
@@ -373,7 +394,7 @@ DrawableObject* SpriteGraphicGenerator::GetBlockLetterS (int cellSize, const Col
     return block;
 }
 
-DrawableObject* SpriteGraphicGenerator::GetButton (const std::string& text, float width)
+DrawableContainer* SpriteGraphicGenerator::GetButton (const std::string& text, float width)
 {
     auto cont = new DrawableContainer();
 
@@ -383,7 +404,7 @@ DrawableObject* SpriteGraphicGenerator::GetButton (const std::string& text, floa
     return cont;
 }
 
-DrawableObject* SpriteGraphicGenerator::GetButtonHover (const std::string& text, float width)
+DrawableContainer* SpriteGraphicGenerator::GetButtonHover (const std::string& text, float width)
 {
     auto cont = new DrawableContainer();
 
@@ -394,7 +415,7 @@ DrawableObject* SpriteGraphicGenerator::GetButtonHover (const std::string& text,
     return cont;
 }
 
-DrawableObject* SpriteGraphicGenerator::GetButtonPressed (const std::string& text, float width)
+DrawableContainer* SpriteGraphicGenerator::GetButtonPressed (const std::string& text, float width)
 {
     auto cont = new DrawableContainer();
     Color shadedPressed {53, 74, 115,  255};
@@ -408,7 +429,7 @@ DrawableObject* SpriteGraphicGenerator::GetButtonPressed (const std::string& tex
     return cont;
 }
 
-DrawableObject* SpriteGraphicGenerator::GetMenuDecorativeBlock (int cellSize)
+DecorativeBlock* SpriteGraphicGenerator::GetMenuDecorativeBlock (int cellSize)
 {
     auto block = new DecorativeBlock (cellSize);
     block->AddCell ({0, 1}, Colors::blue, Colors::blue_shade);
@@ -457,7 +478,7 @@ DrawableObject* SpriteGraphicGenerator::GetMenuDecorativeBlock (int cellSize)
     return block;
 }
 
-DrawableObject* SpriteGraphicGenerator::GetMenuDecorativeBlockInversed (int cellSize)
+DecorativeBlock* SpriteGraphicGenerator::GetMenuDecorativeBlockInversed (int cellSize)
 {
     auto block = new DecorativeBlock (cellSize);
     block->AddCell ({0, 7}, Colors::blue, Colors::blue_shade);

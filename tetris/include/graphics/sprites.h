@@ -3,36 +3,39 @@
 #include <memory>
 #include <string>
 
+class DecorativeBlock;
+class DrawableContainer;
+
 class SpriteGraphicGenerator
 {
 public:
-    static DrawableObject* GetXBoxButton (GamepadButton button, float height);
+    static DrawableContainer* GetXBoxButton (GamepadButton button, float height);
 
-    static DrawableObject* GetXBoxButtonX (float radius);
-    static DrawableObject* GetXBoxButtonY (float radius);
-    static DrawableObject* GetXBoxButtonA (float radius);
-    static DrawableObject* GetXBoxButtonB (float radius);
-    static DrawableObject* GetXBoxUP (float radius);
-    static DrawableObject* GetXBoxDOWN (float radius);
-    static DrawableObject* GetXBoxLEFT (float radius);
-    static DrawableObject* GetXBoxRIGHT (float radius);
-    static DrawableObject* GetXBoxLB (float width);
-    static DrawableObject* GetXBoxRB (float width);
-    static DrawableObject* GetXBoxLT (float height);
-    static DrawableObject* GetXBoxRT (float height);
+    static DrawableContainer* GetXBoxButtonX (float radius);
+    static DrawableContainer* GetXBoxButtonY (float radius);
+    static DrawableContainer* GetXBoxButtonA (float radius);
+    static DrawableContainer* GetXBoxButtonB (float radius);
+    static DrawableContainer* GetXBoxUP (float radius);
+    static DrawableContainer* GetXBoxDOWN (float radius);
+    static DrawableContainer* GetXBoxLEFT (float radius);
+    static DrawableContainer* GetXBoxRIGHT (float radius);
+    static DrawableContainer* GetXBoxLB (float width);
+    static DrawableContainer* GetXBoxRB (float width);
+    static DrawableContainer* GetXBoxLT (float height);
+    static DrawableContainer* GetXBoxRT (float height);
 
-    static DrawableObject* GetKeybordKey (KeyboardKey key, float size);
+    static DrawableContainer* GetKeybordKey (KeyboardKey key, float size);
 
-    static DrawableObject* GetBlockLetterT (int cellSize, const Color& mainColor, const Color& shadeColor);
-    static DrawableObject* GetBlockLetterE (int cellSize, const Color& mainColor, const Color& shadeColor);
-    static DrawableObject* GetBlockLetterR (int cellSize, const Color& mainColor, const Color& shadeColor);
-    static DrawableObject* GetBlockLetterI (int cellSize, const Color& mainColor, const Color& shadeColor);
-    static DrawableObject* GetBlockLetterS (int cellSize, const Color& mainColor, const Color& shadeColor);
+    static DecorativeBlock* GetBlockLetterT (int cellSize, const Color& mainColor, const Color& shadeColor);
+    static DecorativeBlock* GetBlockLetterE (int cellSize, const Color& mainColor, const Color& shadeColor);
+    static DecorativeBlock* GetBlockLetterR (int cellSize, const Color& mainColor, const Color& shadeColor);
+    static DecorativeBlock* GetBlockLetterI (int cellSize, const Color& mainColor, const Color& shadeColor);
+    static DecorativeBlock* GetBlockLetterS (int cellSize, const Color& mainColor, const Color& shadeColor);
 
-    static DrawableObject* GetButton (const std::string& text, float width);
-    static DrawableObject* GetButtonHover (const std::string& text, float width);
-    static DrawableObject* GetButtonPressed (const std::string& text, float width);
+    static DrawableContainer* GetButton (const std::string& text, float width);
+    static DrawableContainer* GetButtonHover (const std::string& text, float width);
+    static DrawableContainer* GetButtonPressed (const std::string& text, float width);
 
-    static DrawableObject* GetMenuDecorativeBlock (int cellSize);
-    static DrawableObject* GetMenuDecorativeBlockInversed (int cellSize);
+    static DecorativeBlock* GetMenuDecorativeBlock (int cellSize);
+    static DecorativeBlock* GetMenuDecorativeBlockInversed (int cellSize);
 };
