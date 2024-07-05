@@ -84,7 +84,7 @@ TitleScreen::TitleScreen (InputHandler* iHandler, const ScreenSize& screenSize):
     auto posS = animPurpleS->GetPosition();
     auto bboxS = animPurpleS->GetBoundingBox();
 
-    Vector2 initPosS {screenSize.m_width + 2.f, posS.y};
+    Vector2 initPosS {width + bboxS.Width(), posS.y};
     animPurpleS->Translate (GraphicsHelper::ComputeTranslation (posS, initPosS));
     animPurpleS->AddMoveAnimStep (34, GraphicsHelper::ComputeTranslation (initPosS, posS));
     animPurpleS->Play();
@@ -120,7 +120,7 @@ TitleScreen::TitleScreen (InputHandler* iHandler, const ScreenSize& screenSize):
         auto pos = anim->GetPosition();
         auto bbox = anim->GetBoundingBox();
 
-        Vector2 initPos {pos.x, (float)screenSize.m_height};
+        Vector2 initPos {pos.x, screenSize.m_height * screenSize.m_scale};
         anim->Translate (GraphicsHelper::ComputeTranslation (pos, initPos));
         anim->AddMoveAnimStep (52, GraphicsHelper::ComputeTranslation (initPos, pos));
         anims.push_back (anim);

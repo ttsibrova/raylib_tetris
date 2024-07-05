@@ -14,7 +14,7 @@ int main() {
     Settings& mainSettings = Settings::GetInstance();
 
 
-    ScreenSize screenSize {1007, 850, mainSettings.GetScale()};
+    ScreenSize screenSize {1280, 900, mainSettings.GetScale()};
 
     std::string name = "Raylib Tetris by Lur4N1k";
     if (mainSettings.GetScale() < 0.6f) {
