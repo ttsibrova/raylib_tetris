@@ -86,7 +86,6 @@ class ClassicTetrisGame : public GameObject, public Subject <CTGSObserver>
 {
 public:
     ClassicTetrisGame (DrawableContainer* ownerContainer,
-                       InputHandler* inputHandler,
                        float scale,
                        const settings::GamepadMappings& gmap,
                        const settings::KeyboardMappings& kmap);
@@ -96,7 +95,7 @@ public:
     void Reset();
     void Draw();
     bool CanPlay() const { return m_bCanPlay; }
-    virtual void Tick() override;
+    virtual void Update() override;
 
     void MoveBlockDown();
     void MoveBlockRight();
@@ -150,7 +149,6 @@ private:
     char                         m_speedLvl;
 
     BlocksFactory                m_blockFactory;
-    InputHandler*                m_inputHandler;
     std::unique_ptr <InputLayer> m_gameInputLayer;
     DrawableContainer*           m_ownerContainer;
 };

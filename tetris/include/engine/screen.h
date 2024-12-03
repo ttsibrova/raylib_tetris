@@ -1,7 +1,8 @@
 #pragma once
 #include <engine/command.h>
 #include <engine/game_object.h>
-#include <engine/screen_manager.h>
+#include <engine/input_handler.h>
+#include <engine/screen_properties.h>
 #include <graphics/drawable_container.h>
 
 
@@ -13,9 +14,8 @@ enum class ScreenState {
 class Screen : public GameObject
 {
 public:
-    Screen (InputHandler* iHandler):
+    Screen():
         m_state (ScreenState::ACTIVE),
-        m_inputHandler (iHandler),
         m_nextScreen {false, Screens::NONE}
     {}
 
@@ -29,7 +29,6 @@ public:
 protected:
     ScreenState               m_state;
     DrawableContainer         m_screenGraphics;
-    InputHandler*             m_inputHandler;
     std::pair <bool, Screens> m_nextScreen;
 };
 
@@ -75,9 +74,10 @@ class Animation;
 class MainMenuScreen : public Screen
 {
 public:
-    MainMenuScreen (InputHandler* iHandler, const ScreenSize& screenSize);
+    MainMenuScreen (const ScreenSize& screenSize);
+
+    virtual void Update() override;
     ~MainMenuScreen();
-    virtual void Tick() override;
 
 private:
     Animation* m_animLogo;
@@ -88,7 +88,7 @@ class GameScreen : public Screen
 {
 public:
 
-    virtual void Tick() override;
+    virtual void Update() override;
 
 };
 

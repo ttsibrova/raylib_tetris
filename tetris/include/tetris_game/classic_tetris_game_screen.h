@@ -17,13 +17,12 @@ public:
     public:
         PauseSubScreen (const ScreenSize& size,
                         Vector2 posCenter,
-                        InputHandler* iHandler,
                         const settings::KeyboardMappings& kMap,
                         const settings::GamepadMappings& gMap);
 
         void NotifyGameReset();
 
-        virtual void Tick() override {}
+        virtual void Update() override {}
         virtual ~PauseSubScreen();
     private:
         Menu*         m_pauseMenu;
@@ -35,23 +34,21 @@ public:
     public:
         GameOverSubScreen (const ScreenSize& size,
                            Vector2 posCenter,
-                           size_t score,
-                           InputHandler* iHandler);
+                           size_t score);
 
         void NotifyGameReset();
 
-        virtual void Tick() override {}
+        virtual void Update() override {}
         virtual ~GameOverSubScreen();
     private:
         Menu*      m_gameOverMenu;
         InputLayer m_inputLayer;
     };
 
-    ClassicTetrisGameScreen (const ScreenSize& screenSize, InputHandler* iHandler);
+    ClassicTetrisGameScreen (const ScreenSize& screenSize);
     ~ClassicTetrisGameScreen();
 
-    //void Init();
-    virtual void Tick() override;
+    virtual void Update() override;
     virtual void onNotify (const Object& obj, Event e) override;
 
     const HighScores& GetGameHighScores() const { return m_gameScores; }
@@ -70,11 +67,11 @@ class CTGHighScoresScreen: public Screen
 {
 public:
     CTGHighScoresScreen (const ScreenSize& size,
-                         HighScores scores,
-                         InputHandler* iHandler);
+                         HighScores scores);
 
-    virtual void Tick() override;
-    virtual ~CTGHighScoresScreen ();
+    virtual void Update() override;
+
+    virtual ~CTGHighScoresScreen();
 private:
     Menu*                   m_menu;
     InputLayer              m_inputLayer;

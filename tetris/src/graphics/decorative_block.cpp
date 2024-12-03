@@ -6,8 +6,8 @@
 Cell::Cell (float cellSize, const Color& mainColor, const Color& shadeColor)
 {
     float shadeSize = cellSize / 7;
-    m_graphics.AddRectangle (m_pos, DrawPosition::TopLeft, cellSize, cellSize, shadeColor);
-    m_graphics.AddRectangle ({m_pos.x + shadeSize, m_pos.y + shadeSize},
+    DrawableContainerTools::AddRectangle (m_graphics, m_pos, DrawPosition::TopLeft, cellSize, cellSize, shadeColor);
+    DrawableContainerTools::AddRectangle (m_graphics, {m_pos.x + shadeSize, m_pos.y + shadeSize},
                               DrawPosition::TopLeft,
                               cellSize - shadeSize * 2, cellSize - shadeSize * 2,
                               mainColor);

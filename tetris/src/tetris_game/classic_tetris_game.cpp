@@ -114,7 +114,6 @@ bool CTGPauseCommand::Execute (Object* obj)
 }
 
 ClassicTetrisGame::ClassicTetrisGame (DrawableContainer* ownerContainer,
-                                      InputHandler* inputHandler,
                                       float scale,
                                       const settings::GamepadMappings& gmap,
                                       const settings::KeyboardMappings& kmap):
@@ -129,7 +128,6 @@ ClassicTetrisGame::ClassicTetrisGame (DrawableContainer* ownerContainer,
     m_numRemovedLines(0),
     m_comboNum (0),
     m_lastFallStarted (0),
-    m_inputHandler (inputHandler),
     m_ownerContainer (ownerContainer)
 {
     m_gameInputLayer = std::make_unique <InputLayer> ();
@@ -141,8 +139,7 @@ ClassicTetrisGame::ClassicTetrisGame (DrawableContainer* ownerContainer,
     m_gameInputLayer->AddAction (GAMEPAD_BUTTON_LEFT_FACE_DOWN, kmap.m_MoveDown, ActionType::HOLD, std::make_unique <CTGMoveDownCommand>());
     m_gameInputLayer->AddAction (GAMEPAD_BUTTON_MIDDLE_RIGHT, KEY_ESCAPE, ActionType::PRESS, std::make_unique <CTGPauseCommand>());
 
-    m_inputHandler->PushInputLayer (m_gameInputLayer.get());
-    m_inputHandler->PushObject (this);
+    InputHandler::GlobalInstance().AddLayer (m_gameInputLayer.get(), this);
 }
 
 void ClassicTetrisGame::Init()
@@ -153,7 +150,7 @@ void ClassicTetrisGame::Init()
     auto ownerBBox = m_ownerContainer->GetBoundingBox();
     Vector2 gridPixelPos {ownerBBox.Min().x + (ownerBBox.Max().x - ownerBBox.Min().x) / 2, ownerBBox.Min().y};
 
-    m_ownerContainer->AddRectangle ({gridPixelPos.x+1, gridPixelPos.y}, DrawPosition::Top, GetGridHeight() + 4, GetGridWidth() + 7, Colors::lightBlue_dimmer);
+    DrawableContainerTools::AddRectangle (*m_ownerContainer, {gridPixelPos.x+1, gridPixelPos.y}, DrawPosition::Top, GetGridHeight() + 4, GetGridWidth() + 7, Colors::lightBlue_dimmer);
     m_ownerContainer->AddDrawableObject (gridPixelPos, DrawPosition::Top, m_gameGrid);
 
     auto gameHUD = new GridHUD (m_gameGrid);
@@ -198,7 +195,7 @@ void ClassicTetrisGame::Draw()
     }
 }
 
-void ClassicTetrisGame::Tick()
+void ClassicTetrisGame::Update()
 {
     if (CanPlay()) {
         UpdateFallingBlock();
@@ -329,8 +326,7 @@ int ClassicTetrisGame::GetGameWidth()
 
 ClassicTetrisGame::~ClassicTetrisGame()
 {
-    m_inputHandler->PopInputLayer();
-    m_inputHandler->PopObject();
+    InputHandler::GlobalInstance().ReleaseLayer();
 }
 
 void ClassicTetrisGame::PrepareBlock (Block* block)

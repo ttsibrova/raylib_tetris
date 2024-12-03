@@ -49,7 +49,13 @@ bool InputHandler::CheckGamepadInputs()
 }
 
 
-void InputHandler::Tick()
+InputHandler& InputHandler::GlobalInstance()
+{
+    static InputHandler iHandler;
+    return iHandler;
+}
+
+void InputHandler::Update()
 {
     if (!m_inputLayers.empty() && !m_objectsStack.empty()) {
 
@@ -82,6 +88,18 @@ void InputHandler::Tick()
             return;
         }
     }
+}
+
+void InputHandler::AddLayer (InputLayer* newLayer, Object* obj)
+{
+    PushInputLayer (newLayer);
+    PushObject (obj);
+}
+
+void InputHandler::ReleaseLayer()
+{
+    PopInputLayer();
+    PopObject();
 }
 
 void InputHandler::PushInputLayer (InputLayer* newLayer)

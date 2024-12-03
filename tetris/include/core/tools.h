@@ -5,8 +5,6 @@
 #include <iostream>
 #include <iterator>
 
-
-#include <vector>
 namespace Tools {
 template <class Type, size_t D0, size_t D1, size_t ... Dims>
 class multi_array {

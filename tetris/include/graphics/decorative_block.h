@@ -1,17 +1,17 @@
 #pragma once
-#include <graphics/containered_drawable_object.h>
+#include <graphics/drawable_object_with_container.h>
 #include <graphics/drawable_container.h>
 #include <tetris_game/grid.h>
 
 #include <optional>
 
-class Cell : public ContaineredDrawableObject
+class Cell : public DrawableObjectWithContainer
 {
 public:
     Cell (float cellSize, const Color& mainColor, const Color& shadeColor);
 };
 
-class DecorativeBlock: public ContaineredDrawableObject
+class DecorativeBlock: public DrawableObjectWithContainer
 {
 public:
     DecorativeBlock (int cellSize):

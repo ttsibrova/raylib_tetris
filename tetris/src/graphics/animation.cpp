@@ -24,7 +24,7 @@ void Sequence::PerformAnimation (DrawableObject* obj)
     m_currentFrame++;
 }
 
-void Animation::Tick()
+void Animation::Update()
 {
     if (m_bIsPlaying) {
         if (m_animationSequences[m_currentSequenceIdx].CanPerform()) {

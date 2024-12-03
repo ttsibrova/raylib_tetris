@@ -3,6 +3,8 @@
 #include <core/tools.h>
 #include <graphics/drawable_object.h>
 
+#include <vector>
+
 class DrawableContainer;
 
 struct GridPosition

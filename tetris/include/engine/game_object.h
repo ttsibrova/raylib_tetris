@@ -11,7 +11,7 @@ class GameObject: public Object
 {
 public:
     virtual ~GameObject() {}
-    virtual void Tick() = 0;
+    virtual void Update() = 0;
 };
 
 

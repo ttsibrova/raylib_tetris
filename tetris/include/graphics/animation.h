@@ -79,7 +79,7 @@ public:
         m_pos = obj->GetPosition();
     }
 
-    virtual void Tick() override;
+    virtual void Update() override;
     void Play() { m_bIsPlaying = true; m_bIsCompleted = false; }
     void Pause() { m_bIsPlaying = false;}
     bool IsPlaying() const { return m_bIsPlaying; }

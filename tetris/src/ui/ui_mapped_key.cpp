@@ -3,8 +3,7 @@
 #include <graphics/drawable_container.h>
 #include <graphics/sprites.h>
 
-MappedKey::MappedKey (KeyboardKey key, GamepadButton button, const InputHandler* iHandler, float size):
-    m_inputHandler (iHandler)
+MappedKey::MappedKey (KeyboardKey key, GamepadButton button, float size)
 {
     m_gamepadGraphics = SpriteGraphicGenerator::GetXBoxButton (button, size);
     m_keyboardGraphics = SpriteGraphicGenerator::GetKeybordKey (key, size);
@@ -23,7 +22,7 @@ MappedKey::~MappedKey()
 
 void MappedKey::Draw() const
 {
-    switch (m_inputHandler->GetActiveDevice())
+    switch (InputHandler::GlobalInstance().GetActiveDevice())
     {
     case Device::KEYBOARD:
         m_keyboardGraphics->Draw();

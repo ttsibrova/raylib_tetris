@@ -11,14 +11,13 @@
 #include <ui/ui_menu.h>
 #include <ui/ui_button.h>
 
-TitleScreen::TitleScreen (InputHandler* iHandler, const ScreenSize& screenSize):
-    Screen (iHandler),
+TitleScreen::TitleScreen (const ScreenSize& screenSize):
     m_animIdx (0),
     m_bIsreadyForGame (false)
 {
     float height = screenSize.m_height * screenSize.m_scale;
     float width = screenSize.m_width * screenSize.m_scale;
-    m_screenGraphics.AddRectangle ({0.f, 0.f}, DrawPosition::TopLeft, height, width, Colors::darkBlue);
+    DrawableContainerTools::AddRectangle (m_screenGraphics, {0.f, 0.f}, DrawPosition::TopLeft, height, width, Colors::darkBlue);
 
     int cellSize = 35 * screenSize.m_scale;
     auto logoContainer = std::make_shared <DrawableContainer>();
@@ -113,7 +112,12 @@ TitleScreen::TitleScreen (InputHandler* iHandler, const ScreenSize& screenSize):
     m_screenGraphics.AddDrawableObject ({posX, height + (dBlockCellSize + 1) * 2}, DrawPosition::BottomLeft, animBlock2);
     std::shared_ptr <DrawableObject> block3 (SpriteGraphicGenerator::GetMenuDecorativeBlockInversed (dBlockCellSize));
     auto animBlock3 = new Animation (block3);
-    m_screenGraphics.AddDrawableObject ({width, height}, DrawPosition::BottomRight, animBlock3);
+    auto bboxB3 = m_screenGraphics.AddDrawableObject ({width + 15, height}, DrawPosition::BottomRight, animBlock3)->GetBoundingBox();
+
+    std::shared_ptr <DrawableObject> block4 (SpriteGraphicGenerator::GetMenuDecorativeBlock (dBlockCellSize));
+    auto animBlock4 = new Animation (block4);
+    posX = bboxB3.Min().x + dBlockCellSize * 2 + 1;
+    m_screenGraphics.AddDrawableObject ({posX, height + (dBlockCellSize + 1) * 3}, DrawPosition::BottomRight, animBlock4);
 
     auto FillBlockAnim = [&screenSize](Animation* anim, std::vector <Animation*>& anims)
     {
@@ -131,14 +135,15 @@ TitleScreen::TitleScreen (InputHandler* iHandler, const ScreenSize& screenSize):
     FillBlockAnim (animBlock1, m_animsBlocks);
     FillBlockAnim (animBlock2, m_animsBlocks);
     FillBlockAnim (animBlock3, m_animsBlocks);
+    FillBlockAnim (animBlock4, m_animsBlocks);
 
     Vector2 pressPlayPos {topCenter.x, topCenter.y + height * 0.6f};
     auto pressPlay = std::make_shared <DrawableContainer>();
-    pressPlay->AddText ({0.f, 0.f}, DrawPosition::Left, "Press  ", height * 0.04f, RAYWHITE);
+    DrawableContainerTools::AddText (*pressPlay, {0.f, 0.f}, DrawPosition::Left, "Press  ", height * 0.04f, RAYWHITE);
     pressPlay->AddDrawableObject (GraphicsHelper::ComputePosition (DrawPosition::Right, pressPlay->GetBoundingBox()), DrawPosition::Left, SpriteGraphicGenerator::GetKeybordKey (KEY_ENTER, 39 * screenSize.m_scale));
-    pressPlay->AddText (GraphicsHelper::ComputePosition (DrawPosition::Right, pressPlay->GetBoundingBox()), DrawPosition::Left, " / ", height * 0.04f, RAYWHITE);
+    DrawableContainerTools::AddText (*pressPlay, GraphicsHelper::ComputePosition (DrawPosition::Right, pressPlay->GetBoundingBox()), DrawPosition::Left, " / ", height * 0.04f, RAYWHITE);
     pressPlay->AddDrawableObject (GraphicsHelper::ComputePosition (DrawPosition::Right, pressPlay->GetBoundingBox()), DrawPosition::Left, SpriteGraphicGenerator::GetXBoxButtonA (29 * screenSize.m_scale));
-    pressPlay->AddText (GraphicsHelper::ComputePosition (DrawPosition::Right, pressPlay->GetBoundingBox()), DrawPosition::Left, "  to start", height * 0.04f, RAYWHITE);
+    DrawableContainerTools::AddText (*pressPlay, GraphicsHelper::ComputePosition (DrawPosition::Right, pressPlay->GetBoundingBox()), DrawPosition::Left, "  to start", height * 0.04f, RAYWHITE);
     pressPlay->SetAlpha (0);
     auto animPress = new Animation (pressPlay);
     animPress->AddSetOpacityAnimStep (20, 0);
@@ -191,8 +196,7 @@ TitleScreen::TitleScreen (InputHandler* iHandler, const ScreenSize& screenSize):
     hiddenMenu->SetInvisible();
     m_screenGraphics.AddDrawableObject ({-20.f, -20.f}, DrawPosition::BottomRight, hiddenMenu);
 
-    iHandler->PushInputLayer (hiddenMenu->GetInputLayer());
-    iHandler->PushObject (hiddenMenu);
+    InputHandler::GlobalInstance().AddLayer (hiddenMenu->GetInputLayer(), hiddenMenu);
 
     m_screenExitAnimation = new Animation (logoContainer);
     Vector2 menuLogoPos {logoContainer->GetPosition().x, topCenter.y + height * 0.15};
@@ -202,14 +206,13 @@ TitleScreen::TitleScreen (InputHandler* iHandler, const ScreenSize& screenSize):
 
 TitleScreen::~TitleScreen()
 {
-    m_inputHandler->PopInputLayer();
-    m_inputHandler->PopObject();
+    InputHandler::GlobalInstance().ReleaseLayer();
 }
 
-void TitleScreen::Tick()
+void TitleScreen::Update()
 {
     if (m_animIdx < m_animsLogo.size()) {
-        m_animsLogo[m_animIdx]->Tick();
+        m_animsLogo[m_animIdx]->Update();
         if (!m_animsLogo[m_animIdx]->IsPlaying()) {
             if (m_animIdx < m_animsLogo.size() - 3) {
                 AudioManager::GetInstance().Play ("block_drop");
@@ -227,13 +230,13 @@ void TitleScreen::Tick()
         }
     }
 
-    m_animPress->Tick();
+    m_animPress->Update();
     if (m_animIdx == m_animsLogo.size()) {
-        m_animsLogo.back()->Tick();
+        m_animsLogo.back()->Update();
     }
     for (auto& anim: m_animsBlocks) {
         if (anim->IsPlaying()) {
-            anim->Tick();
+            anim->Update();
         }
     }
     if (m_bIsreadyForGame && m_animIdx == m_animsLogo.size()) {
@@ -244,7 +247,7 @@ void TitleScreen::Tick()
     } else if (m_bIsreadyForGame) {
         SetNextScreen (Screens::MAIN_MENU);
     }
-    m_screenExitAnimation->Tick();
+    m_screenExitAnimation->Update();
     m_screenGraphics.Draw();
     if (m_screenExitAnimation->IsCompleted()) {
         SetNextScreen (Screens::MAIN_MENU);

@@ -38,7 +38,7 @@ int main() {
         BeginDrawing();
         //ClearBackground (Colors::darkGrey);
 
-        manager.Tick();
+        manager.Update();
         EndDrawing();
     }
     CloseWindow();

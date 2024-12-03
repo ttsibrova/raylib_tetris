@@ -10,12 +10,11 @@
 #include <ui/ui_button.h>
 
 
-MainMenuScreen::MainMenuScreen (InputHandler* iHandler, const ScreenSize& screenSize):
-    Screen (iHandler)
+MainMenuScreen::MainMenuScreen (const ScreenSize& screenSize)
 {
     float height = screenSize.m_height * screenSize.m_scale;
     float width = screenSize.m_width * screenSize.m_scale;
-    m_screenGraphics.AddRectangle ({0.f, 0.f}, DrawPosition::TopLeft, height, width, Colors::darkBlue);
+    DrawableContainerTools::AddRectangle (m_screenGraphics, {0.f, 0.f}, DrawPosition::TopLeft, height, width, Colors::darkBlue);
 
     int cellSize =35 * screenSize.m_scale;
     auto logoContainer = std::make_shared <DrawableContainer>();
@@ -65,7 +64,11 @@ MainMenuScreen::MainMenuScreen (InputHandler* iHandler, const ScreenSize& screen
     }
     m_screenGraphics.AddDrawableObject ({posX, height + (cellSize + 1) * 2}, DrawPosition::BottomLeft, block2);
     auto block3 = SpriteGraphicGenerator::GetMenuDecorativeBlockInversed (cellSize);
-    m_screenGraphics.AddDrawableObject ({width, height}, DrawPosition::BottomRight, block3);
+    auto bboxB3 = m_screenGraphics.AddDrawableObject ({width + 15, height}, DrawPosition::BottomRight, block3)->GetBoundingBox();
+
+    auto block4 = SpriteGraphicGenerator::GetMenuDecorativeBlock (cellSize);
+    posX = bboxB3.Min().x + cellSize * 2 + 1;
+    m_screenGraphics.AddDrawableObject ({posX, height + (cellSize + 1) * 3}, DrawPosition::BottomRight, block4);
 
     auto menu = new Menu (height * 0.13f, std::make_unique <ScreenCloseCommand> (this));
     menu->SetColumnWidth (width * 0.4);
@@ -77,24 +80,22 @@ MainMenuScreen::MainMenuScreen (InputHandler* iHandler, const ScreenSize& screen
     menu->AddRow (std::move (exitGameButton));
     menu->SetInputLayer (Menu::GetStandardMenuInputLayer());
 
-    m_inputHandler->PushInputLayer (menu->GetInputLayer());
-    m_inputHandler->PushObject (menu);
+    InputHandler::GlobalInstance().AddLayer (menu->GetInputLayer(), menu);
 
     Vector2 menuPos {topCenter.x, topCenter.y + height * 0.45};
     m_screenGraphics.AddDrawableObject (menuPos, DrawPosition::Top, menu);
 }
 
-MainMenuScreen::~MainMenuScreen()
+MainMenuScreen::~MainMenuScreen ()
 {
-    m_inputHandler->PopInputLayer();
-    m_inputHandler->PopObject();
+    InputHandler::GlobalInstance().ReleaseLayer();
 }
 
-void MainMenuScreen::Tick()
+void MainMenuScreen::Update()
 {
-    m_animLogo->Tick();
+    m_animLogo->Update();
     m_screenGraphics.Draw();
 }
 
-void GameScreen::Tick()
+void GameScreen::Update()
 {}

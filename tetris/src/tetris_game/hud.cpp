@@ -69,7 +69,7 @@ GridHUD::HUDGroup::HUDGroup (std::string name, const DrawableContainer* ownerCon
     Vector2 maxCorner {width, height};
     auto groupContainer = new UIGroupContainer (minCorner, maxCorner);
     m_graphics.AddDrawableObject (minCorner, DrawPosition::TopLeft, groupContainer);
-    m_graphics.AddShadedText ({offsetX, posStaticTextY}, DrawPosition::Left, name, fontSize, Colors::lightBlue, BLACK);
+    DrawableContainerTools::AddShadedText (m_graphics, {offsetX, posStaticTextY}, DrawPosition::Left, name, fontSize, Colors::lightBlue, BLACK);
 }
 
 
@@ -86,8 +86,8 @@ GridHUD::Score::Score (const DrawableContainer* ownerContainer):
 
     Vector2 minCorner {0, 0};
 
-    m_graphics.AddRectangle ({offsetX, posScoreY}, DrawPosition::Left, fontSize + 3, width, GRAY);
-    m_graphics.AddRectangle ({offsetX + 3, posScoreY}, DrawPosition::Left, fontSize - 3, width - 6, BLACK);
+    DrawableContainerTools::AddRectangle (m_graphics, {offsetX, posScoreY}, DrawPosition::Left, fontSize + 3, width, GRAY);
+    DrawableContainerTools::AddRectangle (m_graphics, {offsetX + 3, posScoreY}, DrawPosition::Left, fontSize - 3, width - 6, BLACK);
 
     m_text = new shapes::Text ("0", fontSize);
     m_text->SetColor (Colors::yellow);
@@ -108,8 +108,8 @@ GridHUD::SpeedLVL::SpeedLVL (const DrawableContainer* ownerContainer):
     Vector2 minCorner {0, 0};
 
     float fieldWidth = MeasureText ("000", fontSize);
-    m_graphics.AddRectangle ({offsetX, posScoreY}, DrawPosition::Left, fontSize + 3, fieldWidth + 6, GRAY);
-    auto blackField = m_graphics.AddRectangle ({offsetX + 3, posScoreY}, DrawPosition::Left, fontSize - 3, fieldWidth, BLACK);
+    DrawableContainerTools::AddRectangle (m_graphics, {offsetX, posScoreY}, DrawPosition::Left, fontSize + 3, fieldWidth + 6, GRAY);
+    auto blackField = DrawableContainerTools::AddRectangle (m_graphics, {offsetX + 3, posScoreY}, DrawPosition::Left, fontSize - 3, fieldWidth, BLACK);
     Vector2 textPos = GraphicsHelper::ComputePosition (DrawPosition::Right, blackField->GetBoundingBox());
 
     m_text = new shapes::Text ("1", fontSize);
@@ -130,8 +130,8 @@ GridHUD::Combo::Combo (const DrawableContainer* ownerContainer):
 
     Vector2 minCorner {0, 0};
 
-    m_graphics.AddRectangle ({offsetX, posScoreY}, DrawPosition::Left, fontSize + 3, width, GRAY);
-    m_graphics.AddRectangle ({offsetX + 3, posScoreY}, DrawPosition::Left, fontSize - 3, width - 6, BLACK);
+    DrawableContainerTools::AddRectangle (m_graphics, {offsetX, posScoreY}, DrawPosition::Left, fontSize + 3, width, GRAY);
+    DrawableContainerTools::AddRectangle (m_graphics, {offsetX + 3, posScoreY}, DrawPosition::Left, fontSize - 3, width - 6, BLACK);
 
     m_text = new shapes::Text ("", fontSize);
     m_text->SetColor (Colors::yellow);
@@ -152,8 +152,8 @@ GridHUD::NumRemovedLines::NumRemovedLines (const DrawableContainer* ownerContain
 
     Vector2 minCorner {0, 0};
 
-    m_graphics.AddRectangle ({offsetX, posScoreY}, DrawPosition::Left, fontSize + 3, width, GRAY);
-    m_graphics.AddRectangle ({offsetX + 3, posScoreY}, DrawPosition::Left, fontSize - 3, width - 6, BLACK);
+    DrawableContainerTools::AddRectangle (m_graphics, {offsetX, posScoreY}, DrawPosition::Left, fontSize + 3, width, GRAY);
+    DrawableContainerTools::AddRectangle (m_graphics, {offsetX + 3, posScoreY}, DrawPosition::Left, fontSize - 3, width - 6, BLACK);
 
     m_text = new shapes::Text ("0", fontSize);
     m_text->SetColor (Colors::green);

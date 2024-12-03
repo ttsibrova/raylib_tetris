@@ -11,10 +11,10 @@ void EventTimerHandler::AddTimer (float time, CommandWithContext* command)
     m_timers.emplace_back (time, command);
 }
 
-void EventTimerHandler::Tick()
+void EventTimerHandler::Update()
 {
     for (auto it = m_timers.begin(); it != m_timers.end();) {
-        it->Tick();
+        it->Update();
         if (it->IsExpired()) {
             it = m_timers.erase (it);
         } else 

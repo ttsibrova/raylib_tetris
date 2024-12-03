@@ -19,7 +19,7 @@ public:
 
     bool IsExpired() { return m_bIsExpired; }
 
-    virtual void Tick() override {
+    virtual void Update() override {
         if (GetTime() - m_timeStart > m_time) {
             m_command->ExecuteContext();
             m_bIsExpired = true;
@@ -42,7 +42,7 @@ public:
 
     void AddTimer (float time, CommandWithContext* command);
 
-    virtual void Tick() override;
+    virtual void Update() override;
 
 private:
     EventTimerHandler(){}

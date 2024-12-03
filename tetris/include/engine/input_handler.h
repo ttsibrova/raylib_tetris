@@ -39,12 +39,26 @@ public:
 class InputHandler: public GameObject
 {
 public:
-    InputHandler ():
+    static InputHandler& GlobalInstance();
+
+    virtual void Update() override;
+
+    void AddLayer (InputLayer* newLayer, Object* obj);
+    void ReleaseLayer();
+
+    Device GetActiveDevice() const { return m_lastActiveDevice; }
+
+    InputHandler (const InputHandler& other) = delete;
+    InputHandler operator=(const InputHandler& other) = delete;
+
+private:
+    InputHandler():
         m_lastActiveDevice (Device::KEYBOARD),
         m_gamepadId (0)
     {}
 
-    virtual void Tick() override;
+    bool CheckKeyboardInputs();
+    bool CheckGamepadInputs();
 
     void PushInputLayer (InputLayer* newLayer);
     bool PopInputLayer();
@@ -52,11 +66,6 @@ public:
     void PushObject (Object* obj);
     bool PopObject();
 
-    Device GetActiveDevice() const { return m_lastActiveDevice; }
-
-private:
-    bool CheckKeyboardInputs();
-    bool CheckGamepadInputs();
 
 private:
     Device                   m_lastActiveDevice;

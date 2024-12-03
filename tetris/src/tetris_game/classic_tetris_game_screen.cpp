@@ -11,14 +11,15 @@
 #include <ui/ui_mapped_key.h>
 #include <ui/ui_table.h>
 
-ClassicTetrisGameScreen::ClassicTetrisGameScreen (const ScreenSize& screenSize, InputHandler* iHandler):
-    Screen (iHandler),
+namespace dct = DrawableContainerTools;
+
+ClassicTetrisGameScreen::ClassicTetrisGameScreen (const ScreenSize& screenSize):
     m_pauseScreen (nullptr),
     m_gameOverScreen (nullptr),
-    m_classicTetrisGame (&m_screenGraphics, m_inputHandler, screenSize.m_scale, Settings::GetInstance().GetGamepadMappings(), Settings::GetInstance().GetKeyboardMappings()),
+    m_classicTetrisGame (&m_screenGraphics, screenSize.m_scale, Settings::GetInstance().GetGamepadMappings(), Settings::GetInstance().GetKeyboardMappings()),
     m_screenSize (screenSize)
 {
-    m_screenGraphics.AddRectangle ({0.0},
+    dct::AddRectangle (m_screenGraphics, {0.0},
         DrawPosition::TopLeft,
         screenSize.m_height * screenSize.m_scale,
         screenSize.m_width * screenSize.m_scale,
@@ -52,9 +53,9 @@ ClassicTetrisGameScreen::~ClassicTetrisGameScreen()
 }
 
 
-void ClassicTetrisGameScreen::Tick()
+void ClassicTetrisGameScreen::Update()
 {
-    m_classicTetrisGame.Tick();
+    m_classicTetrisGame.Update();
     m_screenGraphics.Draw();
     m_classicTetrisGame.Draw();
     if (m_pauseScreen) {
@@ -90,7 +91,7 @@ void ClassicTetrisGameScreen::onNotify (const Object& obj, Event e)
     case Event::PAUSE:
     {
         Vector2 posCenter = GraphicsHelper::ComputePosition (DrawPosition::Center, m_screenGraphics.GetBoundingBox());
-        m_pauseScreen = new PauseSubScreen (m_screenSize, posCenter, m_inputHandler, settings::KeyboardMappings(), settings::GamepadMappings());
+        m_pauseScreen = new PauseSubScreen (m_screenSize, posCenter, Settings::GetInstance().GetKeyboardMappings(), Settings::GetInstance().GetGamepadMappings());
         m_pauseScreen->AddObserver (this);
         break;
     }
@@ -98,7 +99,7 @@ void ClassicTetrisGameScreen::onNotify (const Object& obj, Event e)
     {
         Vector2 posCenter = GraphicsHelper::ComputePosition (DrawPosition::Center, m_screenGraphics.GetBoundingBox());
         if (auto game = dynamic_cast <const ClassicTetrisGame*> (&obj)) {
-            m_gameOverScreen = new GameOverSubScreen (m_screenSize, posCenter, game->GetScore(), m_inputHandler);
+            m_gameOverScreen = new GameOverSubScreen (m_screenSize, posCenter, game->GetScore());
             m_gameScores.AddNewScore (game->GetScore(), game->GetNumLinesRemoved());
             m_gameOverScreen->AddObserver (this);
         }
@@ -136,21 +137,19 @@ public:
 ClassicTetrisGameScreen::PauseSubScreen::PauseSubScreen (
     const ScreenSize& size,
     Vector2 posCenter,
-    InputHandler* iHandler,
     const settings::KeyboardMappings& kMap,
     const settings::GamepadMappings& gMap):
-    Screen (iHandler),
     m_pauseMenu (nullptr)
 {
     float height = size.m_height * 0.6f * size.m_scale;
     float width = size.m_width * 0.4f * size.m_scale;
-    auto mainShadowing = m_screenGraphics.AddRectangle ({0.f, 0.f}, DrawPosition::Center, size.m_height * size.m_scale, size.m_width * size.m_scale, {0, 0, 0, 170}); //shadow
-    auto contentFrame = m_screenGraphics.AddRectangle ({0.f, 0.f}, DrawPosition::Center, height, width, Colors::ghost);
-    m_screenGraphics.AddRectangle ({0.f, 0.f}, DrawPosition::Center, height * 0.97, width * 0.97, Colors::darkestBlue);
+    auto mainShadowing = dct::AddRectangle (m_screenGraphics, {0.f, 0.f}, DrawPosition::Center, size.m_height * size.m_scale, size.m_width * size.m_scale, {0, 0, 0, 170}); //shadow
+    auto contentFrame = dct::AddRectangle (m_screenGraphics, {0.f, 0.f}, DrawPosition::Center, height, width, Colors::ghost);
+    dct::AddRectangle (m_screenGraphics, {0.f, 0.f}, DrawPosition::Center, height * 0.97, width * 0.97, Colors::darkestBlue);
     auto bbox = contentFrame->GetBoundingBox();
     float posX = 0;
     float posY = GraphicsHelper::ComputePosition (DrawPosition::Top, bbox).y;
-    m_screenGraphics.AddText ({posX, posY + height * 0.15f}, DrawPosition::Center, "Game paused", height * 0.1, RAYWHITE);
+    dct::AddText (m_screenGraphics, {posX, posY + height * 0.15f}, DrawPosition::Center, "Game paused", height * 0.1, RAYWHITE);
 
     m_pauseMenu = new Menu (height * 0.21, std::make_unique <ScreenCloseCommand> (this));
     m_pauseMenu->SetColumnWidth (width);
@@ -164,28 +163,26 @@ ClassicTetrisGameScreen::PauseSubScreen::PauseSubScreen (
 
     m_inputLayer = Menu::GetStandardMenuInputLayer();
 
-    m_inputHandler->PushInputLayer (&m_inputLayer);
-    m_inputHandler->PushObject (m_pauseMenu);
+    InputHandler::GlobalInstance().AddLayer (&m_inputLayer, m_pauseMenu);
 
-
-    auto AddMapping = [height, width, &posY] (KeyboardKey key, GamepadButton button, const InputHandler* iHandler, std::string text, DrawableContainer* cont) {
-        auto mappedKey = new MappedKey (key, button, iHandler, height * 0.09f);
+    auto AddMapping = [height, width, &posY] (KeyboardKey key, GamepadButton button, std::string text, DrawableContainer* cont) {
+        auto mappedKey = new MappedKey (key, button, height * 0.09f);
         cont->AddDrawableObject ({0., posY}, DrawPosition::TopLeft, mappedKey);
 
         Vector2 textPos = GraphicsHelper::ComputePosition (DrawPosition::Right, mappedKey->GetBoundingBox());
-        cont->AddText ({textPos.x + width * 0.04f, textPos.y}, DrawPosition::Left, text, height * 0.05f, RAYWHITE);
+        dct::AddText (*cont, {textPos.x + width * 0.04f, textPos.y}, DrawPosition::Left, text, height * 0.05f, RAYWHITE);
         posY = mappedKey->GetBoundingBox().Max().y + height * 0.05f;
     };
 
     auto controlsContainer = new DrawableContainer();
-    posY = controlsContainer->AddText ({0., 0.}, DrawPosition::TopLeft, "Controls", height * 0.08f, RAYWHITE)->GetBoundingBox().Max().y + height * 0.04f;
+    posY = dct::AddText (*controlsContainer, {0., 0.}, DrawPosition::TopLeft, "Controls", height * 0.08f, RAYWHITE)->GetBoundingBox().Max().y + height * 0.04f;
 
-    AddMapping (kMap.m_HoldKey, gMap.m_HoldButton, m_inputHandler, " - Hold", controlsContainer);
-    AddMapping (kMap.m_HardDropKey, gMap.m_HardDropButton, m_inputHandler, " - Hard drop", controlsContainer);
-    AddMapping (kMap.m_RotateKey, gMap.m_RotateButton, m_inputHandler, " - Rotate", controlsContainer);
-    AddMapping (kMap.m_MoveLeftKey, GAMEPAD_BUTTON_LEFT_FACE_LEFT, m_inputHandler, " - Move left", controlsContainer);
-    AddMapping (kMap.m_MoveRightKey, GAMEPAD_BUTTON_LEFT_FACE_RIGHT, m_inputHandler, " - Move right", controlsContainer);
-    AddMapping (kMap.m_MoveDown, GAMEPAD_BUTTON_LEFT_FACE_DOWN, m_inputHandler, " - Move down", controlsContainer);
+    AddMapping (kMap.m_HoldKey, gMap.m_HoldButton, " - Hold", controlsContainer);
+    AddMapping (kMap.m_HardDropKey, gMap.m_HardDropButton, " - Hard drop", controlsContainer);
+    AddMapping (kMap.m_RotateKey, gMap.m_RotateButton, " - Rotate", controlsContainer);
+    AddMapping (kMap.m_MoveLeftKey, GAMEPAD_BUTTON_LEFT_FACE_LEFT, " - Move left", controlsContainer);
+    AddMapping (kMap.m_MoveRightKey, GAMEPAD_BUTTON_LEFT_FACE_RIGHT, " - Move right", controlsContainer);
+    AddMapping (kMap.m_MoveDown, GAMEPAD_BUTTON_LEFT_FACE_DOWN, " - Move down", controlsContainer);
 
     Vector2 controlsPos = GraphicsHelper::ComputePosition (DrawPosition::Left, mainShadowing->GetBoundingBox());
     m_screenGraphics.AddDrawableObject ({controlsPos.x + width * 0.1f, controlsPos.y}, DrawPosition::Left, controlsContainer);
@@ -200,8 +197,7 @@ void ClassicTetrisGameScreen::PauseSubScreen::NotifyGameReset()
 
 ClassicTetrisGameScreen::PauseSubScreen::~PauseSubScreen()
 {
-    m_inputHandler->PopInputLayer();
-    m_inputHandler->PopObject();
+    InputHandler::GlobalInstance().ReleaseLayer();
 }
 
 class GOSubScreenRestartCommand: public CommandWithContext
@@ -223,22 +219,21 @@ public:
 };
 
 
-ClassicTetrisGameScreen::GameOverSubScreen::GameOverSubScreen (const ScreenSize& size, Vector2 posCenter, size_t score, InputHandler* iHandler):
-    Screen (iHandler),
+ClassicTetrisGameScreen::GameOverSubScreen::GameOverSubScreen (const ScreenSize& size, Vector2 posCenter, size_t score):
     m_gameOverMenu (nullptr)
 {
     float height = size.m_height * 0.5f * size.m_scale;
     float width = size.m_width * 0.7f * size.m_scale;
 
-    auto mainShadowing = m_screenGraphics.AddRectangle ({0.f, 0.f}, DrawPosition::Center, size.m_height * size.m_scale, size.m_width * size.m_scale, {0, 0, 0, 170}); //shadow
-    auto contentFrame = m_screenGraphics.AddRectangle ({0.f, 0.f}, DrawPosition::Center, height, width, Colors::ghost);
-    m_screenGraphics.AddRectangle ({0.f, 0.f}, DrawPosition::Center, height * 0.97, width * 0.98, Colors::darkestBlue);
+    auto mainShadowing = dct::AddRectangle (m_screenGraphics, {0.f, 0.f}, DrawPosition::Center, size.m_height * size.m_scale, size.m_width * size.m_scale, {0, 0, 0, 170}); //shadow
+    auto contentFrame = dct::AddRectangle (m_screenGraphics, {0.f, 0.f}, DrawPosition::Center, height, width, Colors::ghost);
+    dct::AddRectangle (m_screenGraphics, {0.f, 0.f}, DrawPosition::Center, height * 0.97, width * 0.98, Colors::darkestBlue);
     auto bbox = contentFrame->GetBoundingBox();
     float posX = 0;
     float posY = GraphicsHelper::ComputePosition (DrawPosition::Top, bbox).y;
-    m_screenGraphics.AddText ({posX, posY + height * 0.17f}, DrawPosition::Center, "GAME OVER", height * 0.12, Colors::red);
-    m_screenGraphics.AddText ({posX, posY + height * 0.32f}, DrawPosition::Center, "Your score:", height * 0.08, RAYWHITE);
-    m_screenGraphics.AddText ({posX, posY + height * 0.47f}, DrawPosition::Center, std::to_string (score), height * 0.12, Colors::yellow);
+    dct::AddText (m_screenGraphics, {posX, posY + height * 0.17f}, DrawPosition::Center, "GAME OVER", height * 0.12, Colors::red);
+    dct::AddText (m_screenGraphics, {posX, posY + height * 0.32f}, DrawPosition::Center, "Your score:", height * 0.08, RAYWHITE);
+    dct::AddText (m_screenGraphics, {posX, posY + height * 0.47f}, DrawPosition::Center, std::to_string (score), height * 0.12, Colors::yellow);
 
     m_gameOverMenu = new Menu (height * 0.31, std::make_unique <ScreenCloseCommand> (this));
     m_gameOverMenu->SetColumnWidth (width * 0.45, width * 0.45);
@@ -251,9 +246,7 @@ ClassicTetrisGameScreen::GameOverSubScreen::GameOverSubScreen (const ScreenSize&
     m_inputLayer.AddAction (GAMEPAD_BUTTON_LEFT_FACE_LEFT, KEY_LEFT, ActionType::PRESS, std::make_unique <MenuMoveLeftCommand>());
     m_inputLayer.AddAction (GAMEPAD_BUTTON_LEFT_FACE_RIGHT, KEY_RIGHT, ActionType::PRESS, std::make_unique <MenuMoveRightCommand>());
 
-    m_inputHandler->PushInputLayer (&m_inputLayer);
-    m_inputHandler->PushObject (m_gameOverMenu);
-
+    InputHandler::GlobalInstance().AddLayer (&m_inputLayer, m_gameOverMenu);
     m_screenGraphics.Translate (posCenter);
 }
 
@@ -262,16 +255,14 @@ void ClassicTetrisGameScreen::GameOverSubScreen::NotifyGameReset()
     Notify (*this, Event::GAME_RESET);
 }
 
-ClassicTetrisGameScreen::GameOverSubScreen::~GameOverSubScreen()
+ClassicTetrisGameScreen::GameOverSubScreen::~GameOverSubScreen ()
 {
-    m_inputHandler->PopInputLayer();
-    m_inputHandler->PopObject();
+    InputHandler::GlobalInstance().ReleaseLayer();
 }
 
-CTGHighScoresScreen::CTGHighScoresScreen (const ScreenSize& screenSize, HighScores scores, InputHandler* iHandler):
-    Screen (iHandler)
+CTGHighScoresScreen::CTGHighScoresScreen (const ScreenSize& screenSize, HighScores scores)
 {
-    m_screenGraphics.AddRectangle ({0.0},
+    dct::AddRectangle (m_screenGraphics, {0.0},
                                    DrawPosition::TopLeft,
                                    screenSize.m_height * screenSize.m_scale,
                                    screenSize.m_width * screenSize.m_scale,
@@ -281,7 +272,7 @@ CTGHighScoresScreen::CTGHighScoresScreen (const ScreenSize& screenSize, HighScor
     float posXmid = mainBBox.Width() / 2;
     float height = mainBBox.Height();
 
-    m_screenGraphics.AddText ({posXmid, height * 0.05f}, DrawPosition::Top, "HIGHSCORES", height * 0.07f, RAYWHITE);
+    dct::AddText (m_screenGraphics, {posXmid, height * 0.05f}, DrawPosition::Top, "HIGHSCORES", height * 0.07f, RAYWHITE);
 
     float tableHeight = height * 0.6f;
     float tableWidth = mainBBox.Width() * 0.82f;
@@ -300,17 +291,17 @@ CTGHighScoresScreen::CTGHighScoresScreen (const ScreenSize& screenSize, HighScor
 
     size_t idx = 1;
     for (const auto& record : scores.GetRecords()) {
-        auto containerIdx = new DrawableContainer ();
-        auto containerScore = new DrawableContainer ();
-        auto containerLines = new DrawableContainer ();
+        auto containerIdx = new DrawableContainer();
+        auto containerScore = new DrawableContainer();
+        auto containerLines = new DrawableContainer();
 
-        containerIdx->AddRectangle ({0.f, 0.f}, DrawPosition::Center, tableCellHeight * 0.9f, table->GetColWidth<0>(), Colors::blue_shade);
-        containerScore->AddRectangle ({0.f, 0.f}, DrawPosition::Center, tableCellHeight * 0.9f, table->GetColWidth<1>(), Colors::blue_shade);
-        containerLines->AddRectangle ({0.f, 0.f}, DrawPosition::Center, tableCellHeight * 0.9f, table->GetColWidth<2>(), Colors::blue_shade);
+        dct::AddRectangle (*containerIdx, {0.f, 0.f}, DrawPosition::Center, tableCellHeight * 0.9f, table->GetColWidth<0>(), Colors::blue_shade);
+        dct::AddRectangle (*containerScore, {0.f, 0.f}, DrawPosition::Center, tableCellHeight * 0.9f, table->GetColWidth<1>(), Colors::blue_shade);
+        dct::AddRectangle (*containerLines, {0.f, 0.f}, DrawPosition::Center, tableCellHeight * 0.9f, table->GetColWidth<2>(), Colors::blue_shade);
         if (!record.isNew) {
-            containerIdx->AddText ({0.f, 0.f}, DrawPosition::Center, std::to_string (idx++), tableCellHeight * 0.8f, RAYWHITE);
-            containerScore->AddText ({0.f, 0.f}, DrawPosition::Center, std::to_string (record.score), tableCellHeight * 0.8f, Colors::yellow);
-            containerLines->AddText ({0.f, 0.f}, DrawPosition::Center, std::to_string (record.lines), tableCellHeight * 0.8f, Colors::green);
+            dct::AddText (*containerIdx, {0.f, 0.f}, DrawPosition::Center, std::to_string (idx++), tableCellHeight * 0.8f, RAYWHITE);
+            dct::AddText (*containerScore, {0.f, 0.f}, DrawPosition::Center, std::to_string (record.score), tableCellHeight * 0.8f, Colors::yellow);
+            dct::AddText (*containerLines, {0.f, 0.f}, DrawPosition::Center, std::to_string (record.lines), tableCellHeight * 0.8f, Colors::green);
         } else {
             auto idxText = std::make_shared <shapes::Text> (std::to_string (idx++), tableCellHeight * 0.8f);
             auto scoreText = std::make_shared <shapes::Text> (std::to_string (record.score), tableCellHeight * 0.8f);
@@ -327,7 +318,7 @@ CTGHighScoresScreen::CTGHighScoresScreen (const ScreenSize& screenSize, HighScor
                 animation->AddChangeColorAnimStep (60, Colors::red);
                 animation->AddSetColorAnimStep (30, Colors::red);
                 animation->EnableLooping();
-                animation->Play ();
+                animation->Play();
                 anims.push_back (animation);
                 return animation;
             };
@@ -351,25 +342,22 @@ CTGHighScoresScreen::CTGHighScoresScreen (const ScreenSize& screenSize, HighScor
     m_menu->AddRow (std::move (buttonContinue));
     m_screenGraphics.AddDrawableObject ({posXmid, height * 0.835f}, DrawPosition::Top, m_menu);
 
-    m_inputLayer.AddAction (GAMEPAD_BUTTON_RIGHT_FACE_DOWN, KEY_ENTER, ActionType::PRESS, std::make_unique <MenuSelectCommand> ());
-    m_inputLayer.AddAction (GAMEPAD_BUTTON_LEFT_FACE_LEFT, KEY_LEFT, ActionType::PRESS, std::make_unique <MenuMoveLeftCommand> ());
-    m_inputLayer.AddAction (GAMEPAD_BUTTON_LEFT_FACE_RIGHT, KEY_RIGHT, ActionType::PRESS, std::make_unique <MenuMoveRightCommand> ());
+    m_inputLayer.AddAction (GAMEPAD_BUTTON_RIGHT_FACE_DOWN, KEY_ENTER, ActionType::PRESS, std::make_unique <MenuSelectCommand>());
+    m_inputLayer.AddAction (GAMEPAD_BUTTON_LEFT_FACE_LEFT, KEY_LEFT, ActionType::PRESS, std::make_unique <MenuMoveLeftCommand>());
+    m_inputLayer.AddAction (GAMEPAD_BUTTON_LEFT_FACE_RIGHT, KEY_RIGHT, ActionType::PRESS, std::make_unique <MenuMoveRightCommand>());
 
-    m_inputHandler->PushInputLayer (&m_inputLayer);
-    m_inputHandler->PushObject (m_menu);
-
+    InputHandler::GlobalInstance().AddLayer (&m_inputLayer, m_menu);
 }
 
-void CTGHighScoresScreen::Tick()
+void CTGHighScoresScreen::Update()
 {
     for (auto& elem : m_anims) {
-        elem->Tick();
+        elem->Update();
     }
     m_screenGraphics.Draw();
 }
 
 CTGHighScoresScreen::~CTGHighScoresScreen()
 {
-    m_inputHandler->PopInputLayer();
-    m_inputHandler->PopObject();
+    InputHandler::GlobalInstance().ReleaseLayer();
 }

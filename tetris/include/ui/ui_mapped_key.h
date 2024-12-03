@@ -5,7 +5,7 @@
 class MappedKey: public DrawableObject
 {
 public:
-    MappedKey (KeyboardKey key, GamepadButton button, const InputHandler* iHandler, float size);
+    MappedKey (KeyboardKey key, GamepadButton button, float size);
     ~MappedKey();
 
     virtual void Draw() const override;
@@ -16,6 +16,5 @@ public:
 private:
     DrawableObject*     m_keyboardGraphics;
     DrawableObject*     m_gamepadGraphics;
-    const InputHandler* m_inputHandler;
 };
 

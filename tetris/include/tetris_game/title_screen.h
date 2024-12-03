@@ -6,10 +6,10 @@ class Animation;
 class TitleScreen: public Screen
 {
 public:
-    TitleScreen (InputHandler* iHandler, const ScreenSize& screenSize);
+    TitleScreen (const ScreenSize& screenSize);
     ~TitleScreen();
 
-    virtual void Tick() override;
+    virtual void Update() override;
     void SetReady() { m_bIsreadyForGame = true; }
 
 private:

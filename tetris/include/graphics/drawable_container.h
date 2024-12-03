@@ -5,22 +5,14 @@
 #include <vector>
 #include <string>
 
+
 class DrawableContainer: public DrawableObject
 {
 public:
     ~DrawableContainer();
 
 public:
-    DrawableObject* AddRectangle (Vector2 pixelPos, DrawPosition alignPos, float height, float width, const Color& color);
-    DrawableObject* AddRectangle (Vector2 pixelPos, DrawPosition alignPos, const BoundingBox2d& bbox, const Color& color);
-    DrawableObject* AddRectangleRounded (Vector2 pixelPos, DrawPosition alignPos, int height, int widght, float roundness, const Color& color);
-    DrawableObject* AddText (Vector2 pixelPos, DrawPosition alignPos, const std::string& text, int fontSize, const Color& color);
-    DrawableObject* AddShadedText (Vector2 pixelPos, DrawPosition alignPos, const std::string& text, int fontSize, const Color& color, const Color& shadeColor);
-    DrawableObject* AddCircle (Vector2 pixelPos, DrawPosition align, float radius, const Color& color);
-    DrawableObject* AddTriangle (Vector2 pixelPos, DrawPosition align, float height, float rotation, const Color& color);
-
-public:
-    void AddDrawableObject (Vector2 pixelPos, DrawPosition alignPos, DrawableObject* obj);
+    DrawableObject* AddDrawableObject (Vector2 pixelPos, DrawPosition alignPos, DrawableObject* obj);
 
 public:
     virtual void SetAlpha (unsigned char alpha) override;
@@ -33,7 +25,17 @@ public:
 
 protected:
     std::vector <DrawableObject*> m_objects;
-
-    friend class ContaineredDrawableObject;
 };
+
+
+namespace DrawableContainerTools
+{
+    DrawableObject* AddRectangle        (DrawableContainer& container, Vector2 pixelPos, DrawPosition align, const BoundingBox2d& bbox, const Color& color);
+    DrawableObject* AddRectangleRounded (DrawableContainer& container, Vector2 pixelPos, DrawPosition align, int height, int widght, float roundness, const Color& color);
+    DrawableObject* AddText             (DrawableContainer& container, Vector2 pixelPos, DrawPosition align, const std::string& text, int fontSize, const Color& color);
+    DrawableObject* AddShadedText       (DrawableContainer& container, Vector2 pixelPos, DrawPosition align, const std::string& text, int fontSize, const Color& color, const Color& shadeColor);
+    DrawableObject* AddRectangle        (DrawableContainer& container, Vector2 pixelPos, DrawPosition align, float height, float width, const Color& color);
+    DrawableObject* AddCircle           (DrawableContainer& container, Vector2 pixelPos, DrawPosition align, float radius, const Color& color);
+    DrawableObject* AddTriangle         (DrawableContainer& container, Vector2 pixelPos, DrawPosition align, float height, float rotation, const Color& color);
+}
 

@@ -4,6 +4,8 @@
 #include <graphics/decorative_block.h>
 #include <graphics/graphics_helper.h>
 
+namespace dct = DrawableContainerTools;
+
 DrawableContainer* SpriteGraphicGenerator::GetXBoxButton (GamepadButton button, float height)
 {
     switch (button)
@@ -48,61 +50,61 @@ DrawableContainer* SpriteGraphicGenerator::GetXBoxButton (GamepadButton button, 
 DrawableContainer* SpriteGraphicGenerator::GetXBoxButtonX (float radius)
 {
     auto cont = new DrawableContainer();
-    auto r = cont->AddRectangle ({0., 0.}, DrawPosition::Center, radius * 2, radius * 2, {0, 0, 0, 0});
+    auto r = dct::AddRectangle (*cont, {0., 0.}, DrawPosition::Center, radius * 2, radius * 2, {0, 0, 0, 0});
     r->SetInvisible();
-    cont->AddCircle ({0, 0}, DrawPosition::Center, radius, Colors::blue);
-    cont->AddCircle ({0, 0}, DrawPosition::Center, radius * 0.9 , BLACK);
-    cont->AddText ({0, 0}, DrawPosition::Center, "X", (int) radius * 1.5 , Colors::blue);
+    dct::AddCircle (*cont, {0, 0}, DrawPosition::Center, radius, Colors::blue);
+    dct::AddCircle (*cont, {0, 0}, DrawPosition::Center, radius * 0.9 , BLACK);
+    dct::AddText (*cont, {0, 0}, DrawPosition::Center, "X", (int) radius * 1.5 , Colors::blue);
     return cont;
 }
 
 DrawableContainer* SpriteGraphicGenerator::GetXBoxButtonY (float radius)
 {
     auto cont = new DrawableContainer();
-    auto r = cont->AddRectangle ({0., 0.}, DrawPosition::Center, radius * 2, radius * 2, {0, 0, 0, 0});
+    auto r = dct::AddRectangle (*cont, {0., 0.}, DrawPosition::Center, radius * 2, radius * 2, {0, 0, 0, 0});
     r->SetInvisible();
-    cont->AddCircle ({0, 0}, DrawPosition::Center, radius, Colors::yellow);
-    cont->AddCircle ({0, 0}, DrawPosition::Center, radius * 0.9 , BLACK);
-    cont->AddText ({0, 0}, DrawPosition::Center, "Y", (int) radius * 1.5 , Colors::yellow);
+    dct::AddCircle (*cont, {0, 0}, DrawPosition::Center, radius, Colors::yellow);
+    dct::AddCircle (*cont, {0, 0}, DrawPosition::Center, radius * 0.9 , BLACK);
+    dct::AddText (*cont, {0, 0}, DrawPosition::Center, "Y", (int) radius * 1.5 , Colors::yellow);
     return cont;
 }
 
 DrawableContainer* SpriteGraphicGenerator::GetXBoxButtonA (float radius)
 {
     auto cont = new DrawableContainer();
-    auto r = cont->AddRectangle ({0., 0.}, DrawPosition::Center, radius * 2, radius * 2, {0, 0, 0, 0});
+    auto r = dct::AddRectangle (*cont, {0., 0.}, DrawPosition::Center, radius * 2, radius * 2, {0, 0, 0, 0});
     r->SetInvisible();
-    cont->AddCircle ({0, 0}, DrawPosition::Center, radius, Colors::green);
-    cont->AddCircle ({0, 0}, DrawPosition::Center, radius * 0.9 , BLACK);
-    cont->AddText ({0, 0}, DrawPosition::Center, "A", (int) radius * 1.5 , Colors::green);
+    dct::AddCircle (*cont, {0, 0}, DrawPosition::Center, radius, Colors::green);
+    dct::AddCircle (*cont, {0, 0}, DrawPosition::Center, radius * 0.9 , BLACK);
+    dct::AddText (*cont, {0, 0}, DrawPosition::Center, "A", (int) radius * 1.5 , Colors::green);
     return cont;
 }
 
 DrawableContainer* SpriteGraphicGenerator::GetXBoxButtonB (float radius)
 {
     auto cont = new DrawableContainer();
-    auto r = cont->AddRectangle ({0., 0.}, DrawPosition::Center, radius * 2, radius * 2, {0, 0, 0, 0});
+    auto r = dct::AddRectangle (*cont, {0., 0.}, DrawPosition::Center, radius * 2, radius * 2, {0, 0, 0, 0});
     r->SetInvisible();
-    cont->AddCircle ({0, 0}, DrawPosition::Center, radius, Colors::red);
-    cont->AddCircle ({0, 0}, DrawPosition::Center, radius * 0.9 , BLACK);
-    cont->AddText ({0, 0}, DrawPosition::Center, "B", (int) radius * 1.5 , Colors::red);
+    dct::AddCircle (*cont, {0, 0}, DrawPosition::Center, radius, Colors::red);
+    dct::AddCircle (*cont, {0, 0}, DrawPosition::Center, radius * 0.9 , BLACK);
+    dct::AddText (*cont, {0, 0}, DrawPosition::Center, "B", (int) radius * 1.5 , Colors::red);
     return cont;
 }
 
 DrawableContainer* SpriteGraphicGenerator::GetXBoxUP (float radius)
 {
     auto cont = new DrawableContainer();
-    auto r = cont->AddRectangle ({0., 0.}, DrawPosition::Center, radius * 2, radius * 2, {0, 0, 0, 0});
+    auto r = dct::AddRectangle (*cont, {0., 0.}, DrawPosition::Center, radius * 2, radius * 2, {0, 0, 0, 0});
     r->SetInvisible();
-    cont->AddCircle ({0, 0}, DrawPosition::Center, radius, RAYWHITE);
-    cont->AddCircle ({0, 0}, DrawPosition::Center, radius * 0.9 , BLACK);
-    cont->AddRectangle ({0, 0}, DrawPosition::Center, radius * 1.5, radius * 0.6, RAYWHITE);
-    cont->AddRectangle ({0, 0}, DrawPosition::Center, radius * 0.6, radius * 1.5, RAYWHITE);
-    auto rectangleVert = cont->AddRectangle ({0, 0}, DrawPosition::Center, radius * 1.4, radius * 0.5, BLACK);
-    cont->AddRectangle ({0, 0}, DrawPosition::Center, radius * 0.5, radius * 1.4, BLACK);
+    dct::AddCircle (*cont, {0, 0}, DrawPosition::Center, radius, RAYWHITE);
+    dct::AddCircle (*cont, {0, 0}, DrawPosition::Center, radius * 0.9 , BLACK);
+    dct::AddRectangle (*cont, {0, 0}, DrawPosition::Center, radius * 1.5, radius * 0.6, RAYWHITE);
+    dct::AddRectangle (*cont, {0, 0}, DrawPosition::Center, radius * 0.6, radius * 1.5, RAYWHITE);
+    auto rectangleVert = dct::AddRectangle (*cont, {0, 0}, DrawPosition::Center, radius * 1.4, radius * 0.5, BLACK);
+    dct::AddRectangle (*cont, {0, 0}, DrawPosition::Center, radius * 0.5, radius * 1.4, BLACK);
 
     auto bbox = rectangleVert->GetBoundingBox();
-    cont->AddRectangle (bbox.Min(), DrawPosition::TopLeft, radius * 0.45, radius * 0.5, RAYWHITE);
+    dct::AddRectangle (*cont, bbox.Min(), DrawPosition::TopLeft, radius * 0.45, radius * 0.5, RAYWHITE);
 
     return cont;
 }
@@ -110,17 +112,17 @@ DrawableContainer* SpriteGraphicGenerator::GetXBoxUP (float radius)
 DrawableContainer* SpriteGraphicGenerator::GetXBoxDOWN (float radius)
 {
     auto cont = new DrawableContainer();
-    auto r = cont->AddRectangle ({0., 0.}, DrawPosition::Center, radius * 2, radius * 2, {0, 0, 0, 0});
+    auto r = dct::AddRectangle (*cont, {0., 0.}, DrawPosition::Center, radius * 2, radius * 2, {0, 0, 0, 0});
     r->SetInvisible();
-    cont->AddCircle ({0, 0}, DrawPosition::Center, radius, RAYWHITE);
-    cont->AddCircle ({0, 0}, DrawPosition::Center, radius * 0.9 , BLACK);
-    cont->AddRectangle ({0, 0}, DrawPosition::Center, radius * 1.5, radius * 0.6, RAYWHITE);
-    cont->AddRectangle ({0, 0}, DrawPosition::Center, radius * 0.6, radius * 1.5, RAYWHITE);
-    auto rectangleVert = cont->AddRectangle ({0, 0}, DrawPosition::Center, radius * 1.4, radius * 0.5, BLACK);
-    cont->AddRectangle ({0, 0}, DrawPosition::Center, radius * 0.5, radius * 1.4, BLACK);
+    dct::AddCircle (*cont, {0, 0}, DrawPosition::Center, radius, RAYWHITE);
+    dct::AddCircle (*cont, {0, 0}, DrawPosition::Center, radius * 0.9 , BLACK);
+    dct::AddRectangle (*cont, {0, 0}, DrawPosition::Center, radius * 1.5, radius * 0.6, RAYWHITE);
+    dct::AddRectangle (*cont, {0, 0}, DrawPosition::Center, radius * 0.6, radius * 1.5, RAYWHITE);
+    auto rectangleVert = dct::AddRectangle (*cont, {0, 0}, DrawPosition::Center, radius * 1.4, radius * 0.5, BLACK);
+    dct::AddRectangle (*cont, {0, 0}, DrawPosition::Center, radius * 0.5, radius * 1.4, BLACK);
 
     auto bbox = rectangleVert->GetBoundingBox();
-    cont->AddRectangle (bbox.Max(), DrawPosition::BottomRight, radius * 0.45, radius * 0.5, RAYWHITE);
+    dct::AddRectangle (*cont, bbox.Max(), DrawPosition::BottomRight, radius * 0.45, radius * 0.5, RAYWHITE);
 
     return cont;
 }
@@ -128,17 +130,17 @@ DrawableContainer* SpriteGraphicGenerator::GetXBoxDOWN (float radius)
 DrawableContainer* SpriteGraphicGenerator::GetXBoxLEFT (float radius)
 {
     auto cont = new DrawableContainer();
-    auto r = cont->AddRectangle ({0., 0.}, DrawPosition::Center, radius * 2, radius * 2, {0, 0, 0, 0});
+    auto r = dct::AddRectangle (*cont, {0., 0.}, DrawPosition::Center, radius * 2, radius * 2, {0, 0, 0, 0});
     r->SetInvisible();
-    cont->AddCircle ({0, 0}, DrawPosition::Center, radius, RAYWHITE);
-    cont->AddCircle ({0, 0}, DrawPosition::Center, radius * 0.9, BLACK);
-    cont->AddRectangle ({0, 0}, DrawPosition::Center, radius * 1.5, radius * 0.6, RAYWHITE);
-    cont->AddRectangle ({0, 0}, DrawPosition::Center, radius * 0.6, radius * 1.5, RAYWHITE);
-    cont->AddRectangle ({0, 0}, DrawPosition::Center, radius * 1.4, radius * 0.5, BLACK);
-    auto rectangleHor = cont->AddRectangle ({0, 0}, DrawPosition::Center, radius * 0.5, radius * 1.4, BLACK);
+    dct::AddCircle (*cont, {0, 0}, DrawPosition::Center, radius, RAYWHITE);
+    dct::AddCircle (*cont, {0, 0}, DrawPosition::Center, radius * 0.9, BLACK);
+    dct::AddRectangle (*cont, {0, 0}, DrawPosition::Center, radius * 1.5, radius * 0.6, RAYWHITE);
+    dct::AddRectangle (*cont, {0, 0}, DrawPosition::Center, radius * 0.6, radius * 1.5, RAYWHITE);
+    dct::AddRectangle (*cont, {0, 0}, DrawPosition::Center, radius * 1.4, radius * 0.5, BLACK);
+    auto rectangleHor = dct::AddRectangle (*cont, {0, 0}, DrawPosition::Center, radius * 0.5, radius * 1.4, BLACK);
 
     auto bbox = rectangleHor->GetBoundingBox();
-    cont->AddRectangle (bbox.Min(), DrawPosition::TopLeft, radius * 0.5, radius * 0.45, RAYWHITE);
+    dct::AddRectangle (*cont, bbox.Min(), DrawPosition::TopLeft, radius * 0.5, radius * 0.45, RAYWHITE);
 
     return cont;
 }
@@ -146,17 +148,17 @@ DrawableContainer* SpriteGraphicGenerator::GetXBoxLEFT (float radius)
 DrawableContainer* SpriteGraphicGenerator::GetXBoxRIGHT (float radius)
 {
     auto cont = new DrawableContainer();
-    auto r = cont->AddRectangle ({0., 0.}, DrawPosition::Center, radius * 2, radius * 2, {0, 0, 0, 0});
+    auto r = dct::AddRectangle (*cont, {0., 0.}, DrawPosition::Center, radius * 2, radius * 2, {0, 0, 0, 0});
     r->SetInvisible();
-    cont->AddCircle ({0, 0}, DrawPosition::Center, radius, RAYWHITE);
-    cont->AddCircle ({0, 0}, DrawPosition::Center, radius * 0.9, BLACK);
-    cont->AddRectangle ({0, 0}, DrawPosition::Center, radius * 1.5, radius * 0.6, RAYWHITE);
-    cont->AddRectangle ({0, 0}, DrawPosition::Center, radius * 0.6, radius * 1.5, RAYWHITE);
-    cont->AddRectangle ({0, 0}, DrawPosition::Center, radius * 1.4, radius * 0.5, BLACK);
-    auto rectangleHor = cont->AddRectangle ({0, 0}, DrawPosition::Center, radius * 0.5, radius * 1.4, BLACK);
+    dct::AddCircle (*cont, {0, 0}, DrawPosition::Center, radius, RAYWHITE);
+    dct::AddCircle (*cont, {0, 0}, DrawPosition::Center, radius * 0.9, BLACK);
+    dct::AddRectangle (*cont, {0, 0}, DrawPosition::Center, radius * 1.5, radius * 0.6, RAYWHITE);
+    dct::AddRectangle (*cont, {0, 0}, DrawPosition::Center, radius * 0.6, radius * 1.5, RAYWHITE);
+    dct::AddRectangle (*cont, {0, 0}, DrawPosition::Center, radius * 1.4, radius * 0.5, BLACK);
+    auto rectangleHor = dct::AddRectangle (*cont, {0, 0}, DrawPosition::Center, radius * 0.5, radius * 1.4, BLACK);
 
     auto bbox = rectangleHor->GetBoundingBox();
-    cont->AddRectangle (bbox.Max(), DrawPosition::BottomRight, radius * 0.5, radius * 0.45, RAYWHITE);
+    dct::AddRectangle (*cont, bbox.Max(), DrawPosition::BottomRight, radius * 0.5, radius * 0.45, RAYWHITE);
 
     return cont;
 }
@@ -164,12 +166,12 @@ DrawableContainer* SpriteGraphicGenerator::GetXBoxRIGHT (float radius)
 DrawableContainer* SpriteGraphicGenerator::GetXBoxLB (float width)
 {
     auto cont = new DrawableContainer();
-    auto r = cont->AddRectangle ({0., 0.}, DrawPosition::Center, width, width, {0, 0, 0, 0});
+    auto r = dct::AddRectangle (*cont, {0., 0.}, DrawPosition::Center, width, width, {0, 0, 0, 0});
     r->SetInvisible();
-    cont->AddRectangleRounded ({0, 0}, DrawPosition::Center, width * 0.5, width, 0.6, RAYWHITE);
-    auto rInt = cont->AddRectangleRounded ({0, 0}, DrawPosition::Center, width * 0.4, width * 0.9, 0.6, BLACK);
+    dct::AddRectangleRounded (*cont, {0, 0}, DrawPosition::Center, width * 0.5, width, 0.6, RAYWHITE);
+    auto rInt = dct::AddRectangleRounded (*cont, {0, 0}, DrawPosition::Center, width * 0.4, width * 0.9, 0.6, BLACK);
     auto bbox = rInt->GetBoundingBox();
-    cont->AddText ({bbox.Max().x - bbox.Width() * 0.1f, bbox.Max().y - bbox.Height() / 2}, DrawPosition::Right, "LB", bbox.Height() * 0.85, RAYWHITE);
+    dct::AddText (*cont, {bbox.Max().x - bbox.Width() * 0.1f, bbox.Max().y - bbox.Height() / 2}, DrawPosition::Right, "LB", bbox.Height() * 0.85, RAYWHITE);
 
     return cont;
 }
@@ -177,12 +179,12 @@ DrawableContainer* SpriteGraphicGenerator::GetXBoxLB (float width)
 DrawableContainer* SpriteGraphicGenerator::GetXBoxRB (float width)
 {
     auto cont = new DrawableContainer();
-    auto r = cont->AddRectangle ({0., 0.}, DrawPosition::Center, width, width, {0, 0, 0, 0});
+    auto r = dct::AddRectangle (*cont, {0., 0.}, DrawPosition::Center, width, width, {0, 0, 0, 0});
     r->SetInvisible();
-    cont->AddRectangleRounded ({0, 0}, DrawPosition::Center, width * 0.5, width, 0.6, RAYWHITE);
-    auto rInt = cont->AddRectangleRounded ({0, 0}, DrawPosition::Center, width * 0.4, width * 0.9, 0.6, BLACK);
+    dct::AddRectangleRounded (*cont, {0, 0}, DrawPosition::Center, width * 0.5, width, 0.6, RAYWHITE);
+    auto rInt = dct::AddRectangleRounded (*cont, {0, 0}, DrawPosition::Center, width * 0.4, width * 0.9, 0.6, BLACK);
     auto bbox = rInt->GetBoundingBox();
-    cont->AddText ({bbox.Min().x + bbox.Width() * 0.1f, bbox.Max().y - bbox.Height() / 2}, DrawPosition::Left, "RB", bbox.Height() * 0.85, RAYWHITE);
+    dct::AddText (*cont, {bbox.Min().x + bbox.Width() * 0.1f, bbox.Max().y - bbox.Height() / 2}, DrawPosition::Left, "RB", bbox.Height() * 0.85, RAYWHITE);
 
     return cont;
 }
@@ -190,12 +192,12 @@ DrawableContainer* SpriteGraphicGenerator::GetXBoxRB (float width)
 DrawableContainer* SpriteGraphicGenerator::GetXBoxLT (float height)
 {
     auto cont = new DrawableContainer();
-    auto r = cont->AddRectangle ({0., 0.}, DrawPosition::Center, height, height, {0, 0, 0, 0});
+    auto r = dct::AddRectangle (*cont, {0., 0.}, DrawPosition::Center, height, height, {0, 0, 0, 0});
     r->SetInvisible();
-    cont->AddRectangleRounded ({0, 0}, DrawPosition::Center, height , height * 0.5, 0.6, RAYWHITE);
-    auto rInt = cont->AddRectangleRounded ({0, 0}, DrawPosition::Center, height * 0.9, height * 0.4, 0.6, BLACK);
+    dct::AddRectangleRounded (*cont, {0, 0}, DrawPosition::Center, height , height * 0.5, 0.6, RAYWHITE);
+    auto rInt = dct::AddRectangleRounded (*cont, {0, 0}, DrawPosition::Center, height * 0.9, height * 0.4, 0.6, BLACK);
     auto bbox = rInt->GetBoundingBox();
-    cont->AddText ({bbox.Min().x + bbox.Width() / 2, bbox.Max().y - bbox.Height() * 0.1f}, DrawPosition::Bottom, "LT", bbox.Width() * 0.65, RAYWHITE);
+    dct::AddText (*cont, {bbox.Min().x + bbox.Width() / 2, bbox.Max().y - bbox.Height() * 0.1f}, DrawPosition::Bottom, "LT", bbox.Width() * 0.65, RAYWHITE);
 
     return cont;
 }
@@ -203,12 +205,12 @@ DrawableContainer* SpriteGraphicGenerator::GetXBoxLT (float height)
 DrawableContainer* SpriteGraphicGenerator::GetXBoxRT (float height)
 {
     auto cont = new DrawableContainer();
-    auto r = cont->AddRectangle ({0., 0.}, DrawPosition::Center, height, height, {0, 0, 0, 0});
+    auto r = dct::AddRectangle (*cont, {0., 0.}, DrawPosition::Center, height, height, {0, 0, 0, 0});
     r->SetInvisible();
-    cont->AddRectangleRounded ({0, 0}, DrawPosition::Center, height , height * 0.5, 0.6, RAYWHITE);
-    auto rInt = cont->AddRectangleRounded ({0, 0}, DrawPosition::Center, height * 0.9, height * 0.4, 0.6, BLACK);
+    dct::AddRectangleRounded (*cont, {0, 0}, DrawPosition::Center, height , height * 0.5, 0.6, RAYWHITE);
+    auto rInt = dct::AddRectangleRounded (*cont, {0, 0}, DrawPosition::Center, height * 0.9, height * 0.4, 0.6, BLACK);
     auto bbox = rInt->GetBoundingBox();
-    cont->AddText ({bbox.Min().x + bbox.Width() / 2, bbox.Max().y - bbox.Height() * 0.1f}, DrawPosition::Bottom, "RT", bbox.Width() * 0.65, RAYWHITE);
+    dct::AddText (*cont, {bbox.Min().x + bbox.Width() / 2, bbox.Max().y - bbox.Height() * 0.1f}, DrawPosition::Bottom, "RT", bbox.Width() * 0.65, RAYWHITE);
 
     return cont;
 }
@@ -217,12 +219,12 @@ DrawableContainer* SpriteGraphicGenerator::GetKeybordKey (KeyboardKey key, float
 {
     auto cont = new DrawableContainer();
     if (key > 38 && key < 91) {
-        cont->AddRectangleRounded ({0., 0.}, DrawPosition::Top, size, size, 0.4, RAYWHITE);
-        auto rInt = cont->AddRectangleRounded ({0., size * 0.08f}, DrawPosition::Top, size * 0.75, size * 0.9, 0.4, BLACK);
+        dct::AddRectangleRounded (*cont, {0., 0.}, DrawPosition::Top, size, size, 0.4, RAYWHITE);
+        auto rInt = dct::AddRectangleRounded (*cont, {0., size * 0.08f}, DrawPosition::Top, size * 0.75, size * 0.9, 0.4, BLACK);
         auto bbox = rInt->GetBoundingBox();
 
         std::string ch (1, (char)key);
-        cont->AddText ({bbox.Min().x + bbox.Width() * 0.2f, bbox.Min().y + bbox.Height() * 0.1f}, DrawPosition::TopLeft, ch, bbox.Height() * 0.6f, RAYWHITE);
+        dct::AddText (*cont, {bbox.Min().x + bbox.Width() * 0.2f, bbox.Min().y + bbox.Height() * 0.1f}, DrawPosition::TopLeft, ch, bbox.Height() * 0.6f, RAYWHITE);
     }
 
     std::string keyName;
@@ -230,29 +232,29 @@ DrawableContainer* SpriteGraphicGenerator::GetKeybordKey (KeyboardKey key, float
     {
     case KEY_ESCAPE:
     {
-        cont->AddRectangleRounded ({0., 0.}, DrawPosition::Top, size, size, 0.4, RAYWHITE);
-        auto rInt = cont->AddRectangleRounded ({0., size * 0.08f}, DrawPosition::Top, size * 0.75, size * 0.9, 0.4, BLACK);
+        dct::AddRectangleRounded (*cont, {0., 0.}, DrawPosition::Top, size, size, 0.4, RAYWHITE);
+        auto rInt = dct::AddRectangleRounded (*cont, {0., size * 0.08f}, DrawPosition::Top, size * 0.75, size * 0.9, 0.4, BLACK);
         auto bbox = rInt->GetBoundingBox();
 
-        cont->AddText ({bbox.Min().x + bbox.Width() * 0.1f, bbox.Min().y + bbox.Height() * 0.1f}, DrawPosition::TopLeft, "ESC", bbox.Height() * 0.45f, RAYWHITE);
+        dct::AddText (*cont, {bbox.Min().x + bbox.Width() * 0.1f, bbox.Min().y + bbox.Height() * 0.1f}, DrawPosition::TopLeft, "ESC", bbox.Height() * 0.45f, RAYWHITE);
         break;
     }
     case KEY_SPACE:
     {
-        cont->AddRectangleRounded ({0., 0.}, DrawPosition::Top, size, size * 2, 0.4, RAYWHITE);
-        auto rInt = cont->AddRectangleRounded ({0., size * 0.08f}, DrawPosition::Top, size * 0.75, size * 1.9, 0.4, BLACK);
+        dct::AddRectangleRounded (*cont, {0., 0.}, DrawPosition::Top, size, size * 2, 0.4, RAYWHITE);
+        auto rInt = dct::AddRectangleRounded (*cont, {0., size * 0.08f}, DrawPosition::Top, size * 0.75, size * 1.9, 0.4, BLACK);
         auto bbox = rInt->GetBoundingBox();
 
-        cont->AddText ({bbox.Min().x + bbox.Width() * 0.5f, bbox.Min().y + bbox.Height() * 0.1f}, DrawPosition::Top, "SPACE", bbox.Height() * 0.45f, RAYWHITE);
+        dct::AddText (*cont, {bbox.Min().x + bbox.Width() * 0.5f, bbox.Min().y + bbox.Height() * 0.1f}, DrawPosition::Top, "SPACE", bbox.Height() * 0.45f, RAYWHITE);
         break;
     }
     case KEY_ENTER:
     {
-        cont->AddRectangleRounded ({0., 0.}, DrawPosition::Top, size, size * 2, 0.4, RAYWHITE);
-        auto rInt = cont->AddRectangleRounded ({0., size * 0.08f}, DrawPosition::Top, size * 0.75, size * 1.9, 0.4, BLACK);
+        dct::AddRectangleRounded (*cont, {0., 0.}, DrawPosition::Top, size, size * 2, 0.4, RAYWHITE);
+        auto rInt = dct::AddRectangleRounded (*cont, {0., size * 0.08f}, DrawPosition::Top, size * 0.75, size * 1.9, 0.4, BLACK);
         auto bbox = rInt->GetBoundingBox();
 
-        cont->AddText ({bbox.Min().x + bbox.Width() * 0.5f, bbox.Min().y + bbox.Height() * 0.1f}, DrawPosition::Top, "ENTER", bbox.Height() * 0.45f, RAYWHITE);
+        dct::AddText (*cont, {bbox.Min().x + bbox.Width() * 0.5f, bbox.Min().y + bbox.Height() * 0.1f}, DrawPosition::Top, "ENTER", bbox.Height() * 0.45f, RAYWHITE);
         break;
     }
     case KEY_LEFT_ALT: case KEY_RIGHT_ALT:
@@ -270,21 +272,21 @@ DrawableContainer* SpriteGraphicGenerator::GetKeybordKey (KeyboardKey key, float
     }
 
     if (!keyName.empty()) {
-        cont->AddRectangleRounded ({0., 0.}, DrawPosition::Top, size, size * 1.6, 0.4, RAYWHITE);
-        auto rInt = cont->AddRectangleRounded ({0., size * 0.08f}, DrawPosition::Top, size * 0.75, size * 1.5, 0.4, BLACK);
+        dct::AddRectangleRounded (*cont, {0., 0.}, DrawPosition::Top, size, size * 1.6, 0.4, RAYWHITE);
+        auto rInt = dct::AddRectangleRounded (*cont, {0., size * 0.08f}, DrawPosition::Top, size * 0.75, size * 1.5, 0.4, BLACK);
         auto bbox = rInt->GetBoundingBox();
 
-        cont->AddText ({bbox.Min().x + bbox.Width() * 0.5f, bbox.Min().y + bbox.Height() * 0.1f}, DrawPosition::Top, keyName, bbox.Height() * 0.45f, RAYWHITE);
+        dct::AddText (*cont, {bbox.Min().x + bbox.Width() * 0.5f, bbox.Min().y + bbox.Height() * 0.1f}, DrawPosition::Top, keyName, bbox.Height() * 0.45f, RAYWHITE);
     }
 
     auto AddArrow = [] (float angle, float size, DrawableContainer* cont)
     {
-        cont->AddRectangleRounded ({0., 0.}, DrawPosition::Top, size, size, 0.4, RAYWHITE);
-        auto rInt = cont->AddRectangleRounded ({0., size * 0.08f}, DrawPosition::Top, size * 0.75, size * 0.9, 0.4, BLACK);
+        dct::AddRectangleRounded (*cont, {0., 0.}, DrawPosition::Top, size, size, 0.4, RAYWHITE);
+        auto rInt = dct::AddRectangleRounded (*cont, {0., size * 0.08f}, DrawPosition::Top, size * 0.75, size * 0.9, 0.4, BLACK);
         auto bbox = rInt->GetBoundingBox();
         Vector2 pos {bbox.Min().x + bbox.Width() * 0.5f, bbox.Min().y + bbox.Height() * 0.5f};
 
-        cont->AddTriangle (pos, DrawPosition::Center, bbox.Height() * 0.5f, angle, RAYWHITE);
+        dct::AddTriangle (*cont, pos, DrawPosition::Center, bbox.Height() * 0.5f, angle, RAYWHITE);
     };
 
     switch (key)
@@ -398,8 +400,8 @@ DrawableContainer* SpriteGraphicGenerator::GetButton (const std::string& text, f
 {
     auto cont = new DrawableContainer();
 
-    cont->AddRectangle ({0., 0.}, DrawPosition::Center, width * 0.25, width, {72, 88, 130, 255});
-    cont->AddText ({0., 0.}, DrawPosition::Center, text, width * 0.15, RAYWHITE);
+    dct::AddRectangle (*cont, {0., 0.}, DrawPosition::Center, width * 0.25, width, {72, 88, 130, 255});
+    dct::AddText (*cont, {0., 0.}, DrawPosition::Center, text, width * 0.15, RAYWHITE);
 
     return cont;
 }
@@ -408,9 +410,9 @@ DrawableContainer* SpriteGraphicGenerator::GetButtonHover (const std::string& te
 {
     auto cont = new DrawableContainer();
 
-    cont->AddRectangle ({0., 0.}, DrawPosition::Center, width * 0.3, width * 1.05, RAYWHITE);
-    cont->AddRectangle ({0., 0.}, DrawPosition::Center, width * 0.25, width, {72, 88, 130, 255});
-    cont->AddText ({0., 0.}, DrawPosition::Center, text, width * 0.15, RAYWHITE);
+    dct::AddRectangle (*cont, {0., 0.}, DrawPosition::Center, width * 0.3, width * 1.05, RAYWHITE);
+    dct::AddRectangle (*cont, {0., 0.}, DrawPosition::Center, width * 0.25, width, {72, 88, 130, 255});
+    dct::AddText (*cont, {0., 0.}, DrawPosition::Center, text, width * 0.15, RAYWHITE);
 
     return cont;
 }
@@ -421,10 +423,10 @@ DrawableContainer* SpriteGraphicGenerator::GetButtonPressed (const std::string& 
     Color shadedPressed {53, 74, 115,  255};
     Color shade {33, 40, 58, 255};
 
-    cont->AddRectangle ({0., 0.}, DrawPosition::Center, width * 0.3, width * 1.05, RAYWHITE);
-    cont->AddRectangle ({0., 0.}, DrawPosition::Center, width * 0.25, width, shade);
-    cont->AddRectangle ({0., width * 0.02f}, DrawPosition::Center, width * 0.21, width * 0.97, shadedPressed);
-    cont->AddText ({0., 0.}, DrawPosition::Center, text, width * 0.15, RAYWHITE);
+    dct::AddRectangle (*cont, {0., 0.}, DrawPosition::Center, width * 0.3, width * 1.05, RAYWHITE);
+    dct::AddRectangle (*cont, {0., 0.}, DrawPosition::Center, width * 0.25, width, shade);
+    dct::AddRectangle (*cont, {0., width * 0.02f}, DrawPosition::Center, width * 0.21, width * 0.97, shadedPressed);
+    dct::AddText (*cont, {0., 0.}, DrawPosition::Center, text, width * 0.15, RAYWHITE);
 
     return cont;
 }
